@@ -1,7 +1,8 @@
 import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-decorators'
-import { login, logout, getUserInfo } from '@/api/users'
+import { logout, getUserInfo } from '@/api/users'
 import { getToken, setToken, removeToken } from '@/utils/cookies'
 import store from '@/store'
+import request from '@/utils/request'
 
 export interface IUserState {
   token: string
@@ -45,10 +46,16 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public async Login(userInfo: { username: string, password: string }) {
-    let { username, password } = userInfo
-    username = username.trim()
-    const { data } = await login({ username, password })
+  public async Login(userInfo: { login: string, password: string }) {
+    let { login, password } = userInfo
+    login = login.trim()
+    const { data } = await request({
+      url: '/login',
+      method: 'post',
+      data: {
+        login: login,
+        password: password }
+    })
     setToken(data.accessToken)
     this.SET_TOKEN(data.accessToken)
   }

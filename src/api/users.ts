@@ -7,13 +7,6 @@ export const getUserInfo = (data: any) =>
     data
   })
 
-export const login = (data: any) =>
-  request({
-    url: '/users/login',
-    method: 'post',
-    data
-  })
-
 export const logout = () =>
   request({
     url: '/users/logout',

@@ -14,13 +14,13 @@
         </h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="login">
         <span class="svg-container">
           <svg-icon name="user" />
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="loginForm.login"
           name="username"
           type="text"
           autocomplete="on"
@@ -82,25 +82,25 @@ import { isValidUsername } from '@/utils/validate'
 })
 export default class extends Vue {
   private validateUsername = (rule: any, value: string, callback: Function) => {
-    if (!isValidUsername(value)) {
+    if (!value || value.length === 0) {
       callback(new Error('Please enter the correct user name'))
     } else {
       callback()
     }
   }
   private validatePassword = (rule: any, value: string, callback: Function) => {
-    if (value.length < 6) {
+    if (!value || value.length === 0) {
       callback(new Error('The password can not be less than 6 digits'))
     } else {
       callback()
     }
   }
   private loginForm = {
-    username: 'admin',
+    login: 'admin',
     password: '111111'
   }
   private loginRules = {
-    username: [{ validator: this.validateUsername, trigger: 'blur' }],
+    login: [{ validator: this.validateUsername, trigger: 'blur' }],
     password: [{ validator: this.validatePassword, trigger: 'blur' }]
   }
   private passwordType = 'password'
@@ -121,7 +121,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    if (this.loginForm.username === '') {
+    if (this.loginForm.login === '') {
       (this.$refs.username as Input).focus()
     } else if (this.loginForm.password === '') {
       (this.$refs.password as Input).focus()
