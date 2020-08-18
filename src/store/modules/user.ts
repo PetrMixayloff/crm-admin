@@ -2,7 +2,6 @@ import { VuexModule, Module, Action, Mutation, getModule } from 'vuex-module-dec
 import { logout, getUserInfo } from '@/api/users'
 import { getToken, setToken, removeToken } from '@/utils/cookies'
 import store from '@/store'
-import request from '@/utils/request'
 
 export interface IUserState {
   token: string
@@ -18,7 +17,7 @@ class User extends VuexModule implements IUserState {
   public name = ''
   public avatar = ''
   public introduction = ''
-  public roles: string[] = []
+  public roles: string[] = ['admin']
 
   @Mutation
   private SET_TOKEN(token: string) {

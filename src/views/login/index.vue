@@ -146,7 +146,6 @@ export default class extends Vue {
         this.loading = true
         try {
           const resp = await authService.login({ login: this.loginForm.login, password: this.loginForm.password })
-          console.log(resp)
 
           if (resp.data && resp.data.access_token) {
             UserModule.setToken(resp.data.access_token)
