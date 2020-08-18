@@ -24,38 +24,29 @@ service.interceptors.request.use(
 // Response interceptors
 service.interceptors.response.use(
   (response) => {
-    // Some example codes here:
-    // code == 20000: success
-    // code == 50001: invalid access token
-    // code == 50002: already login in other place
-    // code == 50003: access token expired
-    // code == 50004: invalid user (user not exist)
-    // code == 50005: username or password is incorrect
-    // You can change this part for your own usage.
-    const res = response.data
-    if (res.code !== 20000) {
+    if (response.status !== 200) {
       Message({
-        message: res.message || 'Error',
+        message: response.statusText || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        MessageBox.confirm(
-          'You have been logged out, try to login again.',
-          'Log out',
-          {
-            confirmButtonText: 'Relogin',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          }
-        ).then(() => {
-          UserModule.ResetToken()
-          location.reload() // To prevent bugs from vue-router
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
+      // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+      //   MessageBox.confirm(
+      //     'You have been logged out, try to login again.',
+      //     'Log out',
+      //     {
+      //       confirmButtonText: 'Relogin',
+      //       cancelButtonText: 'Cancel',
+      //       type: 'warning'
+      //     }
+      //   ).then(() => {
+      //     UserModule.ResetToken()
+      //     location.reload() // To prevent bugs from vue-router
+      //   })
+      // }
+      return Promise.reject(new Error(response.statusText || 'Error'))
     } else {
-      return response.data
+      return response
     }
   },
   (error) => {

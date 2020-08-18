@@ -76,6 +76,7 @@ import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
 import { isValidUsername } from '@/utils/validate'
+import authService from '@/services/authService'
 
 @Component({
   name: 'Login'
@@ -96,8 +97,8 @@ export default class extends Vue {
     }
   }
   private loginForm = {
-    login: 'admin',
-    password: '111111'
+    login: '',
+    password: ''
   }
   private loginRules = {
     login: [{ validator: this.validateUsername, trigger: 'blur' }],
@@ -143,15 +144,22 @@ export default class extends Vue {
     (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         this.loading = true
-        await UserModule.Login(this.loginForm)
-        this.$router.push({
-          path: this.redirect || '/',
-          query: this.otherQuery
-        })
-        // Just to simulate the time of the request
-        setTimeout(() => {
+        try {
+          const resp = await authService.login({ login: this.loginForm.login, password: this.loginForm.password })
+          console.log(resp)
+
+          if (resp.data && resp.data.access_token) {
+            UserModule.setToken(resp.data.access_token)
+            // await this.getDbSchema()
+            await this.$router.push('/')
+          } else {
+            throw new Error('Не получен токен')
+          }
+        } catch (e) {
+          return false
+        } finally {
           this.loading = false
-        }, 0.5 * 1000)
+        }
       } else {
         return false
       }
