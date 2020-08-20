@@ -127,46 +127,6 @@ export const constantRoutes: RouteConfig[] = [
 */
 export const asyncRoutes: RouteConfig[] = [
   {
-    path: '/permission',
-    component: Layout,
-    redirect: '/permission/directive',
-    meta: {
-      title: 'permission',
-      icon: 'lock',
-      roles: ['admin', 'editor'], // you can set roles in root nav
-      alwaysShow: true // will always show the root menu
-    },
-    children: [
-      {
-        path: 'page',
-        component: () => import(/* webpackChunkName: "permission-page" */ '@/views/permission/page.vue'),
-        name: 'PagePermission',
-        meta: {
-          title: 'pagePermission',
-          roles: ['admin'] // or you can only set roles in sub nav
-        }
-      },
-      {
-        path: 'directive',
-        component: () => import(/* webpackChunkName: "permission-directive" */ '@/views/permission/directive.vue'),
-        name: 'DirectivePermission',
-        meta: {
-          title: 'directivePermission'
-          // if do not set roles, means: this page does not require permission
-        }
-      },
-      {
-        path: 'role',
-        component: () => import(/* webpackChunkName: "permission-role" */ '@/views/permission/role.vue'),
-        name: 'RolePermission',
-        meta: {
-          title: 'rolePermission',
-          roles: ['admin']
-        }
-      }
-    ]
-  },
-  {
     path: '/icon',
     component: Layout,
     children: [
@@ -187,46 +147,6 @@ export const asyncRoutes: RouteConfig[] = [
   chartsRouter,
   nestedRouter,
   tableRouter,
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    meta: {
-      title: 'example',
-      icon: 'example'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import(/* webpackChunkName: "example-create" */ '@/views/example/create.vue'),
-        name: 'CreateArticle',
-        meta: {
-          title: 'createArticle',
-          icon: 'edit'
-        }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import(/* webpackChunkName: "example-edit" */ '@/views/example/edit.vue'),
-        name: 'EditArticle',
-        meta: {
-          title: 'editArticle',
-          noCache: true,
-          activeMenu: '/example/list',
-          hidden: true
-        }
-      },
-      {
-        path: 'list',
-        component: () => import(/* webpackChunkName: "example-list" */ '@/views/example/list.vue'),
-        name: 'ArticleList',
-        meta: {
-          title: 'articleList',
-          icon: 'list'
-        }
-      }
-    ]
-  },
   {
     path: '/tab',
     component: Layout,
@@ -321,84 +241,6 @@ export const asyncRoutes: RouteConfig[] = [
         meta: { title: 'uploadExcel' }
       }
     ]
-  },
-  {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    meta: {
-      title: 'zip',
-      icon: 'zip',
-      alwaysShow: true // will always show the root menu
-    },
-    children: [
-      {
-        path: 'download',
-        component: () => import(/* webpackChunkName: "zip" */ '@/views/zip/index.vue'),
-        name: 'ExportZip',
-        meta: { title: 'exportZip' }
-      }
-    ]
-  },
-  {
-    path: '/pdf',
-    component: Layout,
-    redirect: '/pdf/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "pdf" */ '@/views/pdf/index.vue'),
-        name: 'PDF',
-        meta: {
-          title: 'pdf',
-          icon: 'pdf'
-        }
-      }
-    ]
-  },
-  {
-    path: '/pdf-download-example',
-    component: () => import(/* webpackChunkName: "pdf-download-example" */ '@/views/pdf/download.vue'),
-    meta: { hidden: true }
-  },
-  {
-    path: '/theme',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "theme" */ '@/views/theme/index.vue'),
-        name: 'Theme',
-        meta: {
-          title: 'theme',
-          icon: 'theme'
-        }
-      }
-    ]
-  },
-  {
-    path: '/clipboard',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "clipboard" */ '@/views/clipboard/index.vue'),
-        name: 'Clipboard',
-        meta: {
-          title: 'clipboard',
-          icon: 'clipboard'
-        }
-      }
-    ]
-  },
-  {
-    path: 'https://github.com/Armour/vue-typescript-admin-template',
-    meta: {
-      title: 'externalLink',
-      icon: 'link'
-    }
   },
   {
     path: '*',

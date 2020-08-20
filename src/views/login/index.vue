@@ -80,13 +80,11 @@ import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
 import { login, logout, getUserInfo } from '@/api/users'
-import LangSelect from '@/components/LangSelect/index.vue'
 import SocialSign from './components/SocialSignin.vue'
 
 @Component({
   name: 'Login',
   components: {
-    LangSelect,
     SocialSign
   }
 })

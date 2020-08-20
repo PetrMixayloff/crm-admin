@@ -99,23 +99,10 @@ export default class extends Vue {
   private content3 = content
   private content4 = content
   private html = ''
-  // Mapping for local lang to tuiEditor lang
-  // https://github.com/nhnent/tui.editor/tree/master/src/js/langs
-  private languageTypeList: { [key: string]: string } = {
-    en: 'en_US',
-    zh: 'zh_CN',
-    es: 'es_ES',
-    ja: 'ja_JP',
-    ko: 'ko_KR'
-  }
 
   mounted() {
     // FIXES weird focus issue caused by MarkdownEditor
     window.scrollTo(0, 0)
-  }
-
-  get language() {
-    return this.languageTypeList[AppModule.language]
   }
 
   private getHtml() {

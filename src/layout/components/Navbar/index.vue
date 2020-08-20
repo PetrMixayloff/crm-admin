@@ -14,15 +14,13 @@
       <template v-if="device!=='mobile'">
         <header-search class="right-menu-item" />
         <error-log class="errLog-container right-menu-item hover-effect" />
-        <screenfull class="right-menu-item hover-effect" />
         <el-tooltip
-          :content="$t('navbar.size')"
+          :content="'navbar.size'"
           effect="dark"
           placement="bottom"
         >
           <size-select class="right-menu-item hover-effect" />
         </el-tooltip>
-        <lang-select class="right-menu-item hover-effect" />
       </template>
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
@@ -38,34 +36,20 @@
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/">
             <el-dropdown-item>
-              {{ $t('navbar.profile') }}
+              {{ 'navbar.profile' }}
             </el-dropdown-item>
           </router-link>
           <router-link to="/">
             <el-dropdown-item>
-              {{ $t('navbar.dashboard') }}
+              {{ 'navbar.dashboard' }}
             </el-dropdown-item>
           </router-link>
-          <a
-            target="_blank"
-            href="https://github.com/armour/vue-typescript-admin-template/"
-          >
-            <el-dropdown-item>
-              {{ $t('navbar.github') }}
-            </el-dropdown-item>
-          </a>
-          <a
-            target="_blank"
-            href="https://armour.github.io/vue-typescript-admin-docs/"
-          >
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item
             divided
             @click.native="logout"
           >
             <span style="display:block;">
-              {{ $t('navbar.logOut') }}
+              {{ 'navbar.logOut' }}
             </span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -82,8 +66,6 @@ import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import ErrorLog from '@/components/ErrorLog/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
 import HeaderSearch from '@/components/HeaderSearch/index.vue'
-import LangSelect from '@/components/LangSelect/index.vue'
-import Screenfull from '@/components/Screenfull/index.vue'
 import SizeSelect from '@/components/SizeSelect/index.vue'
 
 @Component({
@@ -93,8 +75,6 @@ import SizeSelect from '@/components/SizeSelect/index.vue'
     ErrorLog,
     Hamburger,
     HeaderSearch,
-    LangSelect,
-    Screenfull,
     SizeSelect
   }
 })

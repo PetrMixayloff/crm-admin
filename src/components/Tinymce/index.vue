@@ -88,19 +88,6 @@ export default class extends Vue {
   private hasChange = false
   private hasInit = false
   private fullscreen = false
-  // https://www.tiny.cloud/docs/configure/localization/#language
-  // and also see langs files under public/tinymce/langs folder
-  private languageTypeList: { [key: string]: string } = {
-    en: 'en',
-    zh: 'zh_CN',
-    es: 'es',
-    ja: 'ja',
-    ko: 'ko_KR'
-  }
-
-  get language() {
-    return this.languageTypeList[AppModule.language]
-  }
 
   get uploadButtonColor() {
     return SettingsModule.theme
@@ -132,8 +119,6 @@ export default class extends Vue {
       toolbar: this.toolbar.length > 0 ? this.toolbar : toolbar,
       menubar: this.menubar,
       plugins: plugins,
-      language: this.language,
-      language_url: this.language === 'en' ? '' : `${process.env.BASE_URL}tinymce/langs/${this.language}.js`,
       skin_url: `${process.env.BASE_URL}tinymce/skins/`,
       emoticons_database_url: `${process.env.BASE_URL}tinymce/emojis.min.js`,
       end_container_on_empty_block: true,
@@ -166,19 +151,6 @@ export default class extends Vue {
         })
       }
     }
-  }
-
-  @Watch('language')
-  private onLanguageChange() {
-    const tinymceManager = (window as any).tinymce
-    const tinymceInstance = tinymceManager.get(this.id)
-    if (this.fullscreen) {
-      tinymceInstance.execCommand('mceFullScreen')
-    }
-    if (tinymceInstance) {
-      tinymceInstance.destroy()
-    }
-    this.$nextTick(() => tinymceManager.init(this.initOptions))
   }
 
   private imageSuccessCBK(arr: IUploadObject[]) {
