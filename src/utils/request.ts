@@ -1,10 +1,11 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { Message, MessageBox } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
 
 const service = axios.create({
-  baseURL: process.env.VUE_APP_BASE_API,
+  baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   timeout: 5000
+  // withCredentials: true // send cookies when cross-domain requests
 })
 
 // Request interceptors
@@ -23,33 +24,18 @@ service.interceptors.request.use(
 
 // Response interceptors
 service.interceptors.response.use(
-  (response) => {
+  (response: any) => {
     if (response.status !== 200) {
       Message({
         message: response.statusText || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
-      // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-      //   MessageBox.confirm(
-      //     'You have been logged out, try to login again.',
-      //     'Log out',
-      //     {
-      //       confirmButtonText: 'Relogin',
-      //       cancelButtonText: 'Cancel',
-      //       type: 'warning'
-      //     }
-      //   ).then(() => {
-      //     UserModule.ResetToken()
-      //     location.reload() // To prevent bugs from vue-router
-      //   })
-      // }
-      return Promise.reject(new Error(response.statusText || 'Error'))
     } else {
       return response
     }
   },
-  (error) => {
+  (error: any) => {
     Message({
       message: error.message,
       type: 'error',

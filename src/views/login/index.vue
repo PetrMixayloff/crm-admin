@@ -10,45 +10,56 @@
     >
       <div class="title-container">
         <h3 class="title">
-          Login Form
+          {{ $t('login.title') }}
         </h3>
       </div>
 
-      <el-form-item prop="login">
+      <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon name="user" />
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.login"
+          v-model="loginForm.username"
+          :placeholder="$t('login.username')"
           name="username"
           type="text"
+          tabindex="1"
           autocomplete="on"
-          placeholder="username"
         />
       </el-form-item>
 
-      <el-form-item prop="password">
-        <span class="svg-container">
-          <svg-icon name="password" />
-        </span>
-        <el-input
-          :key="passwordType"
-          ref="password"
-          v-model="loginForm.password"
-          :type="passwordType"
-          placeholder="password"
-          name="password"
-          autocomplete="on"
-          @keyup.enter.native="handleLogin"
-        />
-        <span
-          class="show-pwd"
-          @click="showPwd"
-        >
-          <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'" />
-        </span>
-      </el-form-item>
+      <el-tooltip
+        v-model="capsTooltip"
+        content="Caps lock is On"
+        placement="right"
+        manual
+      >
+        <el-form-item prop="password">
+          <span class="svg-container">
+            <svg-icon name="password" />
+          </span>
+          <el-input
+            :key="passwordType"
+            ref="password"
+            v-model="loginForm.password"
+            :type="passwordType"
+            :placeholder="$t('login.password')"
+            name="password"
+            tabindex="2"
+            autocomplete="on"
+            @keyup.native="checkCapslock"
+            @blur="capsTooltip = false"
+            @keyup.enter.native="handleLogin"
+          />
+          <span
+            class="show-pwd"
+            @click="showPwd"
+          >
+            <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'" />
+          </span>
+        </el-form-item>
+      </el-tooltip>
 
       <el-button
         :loading="loading"
@@ -56,15 +67,8 @@
         style="width:100%; margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >
-        Sign in
+        {{ $t('login.logIn') }}
       </el-button>
-
-      <div style="position:relative">
-        <div class="tips">
-          <span> username: admin </span>
-          <span> password: any </span>
-        </div>
-      </div>
     </el-form>
   </div>
 </template>
@@ -75,38 +79,48 @@ import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
-import { isValidUsername } from '@/utils/validate'
-import authService from '@/services/authService'
+import { login, logout, getUserInfo } from '@/api/users'
+import LangSelect from '@/components/LangSelect/index.vue'
+import SocialSign from './components/SocialSignin.vue'
 
 @Component({
-  name: 'Login'
+  name: 'Login',
+  components: {
+    LangSelect,
+    SocialSign
+  }
 })
 export default class extends Vue {
   private validateUsername = (rule: any, value: string, callback: Function) => {
-    if (!value || value.length === 0) {
+    if (value.trim().length === 0) {
       callback(new Error('Please enter the correct user name'))
     } else {
       callback()
     }
   }
+
   private validatePassword = (rule: any, value: string, callback: Function) => {
-    if (!value || value.length === 0) {
-      callback(new Error('The password can not be less than 6 digits'))
+    if (value.length < 4) {
+      callback(new Error('The password can not be less than 4 digits'))
     } else {
       callback()
     }
   }
+
   private loginForm = {
-    login: '',
+    username: '',
     password: ''
   }
+
   private loginRules = {
-    login: [{ validator: this.validateUsername, trigger: 'blur' }],
+    username: [{ validator: this.validateUsername, trigger: 'blur' }],
     password: [{ validator: this.validatePassword, trigger: 'blur' }]
   }
+
   private passwordType = 'password'
   private loading = false
   private showDialog = false
+  private capsTooltip = false
   private redirect?: string
   private otherQuery: Dictionary<string> = {}
 
@@ -122,11 +136,16 @@ export default class extends Vue {
   }
 
   mounted() {
-    if (this.loginForm.login === '') {
+    if (this.loginForm.username === '') {
       (this.$refs.username as Input).focus()
     } else if (this.loginForm.password === '') {
       (this.$refs.password as Input).focus()
     }
+  }
+
+  private checkCapslock(e: KeyboardEvent) {
+    const { key } = e
+    this.capsTooltip = key !== null && key.length === 1 && (key >= 'A' && key <= 'Z')
   }
 
   private showPwd() {
@@ -145,10 +164,15 @@ export default class extends Vue {
       if (valid) {
         this.loading = true
         try {
-          const resp = await authService.login({ login: this.loginForm.login, password: this.loginForm.password })
+          const resp = await login(this.loginForm)
 
           if (resp.data && resp.data.access_token) {
-            UserModule.setToken(resp.data.access_token)
+            const token = resp.data.access_token
+            UserModule.SetToken(token)
+            // const data = await getUserInfo()
+            // if (data.data) {
+            //   UserModule.SetUserInfo(data)
+            // }
             // await this.getDbSchema()
             await this.$router.push('/')
           } else {
@@ -263,6 +287,15 @@ export default class extends Vue {
       text-align: center;
       font-weight: bold;
     }
+
+    .set-language {
+      color: #fff;
+      position: absolute;
+      top: 3px;
+      font-size: 18px;
+      right: 0px;
+      cursor: pointer;
+    }
   }
 
   .show-pwd {
@@ -273,6 +306,18 @@ export default class extends Vue {
     color: $darkGray;
     cursor: pointer;
     user-select: none;
+  }
+
+  .thirdparty-button {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+  }
+
+  @media only screen and (max-width: 470px) {
+    .thirdparty-button {
+      display: none;
+    }
   }
 }
 </style>

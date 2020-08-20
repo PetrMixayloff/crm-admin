@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <p>Страница в разработке</p>
+  <div class="dashboard-container">
+    <p>Раздел в разработке</p>
   </div>
 </template>
 
@@ -9,22 +9,17 @@ import { Component, Vue } from 'vue-property-decorator'
 import { UserModule } from '@/store/modules/user'
 
 @Component({
-  name: 'Главная'
+  name: 'Dashboard'
 })
 export default class extends Vue {
+  private currentRole = 'admin-dashboard'
 
+  get roles() {
+    return UserModule.roles
+  }
+
+  created() {
+
+  }
 }
 </script>
-
-<style lang="scss" scoped>
-.dashboard {
-  &-container {
-    margin: 30px;
-  }
-
-  &-text {
-    font-size: 30px;
-    line-height: 46px;
-  }
-}
-</style>
