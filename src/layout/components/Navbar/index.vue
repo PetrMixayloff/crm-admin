@@ -12,36 +12,27 @@
     />
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <header-search class="right-menu-item" />
         <error-log class="errLog-container right-menu-item hover-effect" />
-        <el-tooltip
-          :content="'navbar.size'"
-          effect="dark"
-          placement="bottom"
-        >
-          <size-select class="right-menu-item hover-effect" />
-        </el-tooltip>
       </template>
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
         trigger="click"
       >
         <div class="avatar-wrapper">
-          <img
-            :src="avatar+'?imageView2/1/w/80/h/80'"
-            class="user-avatar"
-          >
+          <svg-icon
+            class="user-icon"
+            name="user"/>
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/">
             <el-dropdown-item>
-              {{ 'navbar.profile' }}
+              Профиль
             </el-dropdown-item>
           </router-link>
           <router-link to="/">
             <el-dropdown-item>
-              {{ 'navbar.dashboard' }}
+              Мои магазины
             </el-dropdown-item>
           </router-link>
           <el-dropdown-item
@@ -49,7 +40,7 @@
             @click.native="logout"
           >
             <span style="display:block;">
-              {{ 'navbar.logOut' }}
+              Выйти
             </span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -65,17 +56,13 @@ import { UserModule } from '@/store/modules/user'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import ErrorLog from '@/components/ErrorLog/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
-import HeaderSearch from '@/components/HeaderSearch/index.vue'
-import SizeSelect from '@/components/SizeSelect/index.vue'
 
 @Component({
   name: 'Navbar',
   components: {
     Breadcrumb,
     ErrorLog,
-    Hamburger,
-    HeaderSearch,
-    SizeSelect
+    Hamburger
   }
 })
 export default class extends Vue {
