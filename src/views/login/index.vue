@@ -9,8 +9,13 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">
-          {{ $t('login.title') }}
+        <h3 v-if="this.$route.path==='/create_admin'"
+            class="title">
+          Регистрация нового администратора
+        </h3>
+        <h3 v-else
+            class="title">
+          Вход
         </h3>
       </div>
 
@@ -21,7 +26,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          :placeholder="$t('login.username')"
+          placeholder="Логин"
           name="username"
           type="text"
           tabindex="1"
@@ -31,7 +36,7 @@
 
       <el-tooltip
         v-model="capsTooltip"
-        content="Caps lock is On"
+        content="Caps lock включен"
         placement="right"
         manual
       >
@@ -44,7 +49,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            :placeholder="$t('login.password')"
+            placeholder="Пароль"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -62,12 +67,22 @@
       </el-tooltip>
 
       <el-button
+        v-if="this.$route.path==='/create_admin'"
+        :loading="loading"
+        type="primary"
+        style="width:100%; margin-bottom:30px;"
+        @click.native.prevent="createAdmin"
+      >
+        Зарегистрировать
+      </el-button>
+      <el-button
+        v-else
         :loading="loading"
         type="primary"
         style="width:100%; margin-bottom:30px;"
         @click.native.prevent="handleLogin"
       >
-        {{ $t('login.logIn') }}
+        Войти
       </el-button>
     </el-form>
   </div>
@@ -79,7 +94,7 @@ import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
-import { login, logout, getUserInfo } from '@/api/users'
+import {login, getUserInfo, registerAdmin} from '@/api/users'
 import SocialSign from './components/SocialSignin.vue'
 
 @Component({
@@ -177,6 +192,29 @@ export default class extends Vue {
             throw new Error('Не получен токен')
           }
         } catch (e) {
+          return false
+        } finally {
+          this.loading = false
+        }
+      } else {
+        return false
+      }
+    })
+  }
+
+  private createAdmin() {
+    (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
+      if (valid) {
+        this.loading = true
+        try{
+          const adminData = {
+            username: this.loginForm.username,
+            password: this.loginForm.password,
+            is_staff: false
+          }
+          await registerAdmin(adminData)
+          await this.$router.push('/')
+          } catch (e) {
           return false
         } finally {
           this.loading = false

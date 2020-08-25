@@ -48,13 +48,18 @@ export const constantRoutes: RouteConfig[] = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: () => import(/* webpackChunkName: "redirect" */ '@/views/redirect/index.vue')
+        component: () => import('@/views/redirect/index.vue')
       }
     ]
   },
   {
     path: '/login',
-    component: () => import(/* webpackChunkName: "login" */ '@/views/login/index.vue'),
+    component: () => import('@/views/login/index.vue'),
+    meta: {hidden: true}
+  },
+  {
+    path: '/create_admin',
+    component: () => import('@/views/login/index.vue'),
     meta: {hidden: true}
   },
   {

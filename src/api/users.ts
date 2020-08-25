@@ -51,3 +51,10 @@ export const register = (data: any) =>
     method: 'post',
     data
   })
+
+export const registerAdmin = (data: any) =>
+  request({
+    url: '/users/create_admin',
+    method: 'post',
+    data
+  })
