@@ -9,7 +9,7 @@ export const getUsers = (params: any) =>
 
 export const getUserInfo = () =>
   request({
-    url: '/users/info',
+    url: '/users/me',
     method: 'post'
   })
 

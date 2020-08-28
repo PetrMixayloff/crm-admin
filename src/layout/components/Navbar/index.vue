@@ -30,11 +30,11 @@
               Профиль
             </el-dropdown-item>
           </router-link>
-          <router-link to="/">
-            <el-dropdown-item>
-              Мои магазины
-            </el-dropdown-item>
-          </router-link>
+<!--          <router-link to="/shop/">-->
+<!--            <el-dropdown-item>-->
+<!--              Мои магазины-->
+<!--            </el-dropdown-item>-->
+<!--          </router-link>-->
           <el-dropdown-item
             divided
             @click.native="logout"
@@ -72,10 +72,6 @@ export default class extends Vue {
 
   get device() {
     return AppModule.device.toString()
-  }
-
-  get avatar() {
-    return UserModule.avatar
   }
 
   private toggleSideBar() {

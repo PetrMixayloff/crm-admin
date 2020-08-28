@@ -15,10 +15,10 @@
           <el-card>
             <el-tabs v-model="activeTab">
               <el-tab-pane
-                label="Activity"
-                name="activity"
+                label="Магазин"
+                name="shop"
               >
-                <activity />
+                <shop />
               </el-tab-pane>
               <el-tab-pane
                 label="Timeline"
@@ -27,7 +27,7 @@
                 <timeline />
               </el-tab-pane>
               <el-tab-pane
-                label="Account"
+                label="Аккаунт"
                 name="account"
               >
                 <account :user="user" />
@@ -44,36 +44,32 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { UserModule } from '@/store/modules/user'
 import Account from './components/Account.vue'
-import Activity from './components/Activity.vue'
+import Shop from './components/Shop.vue'
 import Timeline from './components/Timeline.vue'
 import UserCard from './components/UserCard.vue'
 
 export interface IProfile {
   name: string
-  email: string
-  avatar: string
   roles: string
 }
 
 const defaultProfile: IProfile = {
   name: 'Loading...',
-  email: 'Loading...',
-  avatar: 'Loading...',
-  roles: 'Loading...'
+  roles: ''
 }
 
 @Component({
   name: 'Profile',
   components: {
     Account,
-    Activity,
+    Shop,
     Timeline,
     UserCard
   }
 })
 export default class extends Vue {
   private user = defaultProfile
-  private activeTab = 'activity'
+  private activeTab = 'shop'
 
   get name() {
     return UserModule.name
@@ -81,10 +77,6 @@ export default class extends Vue {
 
   get email() {
     return UserModule.email
-  }
-
-  get avatar() {
-    return UserModule.avatar
   }
 
   get roles() {
@@ -98,8 +90,6 @@ export default class extends Vue {
   private getUser() {
     this.user = {
       name: this.name,
-      email: this.email,
-      avatar: this.avatar,
       roles: this.roles.join(' | ')
     }
   }

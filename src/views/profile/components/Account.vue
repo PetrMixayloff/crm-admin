@@ -1,17 +1,17 @@
 <template>
   <el-form>
-    <el-form-item label="Name">
+    <el-form-item label="Имя">
       <el-input v-model.trim="user.name" />
     </el-form-item>
-    <el-form-item label="Email">
-      <el-input v-model.trim="user.email" />
+    <el-form-item label="Пароль">
+      <el-input v-model.trim="user.password" />
     </el-form-item>
     <el-form-item>
       <el-button
         type="primary"
         @click="submit"
       >
-        Update
+        Обновить
       </el-button>
     </el-form-item>
   </el-form>

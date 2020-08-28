@@ -126,7 +126,24 @@ export const constantRoutes: RouteConfig[] = [
         }
       }
     ]
-  }
+  },
+  // {
+  //   path: '/shop',
+  //   component: Layout,
+  //   meta: {hidden: true},
+  //   children: [
+  //     {
+  //       path: 'shop',
+  //       component: () => import(/* webpackChunkName: "profile" */ '@/views/shop/index.vue'),
+  //       name: 'Profile',
+  //       meta: {
+  //         title: 'profile',
+  //         icon: 'user',
+  //         noCache: true
+  //       }
+  //     }
+  //   ]
+  // }
 ]
 
 /**
