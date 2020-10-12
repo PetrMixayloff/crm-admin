@@ -20,6 +20,8 @@
     "codemirror": "^5.54.0",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
+    "devextreme": "^20.1.7",
+    "devextreme-vue": "^20.1.7",
     "driver.js": "^0.9.8",
     "echarts": "^4.8.0",
     "element-ui": "^2.13.2",

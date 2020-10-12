@@ -6,6 +6,10 @@ import SvgIcon from 'vue-svgicon'
 
 import '@/styles/element-variables.scss'
 import '@/styles/index.scss'
+import '@/styles/base_helpers.scss'
+import '@/styles/base_flex.scss'
+import 'devextreme/dist/css/dx.common.css'
+import 'devextreme/dist/css/dx.material.blue.light.compact.css'
 
 import App from '@/App.vue'
 import store from '@/store'
@@ -21,7 +25,6 @@ import * as filters from '@/filters'
 Vue.use(ElementUI, {
   size: AppModule.size
 })
-
 
 Vue.use(SvgIcon, {
   tagName: 'svg-icon',

@@ -11,12 +11,12 @@ $yellow:#FEC171;
 $panGreen: #30B08F;
 
 // Sidebar
-$sideBarWidth: 210px;
-$subMenuBg:#1f2d3d;
+$sideBarWidth: 320px;
+$subMenuBg:#212529;
 $subMenuHover:#001528;
-$subMenuActiveText:#f4f4f5;
-$menuBg:#304156;
-$menuText:#bfcbd9;
+$subMenuActiveText:#8d97ad;
+$menuBg: #262629;
+$menuText:#8d97ad;
 $menuActiveText:#409EFF; // Also see settings.sidebarTextTheme
 
 // Login page
@@ -24,6 +24,7 @@ $lightGray: #eee;
 $darkGray:#889aa4;
 $loginBg: #2d3a4b;
 $loginCursorColor: #fff;
+$registerBg: #474b3c;
 
 // The :export directive is the magic sauce for webpack
 // https://mattferderer.com/use-sass-variables-in-typescript-and-javascript

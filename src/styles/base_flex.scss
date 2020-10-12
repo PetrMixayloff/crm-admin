@@ -1,0 +1,133 @@
+// ---FLEX----------------------------------------
+.flex {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.flex-baseline {
+  align-items: baseline;
+}
+
+.flex-l-baseline {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.flex-r-baseline {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+}
+
+.flex-c-baseline {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+
+.flex-center-center, .flex-c-c {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-l-c {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.flex-r-c {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.flex-l-t {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.flex-r-t {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+.flex-l-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.flex-r-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.flex-c-t {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.flex-c-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.flex-between-c {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.flex-around-c {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+
+.flex-between-t {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.flex-around-t {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+}
+
+
+.flex-between-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.flex-around-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+}
+
+.flex-columns {
+  flex-direction: column;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.nowrap {
+  flex-wrap: nowrap;
+}
+
+
+// ---END - FLEX----------------------------------------
+
+
