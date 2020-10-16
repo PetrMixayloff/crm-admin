@@ -21,7 +21,7 @@
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon name="user" />
+          <svg-icon name="user"/>
         </span>
         <el-input
           ref="username"
@@ -42,7 +42,7 @@
       >
         <el-form-item prop="password">
           <span class="svg-container">
-            <svg-icon name="password" />
+            <svg-icon name="password"/>
           </span>
           <el-input
             :key="passwordType"
@@ -61,7 +61,7 @@
             class="show-pwd"
             @click="showPwd"
           >
-            <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'" />
+            <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'"/>
           </span>
         </el-form-item>
       </el-tooltip>
@@ -89,11 +89,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Route } from 'vue-router'
-import { Dictionary } from 'vue-router/types/router'
-import { Form as ElForm, Input } from 'element-ui'
-import { UserModule } from '@/store/modules/user'
+import {Component, Vue, Watch} from 'vue-property-decorator'
+import {Route} from 'vue-router'
+import {Dictionary} from 'vue-router/types/router'
+import {Form as ElForm, Input} from 'element-ui'
+import {UserModule} from '@/store/modules/user'
 import {login, getUserInfo, registerAdmin} from '@/api/users'
 import SocialSign from './components/SocialSignin.vue'
 
@@ -126,8 +126,8 @@ export default class extends Vue {
   }
 
   private loginRules = {
-    username: [{ validator: this.validateUsername, trigger: 'blur' }],
-    password: [{ validator: this.validatePassword, trigger: 'blur' }]
+    username: [{validator: this.validateUsername, trigger: 'blur'}],
+    password: [{validator: this.validatePassword, trigger: 'blur'}]
   }
 
   private passwordType = 'password'
@@ -137,7 +137,7 @@ export default class extends Vue {
   private redirect?: string
   private otherQuery: Dictionary<string> = {}
 
-  @Watch('$route', { immediate: true })
+  @Watch('$route', {immediate: true})
   private onRouteChange(route: Route) {
     // TODO: remove the "as Dictionary<string>" hack after v4 release for vue-router
     // See https://github.com/vuejs/vue-router/pull/2050 for details
@@ -157,7 +157,7 @@ export default class extends Vue {
   }
 
   private checkCapslock(e: KeyboardEvent) {
-    const { key } = e
+    const {key} = e
     this.capsTooltip = key !== null && key.length === 1 && (key >= 'A' && key <= 'Z')
   }
 
@@ -208,10 +208,10 @@ export default class extends Vue {
   }
 
   private createAdmin() {
-    (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
+    (this.$refs.loginForm as ElForm).validate(async (valid: boolean) => {
       if (valid) {
         this.loading = true
-        try{
+        try {
           const adminData = {
             username: this.loginForm.username,
             password: this.loginForm.password,
@@ -219,7 +219,7 @@ export default class extends Vue {
           }
           await registerAdmin(adminData)
           await this.$router.push('/')
-          } catch (e) {
+        } catch (e) {
           return false
         } finally {
           this.loading = false
@@ -245,8 +245,13 @@ export default class extends Vue {
 // References: https://www.zhangxinxu.com/wordpress/2018/01/css-caret-color-first-line/
 @supports (-webkit-mask: none) and (not (cater-color: $loginCursorColor)) {
   .login-container .el-input {
-    input { color: $loginCursorColor; }
-    input::first-line { color: $lightGray; }
+    input {
+      color: $loginCursorColor;
+    }
+
+    input::first-line {
+      color: $lightGray;
+    }
   }
 }
 
