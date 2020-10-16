@@ -6,6 +6,7 @@ import { Route } from 'vue-router'
 import { UserModule } from '@/store/modules/user'
 import { PermissionModule } from '@/store/modules/permission'
 import settings from './settings'
+import { getUserInfo } from '@/api/users'
 
 NProgress.configure({ showSpinner: false })
 
@@ -30,12 +31,21 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
       // Check whether the user has obtained his permission roles
       if (UserModule.roles.length === 0) {
         try {
+          const user = await getUserInfo()
+          if (user.data) {
+            const userInfo = {
+              name: user.data.full_name,
+              shop_id: user.data.shop_id,
+              roles: user.data.is_staff ? ['user'] : ['admin']
+            }
+            UserModule.SetUserInfo(userInfo)
+          }
           // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
           // await UserModule.GetUserInfo()
-          const roles = ['admin'] // hack, set roles always 'admin' while developing
-          UserModule.SetRoles(roles)
+          // const roles = ['admin'] // hack, set roles always 'admin' while developing
+          // UserModule.SetRoles(roles)
           // Generate accessible routes map based on role
-          PermissionModule.GenerateRoutes(roles)
+          PermissionModule.GenerateRoutes(UserModule.roles)
           // Dynamically add accessible routes
           router.addRoutes(PermissionModule.dynamicRoutes)
           // Hack: ensure addRoutes is complete
