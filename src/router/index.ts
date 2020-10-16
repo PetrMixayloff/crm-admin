@@ -63,6 +63,11 @@ export const constantRoutes: RouteConfig[] = [
     meta: {hidden: true}
   },
   {
+    path: '/create_new_shop',
+    component: () => import('@/views/shop-create/index.vue'),
+    meta: {hidden: true}
+  },
+  {
     path: '/auth-redirect',
     component: () => import(/* webpackChunkName: "auth-redirect" */ '@/views/login/auth-redirect.vue'),
     meta: {hidden: true}

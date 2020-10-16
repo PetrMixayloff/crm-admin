@@ -52,6 +52,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
           if (!UserModule.shopId) {
             console.log('not shop')
             next('/create_new_shop')
+            NProgress.done()
           }
           // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
           // await UserModule.GetUserInfo()
