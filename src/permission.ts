@@ -33,12 +33,25 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
         try {
           const user = await getUserInfo()
           if (user.data) {
-            const userInfo = {
-              name: user.data.full_name,
-              shop_id: user.data.shop_id,
-              roles: user.data.is_staff ? ['user'] : ['admin']
+            if (!user.data.is_superuser) {
+              const userInfo = {
+                name: user.data.full_name,
+                shop_id: user.data.shop_id,
+                roles: user.data.is_staff ? ['user'] : ['admin']
+              }
+              UserModule.SetUserInfo(userInfo)
+            } else {
+              const userInfo = {
+                name: 'superuser',
+                shop_id: null,
+                roles: ['developer']
+              }
+              UserModule.SetUserInfo(userInfo)
             }
-            UserModule.SetUserInfo(userInfo)
+          }
+          if (!UserModule.shopId) {
+            console.log('not shop')
+            next('/create_new_shop')
           }
           // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
           // await UserModule.GetUserInfo()
