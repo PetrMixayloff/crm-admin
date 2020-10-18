@@ -1,14 +1,14 @@
 import router from './router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
-import { Message } from 'element-ui'
-import { Route } from 'vue-router'
-import { UserModule } from '@/store/modules/user'
-import { PermissionModule } from '@/store/modules/permission'
+import {Message} from 'element-ui'
+import {Route} from 'vue-router'
+import {UserModule} from '@/store/modules/user'
+import {PermissionModule} from '@/store/modules/permission'
 import settings from './settings'
-import { getUserInfo } from '@/api/users'
+import {getUserInfo} from '@/api/users'
 
-NProgress.configure({ showSpinner: false })
+NProgress.configure({showSpinner: false})
 
 const whiteList = ['/login', '/auth-redirect']
 
@@ -17,7 +17,7 @@ const getPageTitle = (pageName: string) => {
   // return `${settings.title}`
 }
 
-router.beforeEach(async(to: Route, _: Route, next: any) => {
+router.beforeEach(async (to: Route, _: Route, next: any) => {
   // Start progress bar
   NProgress.start()
 
@@ -25,7 +25,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
   if (UserModule.token) {
     if (to.path === '/login') {
       // If is logged in, redirect to the home page
-      next({ path: '/' })
+      next({path: '/'})
       NProgress.done()
     } else {
       // Check whether the user has obtained his permission roles
@@ -53,18 +53,19 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
             console.log('not shop')
             next('/create_new_shop')
             NProgress.done()
+          } else {
+            // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
+            // await UserModule.GetUserInfo()
+            // const roles = ['admin'] // hack, set roles always 'admin' while developing
+            // UserModule.SetRoles(roles)
+            // Generate accessible routes map based on role
+            PermissionModule.GenerateRoutes(UserModule.roles)
+            // Dynamically add accessible routes
+            router.addRoutes(PermissionModule.dynamicRoutes)
+            // Hack: ensure addRoutes is complete
+            // Set the replace: true, so the navigation will not leave a history record
+            next({...to, replace: true})
           }
-          // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
-          // await UserModule.GetUserInfo()
-          // const roles = ['admin'] // hack, set roles always 'admin' while developing
-          // UserModule.SetRoles(roles)
-          // Generate accessible routes map based on role
-          PermissionModule.GenerateRoutes(UserModule.roles)
-          // Dynamically add accessible routes
-          router.addRoutes(PermissionModule.dynamicRoutes)
-          // Hack: ensure addRoutes is complete
-          // Set the replace: true, so the navigation will not leave a history record
-          next({ ...to, replace: true })
         } catch (err) {
           // Remove token and redirect to login page
           UserModule.ResetToken()
