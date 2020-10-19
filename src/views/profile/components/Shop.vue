@@ -5,12 +5,22 @@
       ref="shopForm"
       :model="shopForm"
       :rules="shopRules"
-      autocomplete="on">
-      <el-form-item label="Название" prop="name">
-        <el-input v-model.trim="shopForm.name"/>
+      autocomplete="on"
+    >
+      <el-form-item
+        label="Название"
+        prop="name"
+      >
+        <el-input v-model.trim="shopForm.name" />
       </el-form-item>
-      <el-form-item label="Адрес" prop="address">
-        <el-input type="textarea" v-model.trim="shopForm.address"/>
+      <el-form-item
+        label="Адрес"
+        prop="address"
+      >
+        <el-input
+          v-model.trim="shopForm.address"
+          type="textarea"
+        />
       </el-form-item>
       <el-form-item>
         <el-button
@@ -31,10 +41,10 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
-import {UserModule} from '@/store/modules/user'
-import request from "@/utils/request";
-import {Form as ElForm} from "element-ui/types/element-ui";
+import { Component, Vue } from 'vue-property-decorator'
+import { UserModule } from '@/store/modules/user'
+import request from '@/utils/request'
+import { Form as ElForm } from 'element-ui/types/element-ui'
 
 @Component({
   name: 'Shop'
@@ -47,6 +57,7 @@ export default class extends Vue {
     name: '',
     address: ''
   }
+
   private validateShopName = (rule: any, value: string, callback: Function) => {
     if (value.trim().length === 0) {
       callback(new Error('Пожалуйста, задайте название магазина.'))
@@ -62,9 +73,10 @@ export default class extends Vue {
       callback()
     }
   }
+
   private shopRules = {
-    name: [{required: true, validator: this.validateShopName, trigger: 'blur'}],
-    address: [{required: true, validator: this.validateAddress, trigger: 'blur'}]
+    name: [{ required: true, validator: this.validateShopName, trigger: 'blur' }],
+    address: [{ required: true, validator: this.validateAddress, trigger: 'blur' }]
   }
 
   async created() {
@@ -78,7 +90,7 @@ export default class extends Vue {
 
   async getShopInfo() {
     const resp = await request({
-      url: `/shop`,
+      url: '/shop',
       method: 'get'
     })
     if (resp.data) {
@@ -90,7 +102,7 @@ export default class extends Vue {
   }
 
   async onShopCreate() {
-    (this.$refs.shopForm as ElForm).validate(async (valid: boolean) => {
+    (this.$refs.shopForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         const resp = await request({
           url: '/shop',

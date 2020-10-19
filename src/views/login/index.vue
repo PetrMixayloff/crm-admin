@@ -89,12 +89,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from 'vue-property-decorator'
-import {Route} from 'vue-router'
-import {Dictionary} from 'vue-router/types/router'
-import {Form as ElForm, Input} from 'element-ui'
-import {UserModule} from '@/store/modules/user'
-import {login, getUserInfo, registerAdmin} from '@/api/users'
+import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Route } from 'vue-router'
+import { Dictionary } from 'vue-router/types/router'
+import { Form as ElForm, Input } from 'element-ui'
+import { UserModule } from '@/store/modules/user'
+import { login, getUserInfo, registerAdmin } from '@/api/users'
 import SocialSign from './components/SocialSignin.vue'
 
 @Component({
@@ -126,8 +126,8 @@ export default class extends Vue {
   }
 
   private loginRules = {
-    username: [{validator: this.validateUsername, trigger: 'blur'}],
-    password: [{validator: this.validatePassword, trigger: 'blur'}]
+    username: [{ validator: this.validateUsername, trigger: 'blur' }],
+    password: [{ validator: this.validatePassword, trigger: 'blur' }]
   }
 
   private passwordType = 'password'
@@ -137,7 +137,7 @@ export default class extends Vue {
   private redirect?: string
   private otherQuery: Dictionary<string> = {}
 
-  @Watch('$route', {immediate: true})
+  @Watch('$route', { immediate: true })
   private onRouteChange(route: Route) {
     // TODO: remove the "as Dictionary<string>" hack after v4 release for vue-router
     // See https://github.com/vuejs/vue-router/pull/2050 for details
@@ -157,7 +157,7 @@ export default class extends Vue {
   }
 
   private checkCapslock(e: KeyboardEvent) {
-    const {key} = e
+    const { key } = e
     this.capsTooltip = key !== null && key.length === 1 && (key >= 'A' && key <= 'Z')
   }
 
@@ -208,7 +208,7 @@ export default class extends Vue {
   }
 
   private createAdmin() {
-    (this.$refs.loginForm as ElForm).validate(async (valid: boolean) => {
+    (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
         this.loading = true
         try {
