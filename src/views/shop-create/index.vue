@@ -13,7 +13,7 @@
           label="Название"
           prop="name"
         >
-          <el-input v-model.trim="shopForm.name"/>
+          <el-input v-model.trim="shopForm.name" />
         </el-form-item>
         <el-form-item
           label="Адрес"
@@ -50,6 +50,9 @@ import {
 } from 'devextreme-vue'
 // eslint-disable-next-line no-unused-vars
 import { confirm } from 'devextreme/ui/dialog'
+import { Form as ElForm } from 'element-ui/types/element-ui'
+import request from '@/utils/request'
+import { UserModule } from '@/store/modules/user'
 
 @Component({
   name: 'QtEditor',
@@ -80,6 +83,24 @@ export default class extends Vue {
   private shopRules = {
     name: [{ required: true, validator: this.validateShopName, trigger: 'blur' }],
     address: [{ required: false, trigger: 'blur' }]
+  }
+
+  async onShopCreate() {
+    (this.$refs.shopForm as ElForm).validate(async(valid: boolean) => {
+      if (valid) {
+        const resp = await request({
+          url: '/shop',
+          method: 'post',
+          data: this.shopForm
+        })
+        if (resp) {
+          UserModule.SetShop(resp.data.id)
+          await this.$router.push({ path: '/' })
+        }
+      } else {
+        return false
+      }
+    })
   }
 }
 

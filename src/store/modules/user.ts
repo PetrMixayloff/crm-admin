@@ -66,8 +66,13 @@ class User extends VuexModule implements IUserState {
   }
 
   @Action
-  public SetUserInfo(data:any) {
-    const { name, shopId, roles } = data
+  public SetShop(shopId: string) {
+    this.SET_SHOP(shopId)
+  }
+
+  @Action
+  public SetUserInfo(data: any) {
+    const { name, roles, shopId } = data
     // roles must be a non-empty array
     if (!roles || roles.length <= 0) {
       throw Error('GetUserInfo: roles must be a non-null array!')

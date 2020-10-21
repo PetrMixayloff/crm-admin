@@ -186,13 +186,13 @@ export default class extends Vue {
             if (user.data) {
               const userInfo = {
                 name: user.data.full_name,
-                shop_id: user.data.shop_id,
+                shopId: user.data.shop_id,
                 roles: user.data.is_staff ? ['user'] : ['admin']
               }
               UserModule.SetUserInfo(userInfo)
             }
             // await this.getDbSchema()
-            await this.$router.push('/')
+            await this.$router.push({ path: '/' })
           } else {
             throw new Error('Не получен токен')
           }

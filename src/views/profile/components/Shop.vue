@@ -11,7 +11,7 @@
         label="Название"
         prop="name"
       >
-        <el-input v-model.trim="shopForm.name" />
+        <el-input v-model.trim="shopForm.name"/>
       </el-form-item>
       <el-form-item
         label="Адрес"

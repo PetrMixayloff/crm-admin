@@ -36,7 +36,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
             if (!user.data.is_superuser) {
               const userInfo = {
                 name: user.data.full_name,
-                shop_id: user.data.shop_id,
+                shopId: user.data.shop_id,
                 roles: user.data.is_staff ? ['user'] : ['admin']
               }
               UserModule.SetUserInfo(userInfo)
