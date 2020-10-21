@@ -7,6 +7,7 @@ import { UserModule } from '@/store/modules/user'
 import { PermissionModule } from '@/store/modules/permission'
 import settings from './settings'
 import { getUserInfo } from '@/api/users'
+import { getDbSchema } from "@/api/schema"
 
 NProgress.configure({ showSpinner: false })
 
@@ -53,6 +54,7 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
             next('/create_new_shop')
             NProgress.done()
           } else {
+            await getDbSchema()
             // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
             // await UserModule.GetUserInfo()
             // const roles = ['admin'] // hack, set roles always 'admin' while developing

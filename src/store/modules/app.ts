@@ -14,6 +14,7 @@ export interface IAppState {
     withoutAnimation: boolean
   }
   size: string
+  db_schema: any
 }
 
 @Module({ dynamic: true, store, name: 'app' })
@@ -25,6 +26,16 @@ class App extends VuexModule implements IAppState {
 
   public device = DeviceType.Desktop
   public size = getSize() || 'medium'
+  public db_schema = {}
+
+  @Mutation
+  private SET_DB_SCHEMA(schema: any) {
+    this.db_schema = {...schema};
+  }
+  @Action
+  public SetDbSchema(schema: any) {
+    this.SET_DB_SCHEMA(schema)
+  }
 
   @Mutation
   private TOGGLE_SIDEBAR(withoutAnimation: boolean) {

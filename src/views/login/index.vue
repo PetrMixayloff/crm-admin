@@ -94,7 +94,9 @@ import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
+import { AppModule } from '@/store/modules/app'
 import { login, getUserInfo, registerAdmin } from '@/api/users'
+import { getDbSchema } from "@/api/schema"
 import SocialSign from './components/SocialSignin.vue'
 
 @Component({
@@ -191,7 +193,7 @@ export default class extends Vue {
               }
               UserModule.SetUserInfo(userInfo)
             }
-            // await this.getDbSchema()
+            await getDbSchema()
             await this.$router.push({ path: '/' })
           } else {
             throw new Error('Не получен токен')
