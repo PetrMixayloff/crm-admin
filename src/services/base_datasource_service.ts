@@ -1,31 +1,30 @@
-import DataSource from 'devextreme/data/data_source';
-import CustomStore from 'devextreme/data/custom_store';
-import * as _ from 'lodash';
+import DataSource from 'devextreme/data/data_source'
+import CustomStore from 'devextreme/data/custom_store'
+import * as _ from 'lodash'
 import request from '@/utils/request'
 import { UserModule } from '@/store/modules/user'
 
 class CrudOperates {
-
   public url: string;
 
   constructor(route_url: string) {
-    this.url = route_url;
+    this.url = route_url
   }
 
   public async get(entity_id: number | string | null) {
-    if (_.isNil(entity_id)) return;
+    if (_.isNil(entity_id)) return
 
     return request({
       url: `${this.url}/${entity_id}`,
       method: 'get'
-    });
+    })
   }
 
   public async load() {
     return request({
       url: `${this.url}`,
       method: 'get'
-    });
+    })
   }
 
   public async save(entity: any) {
@@ -34,40 +33,38 @@ class CrudOperates {
         url: this.url,
         method: 'post',
         data: entity
-      });
+      })
     } else {
       return request({
         url: `${this.url}/${entity.id}`,
         method: 'put',
         data: entity
-      });
+      })
     }
   }
 
   public async delete(entity_id: number | string | null) {
-    if (_.isNil(entity_id)) return;
+    if (_.isNil(entity_id)) return
 
     return request({
       url: `${this.url}/${entity_id}`,
       method: 'delete'
-    });
+    })
   }
 
   public async checkDelete(entity_id: number | string | null) {
-    if (_.isNil(entity_id)) return;
+    if (_.isNil(entity_id)) return
 
     return request({
       url: `${this.url}/${entity_id}/check?skip=0&take=0`,
       method: 'get'
-    });
+    })
   }
-
 }
 
 export default {
 
   getBaseDataSource(api_route: string) {
-
     return new DataSource({
       store: new CustomStore({
         key: 'id',
@@ -75,9 +72,9 @@ export default {
           const resp = await request({
             url: `${api_route}/${key}`,
             method: 'get'
-          });
+          })
 
-          return resp;
+          return resp
         },
         async insert(values) {
           const resp = await request({
@@ -86,26 +83,24 @@ export default {
             method: 'post'
           })
 
-
           if (resp && resp.data) {
             //
           } else {
             //
           }
 
-          return resp;
+          return resp
         },
         async update(key, values) {
           const resp = await request({
             url: `${api_route}/${key}`,
             data: values,
             method: 'put'
-          });
+          })
 
-          return resp;
+          return resp
         },
         async load(loadOptions: any) {
-
           let params = '?';
 
           [
@@ -114,24 +109,22 @@ export default {
             'sort',
             'filter'
           ].forEach((i) => {
-            if (i === 'filter') {
-              if (!_.isNil(loadOptions[i]) || loadOptions[i] !== '') {
-                loadOptions[i] = [ "shop_id", "=", UserModule.shopId ]
-                console.log(loadOptions[i]);
-              }
-            }
+            // if (i === 'filter') {
+            //   if (!_.isNil(loadOptions[i]) || loadOptions[i] !== '') {
+            //     loadOptions[i] = [ "shop_id", "=", UserModule.shopId ]
+            //   }
+            // }
 
             if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
-              params += `${i}=${JSON.stringify(loadOptions[i])}&`;
+              params += `${i}=${JSON.stringify(loadOptions[i])}&`
             }
-          });
-          params = params.slice(0, -1);
+          })
+          params = params.slice(0, -1)
 
           const resp = await request({
             url: `${api_route}/${params}`,
             method: 'get'
           })
-
 
           if (resp && resp.data) {
             //
@@ -139,13 +132,13 @@ export default {
             //
           }
 
-          return resp.data;
-        },
+          return resp.data
+        }
       })
     })
   },
 
   getBaseCrud(api_route: string) {
-    return new CrudOperates(api_route);
+    return new CrudOperates(api_route)
   }
 }
