@@ -7,7 +7,7 @@ import { UserModule } from '@/store/modules/user'
 import { PermissionModule } from '@/store/modules/permission'
 import settings from './settings'
 import { getUserInfo } from '@/api/users'
-import { getDbSchema } from "@/api/schema"
+import { getDbSchema } from '@/api/schema'
 
 NProgress.configure({ showSpinner: false })
 

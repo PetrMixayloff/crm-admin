@@ -9,19 +9,23 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3 v-if="this.$route.path==='/create_admin'"
-            class="title">
+        <h3
+          v-if="this.$route.path==='/create_admin'"
+          class="title"
+        >
           Регистрация нового администратора
         </h3>
-        <h3 v-else
-            class="title">
+        <h3
+          v-else
+          class="title"
+        >
           Вход
         </h3>
       </div>
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon name="user"/>
+          <svg-icon name="user" />
         </span>
         <el-input
           ref="username"
@@ -42,7 +46,7 @@
       >
         <el-form-item prop="password">
           <span class="svg-container">
-            <svg-icon name="password"/>
+            <svg-icon name="password" />
           </span>
           <el-input
             :key="passwordType"
@@ -61,7 +65,7 @@
             class="show-pwd"
             @click="showPwd"
           >
-            <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'"/>
+            <svg-icon :name="passwordType === 'password' ? 'eye-off' : 'eye-on'" />
           </span>
         </el-form-item>
       </el-tooltip>
@@ -94,9 +98,8 @@ import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
-import { AppModule } from '@/store/modules/app'
 import { login, getUserInfo, registerAdmin } from '@/api/users'
-import { getDbSchema } from "@/api/schema"
+import { getDbSchema } from '@/api/schema'
 import SocialSign from './components/SocialSignin.vue'
 
 @Component({

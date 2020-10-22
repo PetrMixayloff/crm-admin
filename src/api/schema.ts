@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { AppModule } from "@/store/modules/app";
+import { AppModule } from '@/store/modules/app'
 
 export const getDbSchema = () => {
   return request({
@@ -7,5 +7,5 @@ export const getDbSchema = () => {
     method: 'get'
   }).then(resp => {
     AppModule.SetDbSchema(resp.data)
-  });
+  })
 }

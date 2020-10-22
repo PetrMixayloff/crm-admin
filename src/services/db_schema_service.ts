@@ -8,40 +8,6 @@ const EXCLUDED_COLUMNS: string[] = ['date_created',
    'date_modified',  'deleted', 'created_by_id', 'modified_by_id'
   ];
 
-class CrudOperates {
-
-  public url: string;
-
-  constructor(route_url: string) {
-    this.url = route_url;
-  }
-
-  public async save(entity: any) {
-    if (_.isNil(entity.id)) {
-      return request({
-        url: this.url,
-        method: 'post',
-        data: entity
-      });
-    } else {
-      return request({
-        url: `${this.url}/${entity.id}`,
-        method: 'put',
-        data: entity
-      });
-    }
-  }
-
-  public async delete(entity_id: number | null) {
-    if (_.isNil(entity_id)) return;
-
-    return request({
-      url: `${this.url}/${entity_id}`,
-      method: 'delete'
-    });
-  }
-}
-
 
 export default {
 
@@ -58,6 +24,7 @@ export default {
 
     // @ts-ignore
     const schema: any[] = AppModule.db_schema[schema_table];
+
 
     if (schema) {
       for (const item of schema) {
@@ -94,48 +61,5 @@ export default {
       }
     }
     return [columns, empty_entity];
-  },
-
-  getBaseDataSource(api_route: string) {
-
-    return new DataSource({
-      store: new CustomStore({
-        key: 'id',
-        async load(loadOptions: any) {
-
-          let params = '?';
-
-          [
-            'skip',
-            'take',
-            'sort',
-            'filter'
-          ].forEach((i) => {
-            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
-              params += `${i}=${JSON.stringify(loadOptions[i])}&`;
-            }
-          });
-          params = params.slice(0, -1);
-
-          const resp = await request({
-            url: `${api_route}${params}`,
-            method: 'get'
-          })
-
-
-          if (resp && resp.data) {
-            //
-          } else {
-            //
-          }
-
-          return resp;
-        }
-      })
-    })
-  },
-
-  getBaseCrud(api_route: string) {
-    return new CrudOperates(api_route);
   }
 }

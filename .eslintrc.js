@@ -20,6 +20,7 @@ module.exports = {
     'vue/arrow-spacing': 'error',
     'vue/block-spacing': 'error',
     'vue/brace-style': 'error',
+    'vue/camelcase': 'warning',
     'vue/comma-dangle': 'error',
     'vue/component-name-in-template-casing': 'error',
     'vue/eqeqeq': 'error',

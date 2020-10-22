@@ -16,7 +16,7 @@
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
       @row-click="onRowClick"
-      @row-dbl-click="onRowDbkClick"
+      @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
       @cell-dbl-click="onCellDblClick"
       @content-ready="onContentReady"
@@ -251,7 +251,7 @@ export default class extends Vue {
     }
   }
 
-  onRowDbkClick(e: any) {
+  onRowDblClick(e: any) {
     if (e.rowType !== 'data') {
       return
     }

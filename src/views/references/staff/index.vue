@@ -7,16 +7,16 @@
       :columns="columns"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
-      :master-detail-enable="true"
       start-edit-action="dblClick"
-      @cell-prepared="addClassToCell"/>
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { StaffModule } from './service'
+import { StaffModule, table_name } from './service'
 import TableGrid from '@/components/TableGrid/grid.vue'
+import dbSchemaService from '@/services/db_schema_service'
 
 @Component({
   name: 'Staff',
@@ -28,23 +28,27 @@ export default class extends Vue {
   public state = StaffModule;
   public dataSource = this.state.dataSource;
 
-  public transfer_entity = {};
+  public transferEntity = {};
   public columns: Array<any> = [];
-  public empty_entity: any = {};
+  public emptyEntity: any = {};
 
   created() {
-    this.initColumns();
-    this.state.ResetCurrentRow();
-    this.state.dataSource.reload();
+    this.initColumns()
+    // this.state.ResetCurrentRow()
+    // this.state.dataSource.reload()
   }
 
   initColumns() {
+    const included = ['login', 'full_name', 'position', 'last_login'];
 
-    const included = ['name', 'note', 'date_created'];
-
-    [this.columns, this.empty_entity] = dbSchemaService.prepareGridColumns(
-      table_name, included);
+    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
+      table_name, included)
   }
 
+  onRowClick(e: any) {
+  }
+
+  onRowDblClick(e: any) {
+  }
 }
 </script>

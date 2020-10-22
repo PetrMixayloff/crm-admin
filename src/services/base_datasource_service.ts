@@ -2,6 +2,7 @@ import DataSource from 'devextreme/data/data_source';
 import CustomStore from 'devextreme/data/custom_store';
 import * as _ from 'lodash';
 import request from '@/utils/request'
+import { UserModule } from '@/store/modules/user'
 
 class CrudOperates {
 
@@ -113,6 +114,13 @@ export default {
             'sort',
             'filter'
           ].forEach((i) => {
+            if (i === 'filter') {
+              if (!_.isNil(loadOptions[i]) || loadOptions[i] !== '') {
+                loadOptions[i] = [ "shop_id", "=", UserModule.shopId ]
+                console.log(loadOptions[i]);
+              }
+            }
+
             if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
               params += `${i}=${JSON.stringify(loadOptions[i])}&`;
             }
@@ -120,7 +128,7 @@ export default {
           params = params.slice(0, -1);
 
           const resp = await request({
-            url: `${api_route}${params}`,
+            url: `${api_route}/${params}`,
             method: 'get'
           })
 
@@ -131,8 +139,8 @@ export default {
             //
           }
 
-          return resp;
-        }
+          return resp.data;
+        },
       })
     })
   },

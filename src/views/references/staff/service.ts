@@ -5,7 +5,7 @@ import request from '@/utils/request'
 import base_ds from '@/services/base_datasource_service'
 
 export const route_ns = 'users'
-export const table_name = 'public.users'
+export const table_name = 'public.user'
 
 export class User {
   id = null;
