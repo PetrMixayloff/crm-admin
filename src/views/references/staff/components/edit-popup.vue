@@ -56,7 +56,7 @@ import { Positions } from '@/const'
 import _ from 'lodash'
 
 @Component({
-  name: 'UserPopupEdit',
+  name: 'StaffPopupEdit',
   components: {
     DxForm,
     DxItem,
@@ -64,15 +64,9 @@ import _ from 'lodash'
   }
 })
 export default class extends Vue {
-  @Prop() public popupOptions: any;
-
   private entity: User = new User();
-  public allowBenchPermissions: boolean = false;
-  public allowUsersPermissions: boolean = false;
-  public allowBenchEditPermissions: boolean = false;
 
   public state = StaffModule;
-  public benchDataSource: any = [];
   public positionsDataSource = new ArrayStore({
     key: 'id',
     data: Positions
@@ -104,6 +98,7 @@ export default class extends Vue {
       this.entity = _.cloneDeep(this.state.currentRow)
     } else {
       this.entity = new User()
+      this.state.SetCurrentRow(this.entity)
     }
   }
 
@@ -112,9 +107,15 @@ export default class extends Vue {
   }
 
   async onOk(e: any) {
-    const valid = e.validationGroup.validate()
-    if (valid.isValid) {
-      console.log(this.entity)
+    const result = e.validationGroup.validate()
+    if (result.isValid) {
+      try {
+        await this.state.crud.save(this.entity)
+        this.state.dataSource.reload()
+        this.state.SetEditVisible(false)
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 

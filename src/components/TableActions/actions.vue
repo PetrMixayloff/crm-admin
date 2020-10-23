@@ -22,15 +22,6 @@
         />
 
         <d-button
-          v-if="onView"
-          :btn-text="compactMode ? '': 'Просмотр'"
-          icon="more"
-          btn-type="normal"
-          :disabled="!selected"
-          :on-click="view"
-        />
-
-        <d-button
           v-if="onDelete"
           :btn-text="compactMode ? '': 'Удалить'"
           icon="trash"

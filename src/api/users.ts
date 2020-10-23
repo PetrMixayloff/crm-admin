@@ -47,7 +47,7 @@ export const logout = () =>
 
 export const register = (data: any) =>
   request({
-    url: '/users/register',
+    url: '/users/create',
     method: 'post',
     data
   })

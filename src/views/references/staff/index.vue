@@ -6,7 +6,7 @@
       :on-edit="onEdit"
       :on-delete="onDelete"
       :on-grid-refresh="onGridRefresh"
-      :selected="false"
+      :selected="state.currentRow.id"
       :one-to-one-complete="true"
     />
     <table-grid
@@ -17,34 +17,30 @@
       :dbl-row-click="onRowDblClick"
       start-edit-action="dblClick"
     />
-    <popup-edit
-      :entity="transferEntity"
-    />
+    <staff-popup-edit />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { StaffModule, table_name, User } from './service'
+import { StaffModule, table_name } from './service'
 import TableGrid from '@/components/TableGrid/grid.vue'
-import PopupEdit from './components/edit-popup.vue'
+import StaffPopupEdit from './components/edit-popup.vue'
 import dbSchemaService from '@/services/db_schema_service'
 import TableActions from '@/components/TableActions/actions.vue'
-import { alert, confirm } from 'devextreme/ui/dialog'
+import { confirm } from 'devextreme/ui/dialog'
 
 @Component({
   name: 'Staff',
   components: {
     TableGrid,
     TableActions,
-    PopupEdit
+    StaffPopupEdit
   }
 })
 export default class extends Vue {
   public state = StaffModule;
   public dataSource = this.state.dataSource;
-
-  public transferEntity = {};
   public columns: Array<any> = [];
   public emptyEntity: any = {};
 
@@ -66,8 +62,6 @@ export default class extends Vue {
   }
 
   onCreateNew() {
-    this.transferEntity = new User()
-    this.state.ResetCurrentRow()
     this.state.SetEditTitle('Создание нового сотрудника')
     this.state.SetEditVisible(true)
   }
@@ -87,24 +81,15 @@ export default class extends Vue {
     // if (!_.isNil(selected)) {
     //   this.state.SetCurrentRow(selected[0]);
     // }
-    // this.state.SetEditMode(true)
-    // this.state.SetEditTitle(`Редактирование ${this.editPopup.title}`)
-    // this.state.SetEditVisible(true)
+    this.state.SetEditMode(true)
+    this.state.SetEditTitle('Редактирование информации о сотруднике')
+    this.state.SetEditVisible(true)
   }
 
   onDelete() {
-    confirm('Удалить выбранную запись?', 'Удаление записи')
-      .then(async(answ: boolean) => {
-        if (!answ) {
-          return
-        }
-        const check: any = await this.state.crud.checkDelete(this.state.currentRow.id)
-        debugger
-        if (check.totalCount > 0) {
-          alert(
-            'Данный пользователь используется в исследованиях.<br>Удаление невозможно.',
-            'Внимание!'
-          )
+    confirm('Удалить выбранного сотрудника?', 'Удаление сотрудника')
+      .then(async(answer: boolean) => {
+        if (!answer) {
           return
         }
         try {
@@ -112,7 +97,7 @@ export default class extends Vue {
           this.state.dataSource.reload()
           this.state.ResetCurrentRow()
         } catch (e) {
-          //
+          console.log(e)
         }
       })
   }

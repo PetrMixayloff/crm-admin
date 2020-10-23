@@ -51,15 +51,6 @@ class CrudOperates {
       method: 'delete'
     })
   }
-
-  public async checkDelete(entity_id: number | string | null) {
-    if (_.isNil(entity_id)) return
-
-    return request({
-      url: `${this.url}/${entity_id}/check?skip=0&take=0`,
-      method: 'get'
-    })
-  }
 }
 
 export default {
