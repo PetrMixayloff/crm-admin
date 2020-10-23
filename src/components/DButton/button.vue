@@ -6,6 +6,7 @@
       :icon="icon"
       :text="btnText"
       :disabled="disabled"
+      :validation-group="validationGroup"
       :use-submit-behavior="useSubmitBehavior"
       @click="onClick($event)"
     />
@@ -36,6 +37,7 @@ export default class extends Vue {
   @Prop({ default: '' }) public icon!: string;
   @Prop({ default: false }) public disabled!: boolean;
   @Prop({ default: false }) public useSubmitBehavior!: boolean;
+  @Prop({ default: '' }) public validationGroup!: string;
 
   created() {
 

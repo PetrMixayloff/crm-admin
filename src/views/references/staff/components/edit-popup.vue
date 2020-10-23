@@ -4,6 +4,7 @@
     default-width="450"
     default-height="500"
     :visible="state.editVisible"
+    :validation-group="'staffEntity'"
     @hidden="onClose"
     @ok="onOk"
     @cancel="onCancel"
@@ -12,29 +13,30 @@
     <div id="form-container">
       <DxForm
         id="form"
-        :on-content-ready="validateForm"
+        ref="dxform"
         :form-data.sync="entity"
-        validation-group="entityData"
+        :show-validation-summary="true"
+        validation-group="staffEntity"
       >
         <DxItem
-          data-field="login"
-          :validation-rules="validationRules.required"
-          :label="{text: 'Логин'}"
+          data-field="phone"
+          :validation-rules="validationRules.phone"
+          :label="{text: 'Номер телефона'}"
         />
         <DxItem
           data-field="password"
           :editor-options="{mode: 'password'}"
-          :validation-rules="validationRules.required"
+          :validation-rules="validationRules.password"
           :label="{text: 'Пароль'}"
         />
         <DxItem
           data-field="full_name"
-          :validation-rules="validationRules.required"
+          :validation-rules="validationRules.fullName"
           :label="{text: 'ФИО'}"
         />
         <DxItem
           data-field="position"
-          :validation-rules="validationRules.required"
+          :validation-rules="validationRules.position"
           :label="{text: 'Должность'}"
           editor-type="dxSelectBox"
           :editor-options="{dataSource: positionsDataSource, displayExpr: 'name', valueExpr: 'name'}"
@@ -77,8 +79,17 @@ export default class extends Vue {
   });
 
   public validationRules: any = {
-    required: [
-      { type: 'required', message: 'Обязательное поле' }
+    phone: [
+      { type: 'required', message: 'Номер телефона не заполнен' }
+    ],
+    fullName: [
+      { type: 'required', message: 'ФИО не заполнены' }
+    ],
+    password: [
+      { type: 'required', message: 'Пароль не задан' }
+    ],
+    position: [
+      { type: 'required', message: 'Должность не задана' }
     ]
   }
 
@@ -100,13 +111,11 @@ export default class extends Vue {
     this.state.SetEditVisible(false)
   }
 
-  validateForm(e: any) {
-    console.log(e.component.validate())
-    e.component.validate()
-  }
-
   async onOk(e: any) {
-    console.log(e)
+    const valid = e.validationGroup.validate()
+    if (valid.isValid) {
+      console.log(this.entity)
+    }
   }
 
   onCancel(e: any) {

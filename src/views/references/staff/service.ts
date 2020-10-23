@@ -8,9 +8,9 @@ export const table_name = 'public.user'
 
 export class User {
   id = null
-  login = ''
+  phone = ''
   password = ''
-  shopId = UserModule.shopId
+  shop_id = UserModule.shopId
   full_name = ''
   position = ''
 }

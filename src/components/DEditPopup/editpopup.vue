@@ -33,6 +33,8 @@
               :disabled="disableOkButton"
               hint="Сохранить изменения"
               :on-click="onOk"
+              :validation-group="validationGroup"
+              :use-submit-behavior="true"
             />
           </div>
 
@@ -78,6 +80,7 @@ export default class extends Vue {
   @Prop({ default: true }) public showOkButton!: boolean;
   @Prop({ default: false }) public disableOkButton!: boolean;
   @Prop({ default: '' }) public cssClass!: string;
+  @Prop({ default: '' }) public validationGroup!: string;
 
   public empty() {
 
