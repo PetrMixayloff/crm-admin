@@ -1,35 +1,33 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
-// import {login, logout, getUserInfo} from '@/api/users'
+import { UserModule } from '@/store/modules/user'
 import store from '@/store'
-import request from '@/utils/request'
 import base_ds from '@/services/base_datasource_service'
 
 export const route_ns = 'users'
 export const table_name = 'public.user'
 
 export class User {
-  id = null;
+  id = null
   login = ''
   password = ''
-  shopId = ''
+  shopId = UserModule.shopId
   full_name = ''
   position = ''
-  roles = ['user']
 }
 
 @Module({ dynamic: true, store, name: 'users', namespaced: true })
 class StaffService extends VuexModule {
-  public edit_visible = false;
-  public edit_mode = false;
-  public edit_title = '';
-  public current_row = new User();
+  public editVisible = false;
+  public editMode = false;
+  public editTitle = '';
+  public currentRow = new User();
 
   public dataSource = base_ds.getBaseDataSource(route_ns);
   public crud = base_ds.getBaseCrud(route_ns);
 
   @Mutation
   private SET_EDIT_VISIBLE(value: boolean) {
-    this.edit_visible = value
+    this.editVisible = value
   }
 
   @Action
@@ -39,7 +37,7 @@ class StaffService extends VuexModule {
 
   @Mutation
   private SET_EDIT_TITLE(value: string) {
-    this.edit_title = value
+    this.editTitle = value
   }
 
   @Action
@@ -49,7 +47,7 @@ class StaffService extends VuexModule {
 
   @Mutation
   private SET_CURRENT(value: User) {
-    this.current_row = { ...value }
+    this.currentRow = { ...value }
   }
 
   @Action
@@ -59,7 +57,7 @@ class StaffService extends VuexModule {
 
   @Mutation
   private RESET_CURRENT() {
-    this.current_row = new User()
+    this.currentRow = new User()
   }
 
   @Action
@@ -69,7 +67,7 @@ class StaffService extends VuexModule {
 
   @Mutation
   private SET_EDIT_MODE(value: boolean) {
-    this.edit_mode = value
+    this.editMode = value
   }
 
   @Action

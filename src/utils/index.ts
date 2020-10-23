@@ -90,3 +90,17 @@ export const toggleClass = (ele: HTMLElement, className: string) => {
   }
   ele.className = classString
 }
+
+export function fitPopupHeight(startHeight: number): number {
+  return Math.min(
+    startHeight,
+    document.documentElement.clientHeight - 20
+  )
+}
+
+export function fitPopupWidth(startWidth: number): number {
+  return Math.min(
+    startWidth,
+    document.documentElement.clientWidth - 20
+  )
+}

@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <h4>Сотрудники</h4>
+    <table-actions
+      :on-create-new="onCreateNew"
+      :on-edit="onEdit"
+      :on-delete="onDelete"
+      :on-grid-refresh="onGridRefresh"
+      :selected="false"
+      :one-to-one-complete="true"
+    />
     <table-grid
       ref="tablegrid"
       :data-source="dataSource"
@@ -9,19 +17,27 @@
       :dbl-row-click="onRowDblClick"
       start-edit-action="dblClick"
     />
+    <popup-edit
+      :entity="transferEntity"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
-import { StaffModule, table_name } from './service'
+import { StaffModule, table_name, User } from './service'
 import TableGrid from '@/components/TableGrid/grid.vue'
+import PopupEdit from './components/edit-popup.vue'
 import dbSchemaService from '@/services/db_schema_service'
+import TableActions from '@/components/TableActions/actions.vue'
+import { alert, confirm } from 'devextreme/ui/dialog'
 
 @Component({
   name: 'Staff',
   components: {
-    TableGrid
+    TableGrid,
+    TableActions,
+    PopupEdit
   }
 })
 export default class extends Vue {
@@ -34,8 +50,12 @@ export default class extends Vue {
 
   created() {
     this.initColumns()
-    // this.state.ResetCurrentRow()
-    // this.state.dataSource.reload()
+    this.state.ResetCurrentRow()
+    this.state.dataSource.reload()
+  }
+
+  get viewMode(): boolean {
+    return this.$route.name === 'staff_new'
   }
 
   initColumns() {
@@ -45,10 +65,61 @@ export default class extends Vue {
       table_name, included)
   }
 
+  onCreateNew() {
+    this.transferEntity = new User()
+    this.state.ResetCurrentRow()
+    this.state.SetEditTitle('Создание нового сотрудника')
+    this.state.SetEditVisible(true)
+  }
+
   onRowClick(e: any) {
+    this.state.SetCurrentRow(e.data)
   }
 
   onRowDblClick(e: any) {
+    this.state.SetCurrentRow(e.data)
+    this.onEdit()
+  }
+
+  onEdit() {
+    // const grid = (this.$refs.tableGrid as any);
+    // const selected = grid.getSelectedData();
+    // if (!_.isNil(selected)) {
+    //   this.state.SetCurrentRow(selected[0]);
+    // }
+    // this.state.SetEditMode(true)
+    // this.state.SetEditTitle(`Редактирование ${this.editPopup.title}`)
+    // this.state.SetEditVisible(true)
+  }
+
+  onDelete() {
+    confirm('Удалить выбранную запись?', 'Удаление записи')
+      .then(async(answ: boolean) => {
+        if (!answ) {
+          return
+        }
+        const check: any = await this.state.crud.checkDelete(this.state.currentRow.id)
+        debugger
+        if (check.totalCount > 0) {
+          alert(
+            'Данный пользователь используется в исследованиях.<br>Удаление невозможно.',
+            'Внимание!'
+          )
+          return
+        }
+        try {
+          await this.state.crud.delete(this.state.currentRow.id)
+          this.state.dataSource.reload()
+          this.state.ResetCurrentRow()
+        } catch (e) {
+          //
+        }
+      })
+  }
+
+  onGridRefresh() {
+    this.dataSource.reload()
+    this.state.ResetCurrentRow()
   }
 }
 </script>
