@@ -23,15 +23,15 @@
         </h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="phone">
         <span class="svg-container">
           <svg-icon name="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Логин"
-          name="username"
+          ref="phone"
+          v-model="loginForm.phone"
+          placeholder="Номер телефона"
+          name="phone"
           type="text"
           tabindex="1"
           autocomplete="on"
@@ -109,7 +109,7 @@ import SocialSign from './components/SocialSignin.vue'
   }
 })
 export default class extends Vue {
-  private validateUsername = (rule: any, value: string, callback: Function) => {
+  private validatephone = (rule: any, value: string, callback: Function) => {
     if (value.trim().length === 0) {
       callback(new Error('Please enter the correct user name'))
     } else {
@@ -126,12 +126,12 @@ export default class extends Vue {
   }
 
   private loginForm = {
-    username: '',
+    phone: '',
     password: ''
   }
 
   private loginRules = {
-    username: [{ validator: this.validateUsername, trigger: 'blur' }],
+    phone: [{ validator: this.validatephone, trigger: 'blur' }],
     password: [{ validator: this.validatePassword, trigger: 'blur' }]
   }
 
@@ -154,8 +154,8 @@ export default class extends Vue {
   }
 
   mounted() {
-    if (this.loginForm.username === '') {
-      (this.$refs.username as Input).focus()
+    if (this.loginForm.phone === '') {
+      (this.$refs.phone as Input).focus()
     } else if (this.loginForm.password === '') {
       (this.$refs.password as Input).focus()
     }
@@ -218,7 +218,7 @@ export default class extends Vue {
         this.loading = true
         try {
           const adminData = {
-            username: this.loginForm.username,
+            phone: this.loginForm.phone,
             password: this.loginForm.password,
             is_staff: false
           }

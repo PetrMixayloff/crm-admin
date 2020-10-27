@@ -8,6 +8,8 @@ import { PermissionModule } from '@/store/modules/permission'
 import settings from './settings'
 import { getUserInfo } from '@/api/users'
 import { getDbSchema } from '@/api/schema'
+import { AppModule } from '@/store/modules/app'
+import _ from 'lodash'
 
 NProgress.configure({ showSpinner: false })
 
@@ -18,7 +20,7 @@ const getPageTitle = (pageName: string) => {
   // return `${settings.title}`
 }
 
-router.beforeEach(async(to: Route, _: Route, next: any) => {
+router.beforeEach(async(to: Route, from: Route, next: any) => {
   // Start progress bar
   NProgress.start()
 
@@ -28,55 +30,54 @@ router.beforeEach(async(to: Route, _: Route, next: any) => {
       // If is logged in, redirect to the home page
       next({ path: '/' })
       NProgress.done()
-    } else {
-      // Check whether the user has obtained his permission roles
-      if (UserModule.roles.length === 0) {
-        try {
-          const user = await getUserInfo()
-          if (user.data) {
-            if (!user.data.is_superuser) {
-              const userInfo = {
-                name: user.data.full_name,
-                shopId: user.data.shop_id,
-                roles: user.data.is_staff ? ['user'] : ['admin']
-              }
-              UserModule.SetUserInfo(userInfo)
-            } else {
-              const userInfo = {
-                name: 'superuser',
-                shop_id: null,
-                roles: ['developer']
-              }
-              UserModule.SetUserInfo(userInfo)
+    }
+    if (UserModule.roles.length === 0) {
+      try {
+        const user = await getUserInfo()
+        if (user.data) {
+          if (!user.data.is_superuser) {
+            const userInfo = {
+              name: user.data.full_name,
+              shopId: user.data.shop_id,
+              roles: user.data.is_staff ? ['user'] : ['admin']
             }
-          }
-          if (!UserModule.shopId) {
-            next('/create_new_shop')
-            NProgress.done()
+            UserModule.SetUserInfo(userInfo)
           } else {
-            await getDbSchema()
-            // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
-            // await UserModule.GetUserInfo()
-            // const roles = ['admin'] // hack, set roles always 'admin' while developing
-            // UserModule.SetRoles(roles)
-            // Generate accessible routes map based on role
-            PermissionModule.GenerateRoutes(UserModule.roles)
-            // Dynamically add accessible routes
-            router.addRoutes(PermissionModule.dynamicRoutes)
-            // Hack: ensure addRoutes is complete
-            // Set the replace: true, so the navigation will not leave a history record
-            next({ ...to, replace: true })
+            const userInfo = {
+              name: 'superuser',
+              shop_id: null,
+              roles: ['developer']
+            }
+            UserModule.SetUserInfo(userInfo)
           }
-        } catch (err) {
-          // Remove token and redirect to login page
-          UserModule.ResetToken()
-          Message.error(err || 'Has Error')
-          next(`/login?redirect=${to.path}`)
-          NProgress.done()
         }
-      } else {
-        next()
+      } catch (err) {
+        // Remove token and redirect to login page
+        UserModule.ResetToken()
+        Message.error(err || 'Has Error')
+        next(`/login?redirect=${to.path}`)
+        NProgress.done()
       }
+    }
+    if (!UserModule.shopId) {
+      next('/create_new_shop')
+      NProgress.done()
+    }
+    if (_.isEmpty(AppModule.db_schema)) {
+      await getDbSchema()
+      // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
+      // await UserModule.GetUserInfo()
+      // const roles = ['admin'] // hack, set roles always 'admin' while developing
+      // UserModule.SetRoles(roles)
+      // Generate accessible routes map based on role
+      PermissionModule.GenerateRoutes(UserModule.roles)
+      // Dynamically add accessible routes
+      router.addRoutes(PermissionModule.dynamicRoutes)
+      // Hack: ensure addRoutes is complete
+      // Set the replace: true, so the navigation will not leave a history record
+      next({ ...to, replace: true })
+    } else {
+      next()
     }
   } else {
     // Has no token
