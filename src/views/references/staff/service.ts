@@ -9,12 +9,11 @@ export const table_name = 'public.user'
 export class User {
   id = null
   phone = ''
-  password = ''
+  password: string | null = null
   shop_id = UserModule.shopId
   full_name = ''
   position = ''
   description = ''
-  avatar: any = []
 }
 
 @Module({ dynamic: true, store, name: 'users', namespaced: true })

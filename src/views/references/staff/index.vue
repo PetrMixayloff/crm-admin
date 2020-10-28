@@ -55,7 +55,7 @@ export default class extends Vue {
   }
 
   initColumns() {
-    const included = ['login', 'full_name', 'position', 'last_login'];
+    const included = ['phone', 'full_name', 'position', 'description', 'last_login'];
 
     [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
       table_name, included)
@@ -76,11 +76,6 @@ export default class extends Vue {
   }
 
   onEdit() {
-    // const grid = (this.$refs.tableGrid as any);
-    // const selected = grid.getSelectedData();
-    // if (!_.isNil(selected)) {
-    //   this.state.SetCurrentRow(selected[0]);
-    // }
     this.state.SetEditMode(true)
     this.state.SetEditTitle('Редактирование информации о сотруднике')
     this.state.SetEditVisible(true)

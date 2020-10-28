@@ -9,6 +9,7 @@ import store from '@/store'
 export interface IUserState {
   token: string
   name: string
+  avatar: string
   email: string
   shopId: string
   roles: string[]
@@ -18,6 +19,7 @@ export interface IUserState {
 class User extends VuexModule implements IUserState {
   public token = getToken() || ''
   public name = ''
+  public avatar = ''
   public email = ''
   public shopId = ''
   public roles: string[] = []

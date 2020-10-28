@@ -26,7 +26,7 @@
         <DxItem
           data-field="password"
           :editor-options="{mode: 'password'}"
-          :validation-rules="validationRules.password"
+          :validation-rules="!state.editMode ? validationRules.password : null"
           :label="{text: 'Пароль'}"
         />
         <DxItem
@@ -45,13 +45,6 @@
           data-field="description"
           :label="{text: 'Данные сотрудника'}"
           editor-type="dxTextArea"
-        />
-        <DxItem
-          data-field="avatar"
-          :label="{text: 'Аватар'}"
-          editor-type="dxFileUploader"
-          help-text="Допустимый формат .png"
-          :editor-options="{allowedFileExtensions: ['.png']}"
         />
       </DxForm>
     </div>
@@ -99,11 +92,7 @@ export default class extends Vue {
       { type: 'required', message: 'ФИО не заполнены' }
     ],
     password: [
-      {
-        type: 'custom',
-        validationCallback: this.passwordValidate,
-        message: 'Пароль не менее 4-х символов'
-      }
+      { type: 'required', message: 'Пароль не задан' }
     ],
     position: [
       { type: 'required', message: 'Должность не задана' }
@@ -119,11 +108,9 @@ export default class extends Vue {
   onShow() {
     if (this.state.editMode) {
       this.entity = _.cloneDeep(this.state.currentRow)
-      this.entity.password = ''
-      this.entity.avatar = []
+      this.entity.password = null
     } else {
       this.entity = new User()
-      this.entity.avatar = []
       this.state.SetCurrentRow(this.entity)
     }
   }
