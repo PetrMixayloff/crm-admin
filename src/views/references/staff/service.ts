@@ -13,6 +13,8 @@ export class User {
   shop_id = UserModule.shopId
   full_name = ''
   position = ''
+  description = ''
+  avatar: any = []
 }
 
 @Module({ dynamic: true, store, name: 'users', namespaced: true })

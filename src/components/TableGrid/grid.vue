@@ -5,6 +5,7 @@
       :data-source="dataSource"
       :allow-column-reordering="true"
       :allow-column-resizing="true"
+      :column-auto-width="true"
       :row-alternation-enabled="true"
       :show-column-headers="showColumnHeaders"
       :show-borders="true"
