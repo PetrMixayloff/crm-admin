@@ -187,16 +187,6 @@ export default class extends Vue {
           if (resp.data && resp.data.access_token) {
             const token = resp.data.access_token
             UserModule.SetToken(token)
-            const user = await getUserInfo()
-            if (user.data) {
-              const userInfo = {
-                name: user.data.full_name,
-                shopId: user.data.shop_id,
-                roles: user.data.is_staff ? ['user'] : ['admin']
-              }
-              UserModule.SetUserInfo(userInfo)
-            }
-            await getDbSchema()
             await this.$router.push({ path: '/' })
           } else {
             throw new Error('Не получен токен')
