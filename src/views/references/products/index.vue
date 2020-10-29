@@ -20,6 +20,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
+import { ProductsModule } from './service'
 
 @Component({
   name: 'Products',
@@ -28,7 +29,9 @@ import DxTreeView from 'devextreme-vue/tree-view'
   }
 })
 export default class extends Vue {
-  public products = []
+  public state = ProductsModule;
+  public dataSource = this.state.dataSource;
+  public products = this.dataSource.load()
   public currentItem = {}
 
   selectItem(e: any) {

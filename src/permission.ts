@@ -31,12 +31,10 @@ router.beforeEach(async(to: Route, from: Route, next: any) => {
       next({ path: '/' })
       NProgress.done()
     }
-    console.log(UserModule.roles)
     if (UserModule.roles.length === 0) {
       try {
         const user = await getUserInfo()
         if (user.data) {
-          console.log(user.data)
           if (!user.data.shop_id) {
             next('/create_new_shop')
             NProgress.done()
