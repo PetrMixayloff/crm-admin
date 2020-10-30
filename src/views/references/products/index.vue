@@ -39,12 +39,32 @@
           :filter-node-method="filterNode"
           @node-click="handleNodeClick"
         >
+          <div
+            slot-scope="{node, data}"
+            class="custom-tree-node"
+          >
+            <div class="node-label">
+              {{ node.label }}
+            </div>
+            <div class="manage-buttons">
+              <DHintBox
+                v-if="node.isCurrent"
+                hint="Удалить категорию"
+              >
+                <el-button
+                  type="text"
+                  icon="el-icon-delete"
+                  class="custom-icon"
+                  @click="removeCategory"
+                />
+              </DHintBox>
+            </div>
+          </div>
         </el-tree>
       </DxScrollView>
-      <div class="doc-view-box">
-      </div>
+      <div class="doc-view-box"/>
     </div>
-    <CategoryPopupEdit />
+    <CategoryPopupEdit/>
   </div>
 </template>
 
@@ -56,6 +76,7 @@ import CategoryPopupEdit from './components/category-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
 import { DxScrollView } from 'devextreme-vue'
+import { confirm } from 'devextreme/ui/dialog'
 
 @Component({
   name: 'Products',
@@ -90,7 +111,6 @@ export default class extends Vue {
 
   async mounted() {
     await this.state.initItems()
-    console.log(this.state.items)
   }
 
   filterNode(value: any, data: any) {
@@ -103,9 +123,24 @@ export default class extends Vue {
     //
   }
 
+  removeCategory() {
+    confirm('Внимание!!! Удаление категории приведет к удалению всех ее товаров. Удалить выбранную категорию?', 'Удаление категории')
+      .then(async(answer: boolean) => {
+        if (!answer) {
+          return
+        }
+        try {
+          await this.state.crudCategory.delete(this.currentNode.id)
+          await this.state.initItems()
+          this.currentNode = null
+        } catch (e) {
+          console.log(e)
+        }
+      })
+  }
+
   handleNodeClick(data: any, node: any) {
-    // получение статьи
-    this.currentNode = node
+    this.currentNode = data
   }
 
   selectItem(e: any) {
