@@ -100,12 +100,6 @@ export default {
             'sort',
             'filter'
           ].forEach((i) => {
-            // if (i === 'filter') {
-            //   if (!_.isNil(loadOptions[i]) || loadOptions[i] !== '') {
-            //     loadOptions[i] = [ "shop_id", "=", UserModule.shopId ]
-            //   }
-            // }
-
             if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
               params += `${i}=${JSON.stringify(loadOptions[i])}&`
             }

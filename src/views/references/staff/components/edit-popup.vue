@@ -138,14 +138,6 @@ export default class extends Vue {
     return !_.isNull(found)
   }
 
-  passwordValidate(data: any) {
-    if (!this.state.editMode) {
-      return data.value.trim().length >= 4
-    } else {
-      return true
-    }
-  }
-
   onCancel(e: any) {
     this.state.SetEditVisible(false)
   }

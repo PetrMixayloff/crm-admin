@@ -1,14 +1,23 @@
 import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
+import { UserModule } from '@/store/modules/user'
 
-export const route_ns = 'product'
-export const table_name = 'public.product'
+export const product_route_ns = 'product'
+export const category_route_ns = 'product_category'
+
+export class ProductCategory {
+  id: string | null = null
+  shop_id: string = UserModule.shopId
+  name: string = ''
+  description: string = ''
+  show_on_store = true
+}
 
 export class Product {
-  id = null
-  category_id = ''
-  shop_id = ''
+  id: string | null = null
+  category_id: string | null = null
+  shop_id: string = UserModule.shopId
   name = ''
   description = ''
   url = ''
@@ -19,49 +28,67 @@ export class Product {
   show_on_store = true
 }
 
-@Module({ dynamic: true, store, name: 'product', namespaced: true })
-class StaffService extends VuexModule {
-  public editVisible = false;
-  public editMode = false;
-  public editTitle = '';
-  public currentRow = new Product();
+@Module({ dynamic: true, store, name: 'products', namespaced: true })
+class ProductsService extends VuexModule {
+  public categoryEditVisible = false
+  public categoryEditMode = false
+  public productEditVisible = false
+  public productEditMode = false
+  public currentCategory = new ProductCategory()
+  public currentProduct = new Product()
 
-  public dataSource = base_ds.getBaseDataSource(route_ns);
-  public crud = base_ds.getBaseCrud(route_ns);
+  public productDataSource = base_ds.getBaseDataSource(product_route_ns)
+  public crudProduct = base_ds.getBaseCrud(product_route_ns)
+
+  public categoryDataSource = base_ds.getBaseDataSource(category_route_ns)
+  public crudCategory = base_ds.getBaseCrud(category_route_ns)
+
+  public items: Array<any> = []
 
   @Mutation
-  private SET_EDIT_VISIBLE(value: boolean) {
-    this.editVisible = value
+  private SET_ITEMS(items: Array<any>) {
+    this.items = items
   }
 
   @Action
-  public SetEditVisible(value: boolean) {
-    this.SET_EDIT_VISIBLE(value)
+  public SetItems(items: Array<any>) {
+    this.SET_ITEMS(items)
   }
 
   @Mutation
-  private SET_EDIT_TITLE(value: string) {
-    this.editTitle = value
+  private SET_CATEGORY_EDIT_VISIBLE(value: boolean) {
+    this.categoryEditVisible = value
   }
 
   @Action
-  public SetEditTitle(value: string) {
-    this.SET_EDIT_TITLE(value)
+  public SetCategoryEditVisible(value: boolean) {
+    this.SET_CATEGORY_EDIT_VISIBLE(value)
   }
 
   @Mutation
-  private SET_CURRENT(value: Product) {
-    this.currentRow = { ...value }
+  private SET_CURRENT_PRODUCT(value: Product) {
+    this.currentProduct = { ...value }
   }
 
   @Action
-  public SetCurrentRow(value: Product) {
-    this.SET_CURRENT(value)
+  public SetCurrentProduct(value: Product) {
+    this.SET_CURRENT_PRODUCT(value)
+  }
+
+  @Mutation
+  private SET_CURRENT_CATEGORY(value: ProductCategory) {
+    this.currentCategory = { ...value }
+  }
+
+  @Action
+  public SetCurrentCategory(value: ProductCategory) {
+    this.SET_CURRENT_CATEGORY(value)
   }
 
   @Mutation
   private RESET_CURRENT() {
-    this.currentRow = new Product()
+    this.currentProduct = new Product()
+    this.currentCategory = new ProductCategory()
   }
 
   @Action
@@ -70,14 +97,14 @@ class StaffService extends VuexModule {
   }
 
   @Mutation
-  private SET_EDIT_MODE(value: boolean) {
-    this.editMode = value
+  private SET_CATEGORY_EDIT_MODE(value: boolean) {
+    this.categoryEditMode = value
   }
 
   @Action
-  public SetEditMode(value: boolean) {
-    this.SET_EDIT_MODE(value)
+  public SetCategoryEditMode(value: boolean) {
+    this.SET_CATEGORY_EDIT_MODE(value)
   }
 }
 
-export const ProductsModule = getModule(StaffService)
+export const ProductsModule = getModule(ProductsService)

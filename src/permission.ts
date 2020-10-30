@@ -10,6 +10,7 @@ import { getUserInfo } from '@/api/users'
 import { getDbSchema } from '@/api/schema'
 import { AppModule } from '@/store/modules/app'
 import _ from 'lodash'
+import { AxiosResponse } from "axios";
 
 NProgress.configure({ showSpinner: false })
 
@@ -33,17 +34,17 @@ router.beforeEach(async(to: Route, from: Route, next: any) => {
     }
     if (UserModule.roles.length === 0) {
       try {
-        const user = await getUserInfo()
-        if (user.data) {
-          if (!user.data.shop_id) {
+        const user: AxiosResponse['data'] = await getUserInfo()
+        if (user) {
+          if (!user.shop_id) {
             next('/create_new_shop')
             NProgress.done()
           }
-          if (!user.data.is_superuser) {
+          if (!user.is_superuser) {
             const userInfo = {
-              name: user.data.full_name,
-              shopId: user.data.shop_id,
-              roles: user.data.is_staff ? ['user'] : ['admin']
+              name: user.full_name,
+              shopId: user.shop_id,
+              roles: user.is_staff ? ['user'] : ['admin']
             }
             UserModule.SetUserInfo(userInfo)
           } else {

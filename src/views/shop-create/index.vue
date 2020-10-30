@@ -53,6 +53,7 @@ import { confirm } from 'devextreme/ui/dialog'
 import { Form as ElForm } from 'element-ui/types/element-ui'
 import request from '@/utils/request'
 import { UserModule } from '@/store/modules/user'
+import { AxiosResponse } from 'axios'
 
 @Component({
   name: 'QtEditor',
@@ -88,13 +89,13 @@ export default class extends Vue {
   async onShopCreate() {
     (this.$refs.shopForm as ElForm).validate(async(valid: boolean) => {
       if (valid) {
-        const resp = await request({
+        const resp: AxiosResponse['data'] = await request({
           url: '/shop',
           method: 'post',
           data: this.shopForm
         })
         if (resp) {
-          UserModule.SetShop(resp.data.id)
+          UserModule.SetShop(resp.id)
           await this.$router.push({ path: '/' })
         }
       } else {
