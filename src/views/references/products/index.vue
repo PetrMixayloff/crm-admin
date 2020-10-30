@@ -1,40 +1,69 @@
 <template>
   <div class="app-container">
-    <div class="flex-l-t">
-      <div>
+    <div class="top-panel">
+      <div class="export">
         <d-button
           btn-text="Новая категория"
           icon="plus"
           btn-type="default"
           :on-click="createNewCategory"
         />
-        <DxTreeView
-          id="simple-treeview"
-          :items="items"
-          :width="300"
-          :search-enabled="true"
-          search-mode="contains"
-          @item-click="selectItem"
-        />
       </div>
-      <div style="width: 100%;"/>
+      <div class="search">
+        <el-input
+          v-model="filterText"
+          placeholder="Поиск"
+          class="input-with-select"
+        >
+          <el-button
+            slot="append"
+            icon="el-icon-search"
+          />
+        </el-input>
+      </div>
     </div>
-    <CategoryPopupEdit/>
+    <div class="main-box-content">
+      <DxScrollView
+        direction="both"
+        show-scrollbar="always"
+        class="filter-tree"
+      >
+        <el-tree
+          ref="tree"
+          node-key="id"
+          :data="state.items"
+          :props="defaultProps"
+          default-expand-all
+          :expand-on-click-node="false"
+          :highlight-current="true"
+          :filter-node-method="filterNode"
+          @node-click="handleNodeClick"
+        >
+        </el-tree>
+      </DxScrollView>
+      <div class="doc-view-box">
+      </div>
+    </div>
+    <CategoryPopupEdit />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
 import { ProductsModule } from './service'
 import CategoryPopupEdit from './components/category-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
+import DHintBox from '@/components/DHintBox/index.vue'
+import { DxScrollView } from 'devextreme-vue'
 
 @Component({
   name: 'Products',
   components: {
     DxTreeView,
     DButton,
+    DHintBox,
+    DxScrollView,
     CategoryPopupEdit
   }
 })
@@ -42,27 +71,41 @@ export default class extends Vue {
   public state = ProductsModule
   public productDataSource = this.state.productDataSource
   public categoryDataSource = this.state.categoryDataSource
-  public items = this.state.items
+  private filterText = ''
+  private currentNode: any = null
 
   public currentItem = {}
 
-  async mounted() {
-    await this.initItems()
+  private defaultProps = {
+    id: 'id',
+    children: 'children',
+    label: 'label'
   }
 
-  async initItems() {
-    const newItems: Array<any> = []
-    const categories: any = await this.state.crudCategory.load()
-    // const products = this.state.crudProduct.load()
-    categories.data.forEach((category: any) => {
-      newItems.push({
-        id: category.id,
-        text: category.name,
-        expanded: false,
-        items: category.products
-      })
-    })
-    this.state.SetItems(newItems)
+  @Watch('filterText')
+  findValue(val: any) {
+    const tree: any = this.$refs.tree
+    tree.filter(val)
+  }
+
+  async mounted() {
+    await this.state.initItems()
+    console.log(this.state.items)
+  }
+
+  filterNode(value: any, data: any) {
+    // фильтр элементов дерева по введенному значению
+    if (!value) return true
+    return data.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
+  }
+
+  async remove() {
+    //
+  }
+
+  handleNodeClick(data: any, node: any) {
+    // получение статьи
+    this.currentNode = node
   }
 
   selectItem(e: any) {
@@ -74,3 +117,72 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style scoped>
+.content-box {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 50px;
+}
+
+.top-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.export {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin: 0 10px 0 0;
+}
+
+.search {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.main-box-content {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  margin-top: 10px;
+}
+
+.filter-tree {
+  width: 28%;
+  height: 100%;
+}
+
+.doc-view-box {
+  width: 70%;
+  height: 700px;
+  margin-bottom: 10px;
+}
+
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.custom-tree-node > .manage-buttons {
+  float: left;
+  z-index: 2;
+}
+
+.custom-icon {
+  font-size: 1.5rem;
+  color: black;
+}
+
+.custom-icon:hover {
+  opacity: 0.8;
+}
+
+dfn div {
+  display: inline;
+}
+</style>
