@@ -42,22 +42,35 @@
           editor-type="dxNumberBox"
         />
         <DxItem
+          data-field="images"
+          editor-type="dxGallery"
+          :label="{text: 'Изображения товара'}"
+          :editor-options="{dataSource: entity.images.length > 0 ? entity.images : ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png'],
+                            width: 200}"
+        />
+        <DxItem
           data-field="show_on_store"
           editor-type="dxCheckBox"
           :label="{text: 'Отображать на витрине'}"
           :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
+      <DxFileUploader
+        select-button-text="Выбрать фото"
+        label-text=""
+        accept="image/*"
+        upload-mode="useButtons"
+        :multiple="true"/>
     </div>
   </d-edit-popup>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { DxForm, DxItem } from 'devextreme-vue/form'
-import { DxFileUploader } from 'devextreme-vue/file-uploader'
+import {Component, Vue} from 'vue-property-decorator'
+import {DxForm, DxItem} from 'devextreme-vue/form'
+import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import { Product, ProductsModule } from '../service'
+import {Product, ProductsModule} from '../service'
 import _ from 'lodash'
 
 @Component({
@@ -75,7 +88,7 @@ export default class extends Vue {
 
   public validationRules: any = {
     name: [
-      { type: 'required', message: 'Название категории не задано' }
+      {type: 'required', message: 'Название категории не задано'}
     ]
   }
 
@@ -90,6 +103,7 @@ export default class extends Vue {
       this.entity = _.cloneDeep(this.state.currentProduct)
     } else {
       this.entity = new Product()
+      this.entity.category_id = this.state.currentCategory.id
       this.state.SetCurrentProduct(this.entity)
     }
   }

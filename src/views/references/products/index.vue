@@ -72,33 +72,36 @@
         </el-tree>
       </DxScrollView>
       <div class="doc-view-box">
-        <d-button
-          btn-text="Новый товар в категорию"
-          icon="plus"
-          btn-type="default"
-          :on-click="createNewProduct"
-        />
-        <DxForm
-          id="form"
-          ref="dxform"
-          :form-data.sync="state.currentCategory"
-          :read-only="true"
-        >
-          <DxItem
-            data-field="name"
-            :label="{text: 'Название категории'}"
+        <div v-if="!state.currentProduct.id">
+          <d-button
+            btn-text="Новый товар в категорию"
+            icon="plus"
+            btn-type="default"
+            :disabled="!state.currentCategory.id"
+            :on-click="createNewProduct"
           />
-          <DxItem
-            data-field="description"
-            :label="{text: 'Описание'}"
-          />
-          <DxItem
-            data-field="show_on_store"
-            editor-type="dxCheckBox"
-            :label="{text: 'Отображать на витрине'}"
-            :editor-options="{text: 'Отображать на витрине'}"
-          />
-        </DxForm>
+          <DxForm
+            id="form"
+            ref="dxform"
+            :form-data.sync="state.currentCategory"
+            :read-only="true"
+          >
+            <DxItem
+              data-field="name"
+              :label="{text: 'Название категории'}"
+            />
+            <DxItem
+              data-field="description"
+              :label="{text: 'Описание'}"
+            />
+            <DxItem
+              data-field="show_on_store"
+              editor-type="dxCheckBox"
+              :label="{text: 'Отображать на витрине'}"
+              :editor-options="{text: 'Отображать на витрине'}"
+            />
+          </DxForm>
+        </div>
       </div>
     </div>
     <CategoryPopupEdit/>
