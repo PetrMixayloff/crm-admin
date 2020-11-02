@@ -1,10 +1,10 @@
 <template>
   <d-edit-popup
-    :title="state.categoryEditMode ? 'Изменение данных категории' : 'Создание новой категории'"
-    default-width="450"
-    default-height="500"
-    :visible="state.categoryEditVisible"
-    validation-group="categoryEntity"
+    :title="state.productEditMode ? 'Изменение данных о товаре' : 'Создание нового товара'"
+    default-width="600"
+    default-height="900"
+    :visible="state.productEditVisible"
+    validation-group="productEntity"
     @hidden="onClose"
     @ok="onOk"
     @cancel="onCancel"
@@ -16,7 +16,7 @@
         ref="dxform"
         :form-data.sync="entity"
         :show-validation-summary="true"
-        validation-group="categoryEntity"
+        validation-group="productEntity"
       >
         <DxItem
           data-field="name"
@@ -26,6 +26,20 @@
         <DxItem
           data-field="description"
           :label="{text: 'Описание'}"
+        />
+        <DxItem
+          data-field="url"
+          :label="{text: 'URL'}"
+        />
+        <DxItem
+          data-field="price"
+          :label="{text: 'Цена'}"
+          editor-type="dxNumberBox"
+        />
+        <DxItem
+          data-field="old_price"
+          :label="{text: 'Старая цена'}"
+          editor-type="dxNumberBox"
         />
         <DxItem
           data-field="show_on_store"
@@ -43,11 +57,11 @@ import { Component, Vue } from 'vue-property-decorator'
 import { DxForm, DxItem } from 'devextreme-vue/form'
 import { DxFileUploader } from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import { ProductCategory, ProductsModule } from '../service'
+import { Product, ProductsModule } from '../service'
 import _ from 'lodash'
 
 @Component({
-  name: 'CategoryPopupEdit',
+  name: 'ProductPopupEdit',
   components: {
     DxForm,
     DxItem,
@@ -56,7 +70,7 @@ import _ from 'lodash'
   }
 })
 export default class extends Vue {
-  private entity: ProductCategory = new ProductCategory();
+  private entity: Product = new Product();
   public state = ProductsModule;
 
   public validationRules: any = {
@@ -72,27 +86,27 @@ export default class extends Vue {
   }
 
   onShow() {
-    if (this.state.categoryEditMode) {
-      this.entity = _.cloneDeep(this.state.currentCategory)
+    if (this.state.productEditMode) {
+      this.entity = _.cloneDeep(this.state.currentProduct)
     } else {
-      this.entity = new ProductCategory()
-      this.state.SetCurrentCategory(this.entity)
+      this.entity = new Product()
+      this.state.SetCurrentProduct(this.entity)
     }
   }
 
   onClose() {
-    this.state.SetCategoryEditVisible(false)
+    this.state.SetProductEditVisible(false)
   }
 
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
       try {
-        await this.state.crudCategory.save(this.entity)
+        await this.state.crudProduct.save(this.entity)
         await this.state.initItems()
-        this.state.SetCurrentCategory(this.entity)
-        this.state.SetCategoryEditVisible(false)
-        this.state.SetCategoryEditMode(false)
+        this.state.SetCurrentProduct(this.entity)
+        this.state.SetProductEditVisible(false)
+        this.state.SetProductEditMode(false)
       } catch (e) {
         console.log(e)
       }
@@ -100,7 +114,7 @@ export default class extends Vue {
   }
 
   onCancel(e: any) {
-    this.state.SetCategoryEditVisible(false)
+    this.state.SetProductEditVisible(false)
   }
 }
 </script>

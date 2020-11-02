@@ -48,6 +48,7 @@ class ProductsService extends VuexModule {
   @Action
   public async initItems() {
     const categories: any = await this.crudCategory.load()
+    categories.data.sort((a: any, b: any) => a.name > b.name ? 1 : -1)
     this.SET_ITEMS(categories.data)
   }
 
@@ -64,6 +65,16 @@ class ProductsService extends VuexModule {
   @Action
   public SetCategoryEditVisible(value: boolean) {
     this.SET_CATEGORY_EDIT_VISIBLE(value)
+  }
+
+  @Mutation
+  private SET_PRODUCT_EDIT_VISIBLE(value: boolean) {
+    this.productEditVisible = value
+  }
+
+  @Action
+  public SetProductEditVisible(value: boolean) {
+    this.SET_PRODUCT_EDIT_VISIBLE(value)
   }
 
   @Mutation
@@ -105,6 +116,16 @@ class ProductsService extends VuexModule {
   @Action
   public SetCategoryEditMode(value: boolean) {
     this.SET_CATEGORY_EDIT_MODE(value)
+  }
+
+  @Mutation
+  private SET_PRODUCT_EDIT_MODE(value: boolean) {
+    this.productEditMode = value
+  }
+
+  @Action
+  public SetProductEditMode(value: boolean) {
+    this.SET_PRODUCT_EDIT_MODE(value)
   }
 }
 
