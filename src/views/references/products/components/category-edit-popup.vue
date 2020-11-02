@@ -29,8 +29,9 @@
         />
         <DxItem
           data-field="show_on_store"
-          :label="{text: 'Отображать на витрине'}"
           editor-type="dxCheckBox"
+          :label="{text: 'Отображать на витрине'}"
+          :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
     </div>
@@ -90,6 +91,7 @@ export default class extends Vue {
         await this.state.crudCategory.save(this.entity)
         await this.state.initItems()
         this.state.SetCategoryEditVisible(false)
+        this.state.SetCategoryEditMode(false)
       } catch (e) {
         console.log(e)
       }

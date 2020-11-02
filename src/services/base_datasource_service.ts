@@ -22,7 +22,7 @@ class CrudOperates {
 
   public async load() {
     return request({
-      url: `${this.url}`,
+      url: `${this.url}/`,
       method: 'get'
     })
   }
@@ -30,7 +30,7 @@ class CrudOperates {
   public async save(entity: any) {
     if (_.isNil(entity.id)) {
       return request({
-        url: this.url,
+        url: `${this.url}/`,
         method: 'post',
         data: entity
       })
@@ -54,7 +54,6 @@ class CrudOperates {
 }
 
 export default {
-
   getBaseDataSource(api_route: string) {
     return new DataSource({
       store: new CustomStore({

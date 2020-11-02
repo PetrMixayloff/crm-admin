@@ -47,16 +47,8 @@ class ProductsService extends VuexModule {
 
   @Action
   public async initItems() {
-    const newItems: Array<any> = []
     const categories: any = await this.crudCategory.load()
-    categories.data.forEach((category: any) => {
-      newItems.push({
-        id: category.id,
-        label: category.name,
-        children: category.products
-      })
-    })
-    this.SET_ITEMS(newItems)
+    this.SET_ITEMS(categories.data)
   }
 
   @Mutation

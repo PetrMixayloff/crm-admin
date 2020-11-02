@@ -46,37 +46,75 @@
             <div class="node-label">
               {{ node.label }}
             </div>
-            <div class="manage-buttons">
-              <DHintBox
-                v-if="node.isCurrent"
-                hint="Удалить категорию"
-              >
-                <el-button
-                  type="text"
-                  icon="el-icon-delete"
-                  class="custom-icon"
-                  @click="removeCategory"
-                />
-              </DHintBox>
+            <div v-if="node.isCurrent" class="manage-buttons">
+              <dfn>
+                <DHintBox hint="Редактировать категорию">
+                  <el-button
+                    type="text"
+                    icon="el-icon-edit"
+                    class="custom-icon"
+                    @click="editCategory"
+                  />
+                </DHintBox>
+              </dfn>
+              <dfn>
+                <DHintBox hint="Удалить категорию">
+                  <el-button
+                    type="text"
+                    icon="el-icon-delete"
+                    class="custom-icon"
+                    @click="removeCategory"
+                  />
+                </DHintBox>
+              </dfn>
             </div>
           </div>
         </el-tree>
       </DxScrollView>
-      <div class="doc-view-box"/>
+      <div class="doc-view-box">
+        <d-button
+          btn-text="Новый товар в категорию"
+          icon="plus"
+          btn-type="default"
+          :on-click="createNewCategory"
+        />
+        <DxForm
+          id="form"
+          ref="dxform"
+          :form-data.sync="currentNode"
+          :read-only="true"
+        >
+          <DxItem
+            data-field="name"
+            :label="{text: 'Название категории'}"
+          />
+          <DxItem
+            data-field="description"
+            :label="{text: 'Описание'}"
+          />
+          <DxItem
+            data-field="show_on_store"
+            editor-type="dxCheckBox"
+            :label="{text: 'Отображать на витрине'}"
+            :editor-options="{text: 'Отображать на витрине'}"
+          />
+        </DxForm>
+      </div>
     </div>
     <CategoryPopupEdit/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import {Component, Vue, Watch} from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
-import { ProductsModule } from './service'
+import {ProductCategory, ProductsModule} from './service'
+import {DxForm, DxItem} from 'devextreme-vue/form'
 import CategoryPopupEdit from './components/category-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
-import { DxScrollView } from 'devextreme-vue'
-import { confirm } from 'devextreme/ui/dialog'
+import {DxScrollView} from 'devextreme-vue'
+import {confirm} from 'devextreme/ui/dialog'
 
 @Component({
   name: 'Products',
@@ -85,6 +123,8 @@ import { confirm } from 'devextreme/ui/dialog'
     DButton,
     DHintBox,
     DxScrollView,
+    DxForm,
+    DxItem,
     CategoryPopupEdit
   }
 })
@@ -99,8 +139,8 @@ export default class extends Vue {
 
   private defaultProps = {
     id: 'id',
-    children: 'children',
-    label: 'label'
+    children: 'products',
+    label: 'name'
   }
 
   @Watch('filterText')
@@ -125,7 +165,7 @@ export default class extends Vue {
 
   removeCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всех ее товаров. Удалить выбранную категорию?', 'Удаление категории')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }
@@ -139,8 +179,19 @@ export default class extends Vue {
       })
   }
 
+  editCategory() {
+    this.state.SetCategoryEditVisible(true)
+    this.state.SetCategoryEditMode(true)
+  }
+
   handleNodeClick(data: any, node: any) {
     this.currentNode = data
+    if (data.products) {
+      this.state.SetCurrentCategory(data)
+      console.log(this.state.currentCategory)
+    } else {
+      this.state.SetCurrentProduct(data)
+    }
   }
 
   selectItem(e: any) {
@@ -180,7 +231,7 @@ export default class extends Vue {
 
 .main-box-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   height: 100%;
   margin-top: 10px;
 }
@@ -191,6 +242,7 @@ export default class extends Vue {
 }
 
 .doc-view-box {
+  padding: 0 20px;
   width: 70%;
   height: 700px;
   margin-bottom: 10px;
