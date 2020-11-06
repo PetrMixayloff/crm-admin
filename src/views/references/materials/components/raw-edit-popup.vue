@@ -1,10 +1,10 @@
 <template>
   <d-edit-popup
-    :title="state.productEditMode ? 'Изменение данных о товаре' : 'Создание нового товара'"
+    :title="state.rawEditMode ? 'Изменение данных о сырье' : 'Создание нового сырья'"
     default-width="600"
     default-height="900"
-    :visible="state.productEditVisible"
-    validation-group="productEntity"
+    :visible="state.rawEditVisible"
+    validation-group="rawEntity"
     @hidden="onClose"
     @ok="onOk"
     @cancel="onCancel"
@@ -16,20 +16,16 @@
         ref="dxform"
         :form-data.sync="entity"
         :show-validation-summary="true"
-        validation-group="productEntity"
+        validation-group="rawEntity"
       >
         <DxItem
           data-field="name"
           :validation-rules="validationRules.name"
-          :label="{text: 'Название товара'}"
+          :label="{text: 'Название сырья'}"
         />
         <DxItem
           data-field="description"
           :label="{text: 'Описание'}"
-        />
-        <DxItem
-          data-field="url"
-          :label="{text: 'URL'}"
         />
         <DxItem
           data-field="price"
@@ -37,22 +33,40 @@
           editor-type="dxNumberBox"
         />
         <DxItem
-          data-field="old_price"
-          :label="{text: 'Старая цена'}"
+          data-field="quantity"
+          :label="{text: 'Остаток на складе'}"
+          editor-type="dxNumberBox"
+        />
+        <DxItem
+          data-field="unit"
+          :label="{text: 'Единица измерения'}"
+        />
+        <DxItem
+          data-field="per-pack"
+          :label="{text: 'Количество в упаковке'}"
+          editor-type="dxNumberBox"
+        />
+        <DxItem
+          data-field="green_signal"
+          :label="{text: 'Зеленый остаток'}"
+          editor-type="dxNumberBox"
+        />
+        <DxItem
+          data-field="yellow_signal"
+          :label="{text: 'Желтый остаток'}"
+          editor-type="dxNumberBox"
+        />
+        <DxItem
+          data-field="red_signal"
+          :label="{text: 'Красный остаток'}"
           editor-type="dxNumberBox"
         />
         <DxItem
           data-field="images"
           editor-type="dxGallery"
-          :label="{text: 'Изображения товара'}"
+          :label="{text: 'Изображения'}"
           :editor-options="{dataSource: entity.images.length > 0 ? entity.images : ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png'],
                             width: 200}"
-        />
-        <DxItem
-          data-field="show_on_store"
-          editor-type="dxCheckBox"
-          :label="{text: 'Отображать на витрине'}"
-          :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
       <DxFileUploader
@@ -70,11 +84,11 @@ import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem} from 'devextreme-vue/form'
 import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {Product, ProductsModule} from '../service'
+import {Raw, RawModule} from '../service'
 import _ from 'lodash'
 
 @Component({
-  name: 'ProductPopupEdit',
+  name: 'RawPopupEdit',
   components: {
     DxForm,
     DxItem,
@@ -83,12 +97,12 @@ import _ from 'lodash'
   }
 })
 export default class extends Vue {
-  private entity: Product = new Product();
-  public state = ProductsModule;
+  private entity: Raw = new Raw();
+  public state = RawModule;
 
   public validationRules: any = {
     name: [
-      {type: 'required', message: 'Название товара не задано'}
+      {type: 'required', message: 'Название сырья не задано'}
     ]
   }
 
@@ -99,28 +113,28 @@ export default class extends Vue {
   }
 
   onShow() {
-    if (this.state.productEditMode) {
-      this.entity = _.cloneDeep(this.state.currentProduct)
+    if (this.state.rawEditMode) {
+      this.entity = _.cloneDeep(this.state.currentRaw)
     } else {
-      this.entity = new Product()
+      this.entity = new Raw()
       this.entity.category_id = this.state.currentCategory.id
-      this.state.SetCurrentProduct(this.entity)
+      this.state.SetCurrentRaw(this.entity)
     }
   }
 
   onClose() {
-    this.state.SetProductEditVisible(false)
+    this.state.SetRawEditVisible(false)
   }
 
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
       try {
-        await this.state.crudProduct.save(this.entity)
+        await this.state.crudRaw.save(this.entity)
         await this.state.initItems()
-        this.state.SetCurrentProduct(this.entity)
-        this.state.SetProductEditVisible(false)
-        this.state.SetProductEditMode(false)
+        this.state.SetCurrentRaw(this.entity)
+        this.state.SetRawEditVisible(false)
+        this.state.SetRawEditMode(false)
       } catch (e) {
         console.log(e)
       }
@@ -128,7 +142,7 @@ export default class extends Vue {
   }
 
   onCancel(e: any) {
-    this.state.SetProductEditVisible(false)
+    this.state.SetRawEditVisible(false)
   }
 }
 </script>
