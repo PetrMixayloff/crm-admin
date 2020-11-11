@@ -46,56 +46,76 @@
             <div class="node-label">
               {{ node.label }}
             </div>
-            <div v-if="node.isCurrent" class="manage-buttons">
-              <dfn>
-                <DHintBox hint="Редактировать категорию">
-                  <el-button
-                    type="text"
-                    icon="el-icon-edit"
-                    class="custom-icon"
-                    @click="editCategory"
-                  />
-                </DHintBox>
-              </dfn>
-              <dfn>
-                <DHintBox hint="Удалить категорию">
-                  <el-button
-                    type="text"
-                    icon="el-icon-delete"
-                    class="custom-icon"
-                    @click="removeCategory"
-                  />
-                </DHintBox>
-              </dfn>
+            <div v-if="node.isCurrent && data.raws" class="manage-buttons">
             </div>
           </div>
         </el-tree>
       </DxScrollView>
       <div class="doc-view-box">
-        <div v-if="!state.currentRaw.id">
-          <d-button
-            btn-text="Добавиьт сырье в категорию"
-            icon="plus"
-            btn-type="default"
-            :disabled="!state.currentCategory.id"
-            :on-click="createNewRaw"
-          />
-          <DxForm
-            id="form"
-            ref="dxform"
-            :form-data.sync="state.currentCategory"
-            :read-only="true"
-          >
-            <DxItem
-              data-field="name"
-              :label="{text: 'Название категории'}"
-            />
-            <DxItem
-              data-field="description"
-              :label="{text: 'Описание'}"
-            />
-          </DxForm>
-        </div>
+        <table-actions
+          :on-create-new="createNewRaw"
+          :show-create-new="!showCategory"
+          :on-edit="showCategory ? editCategory : editRaw"
+          :on-delete="showCategory ? removeCategory : deleteRaw"
+          :table-title="showCategory ? state.currentCategory.name : state.currentRaw.name"
+          :selected="showCategory ? state.currentCategory.id : state.currentRaw.id"
+        />
+        <DxScrollView
+          direction="both"
+          show-scrollbar="always"
+        >
+          <div v-if="showCategory">
+            <d-textarea
+              :input-data="state.currentCategory.description"
+              title="Описание"
+              :height="200"
+              :is-read-only="true"/>
+          </div>
+          <div v-else>
+            <img :src="state.currentRaw.images.length > 0 ? state.currentRaw.images[0] :
+              ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']" alt="" width="25%">
+            <d-textarea
+              :input-data="state.currentRaw.description"
+              title="Описание"
+              :height="200"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.price"
+              title="Цена"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.quantity"
+              title="Остаток на складе"
+              :is-read-only="true"/>
+            <d-textbox
+              class="textbox-field"
+              :input-data="state.currentRaw.unit"
+              title="Единица измерения"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.per_pack"
+              title="Количество в упаковке"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.green_signal"
+              title="Зеленый остаток"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.yellow_signal"
+              title="Желтый остаток"
+              :is-read-only="true"/>
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.red_signal"
+              title="Красный остаток"
+              :is-read-only="true"/>
+          </div>
+        </DxScrollView>
       </div>
     </div>
     <RawCategoryPopupEdit/>
@@ -111,19 +131,29 @@ import {DxForm, DxItem} from 'devextreme-vue/form'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
+import DTextbox from '@/components/DTextbox/textbox.vue'
+import DNuberbox from '@/components/DNumberbox/numberbox.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
+import TableActions from '@/components/TableActions/actions.vue'
+import DTextarea from '@/components/DTextarea/textarea.vue';
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
+import DNumberbox from "@/components/DNumberbox/numberbox.vue";
 
 @Component({
   name: 'Materials',
   components: {
+    DNumberbox,
     DxTreeView,
     DButton,
     DHintBox,
     DxScrollView,
     DxForm,
     DxItem,
+    DTextbox,
+    DNuberbox,
+    TableActions,
+    DTextarea,
     RawCategoryPopupEdit,
     RawPopupEdit
   }
@@ -132,6 +162,7 @@ export default class extends Vue {
   public state = RawModule
   public rawDataSource = this.state.rawDataSource
   public categoryDataSource = this.state.rawCategoryDataSource
+  public showCategory = true
   private filterText = ''
 
   private defaultProps = {
@@ -183,9 +214,11 @@ export default class extends Vue {
 
   handleNodeClick(data: any, node: any) {
     if (data.raws) {
+      this.showCategory = true
       let {is_active, ...category} = data;
       this.state.SetCurrentCategory(category)
     } else {
+      this.showCategory = false
       this.state.SetCurrentRaw(data)
     }
   }
@@ -196,6 +229,18 @@ export default class extends Vue {
 
   createNewRaw() {
     this.state.SetRawEditVisible(true)
+  }
+
+  editRaw() {
+    //
+  }
+
+  deleteRaw() {
+    //
+  }
+
+  onRefresh() {
+    //
   }
 }
 </script>
@@ -267,5 +312,11 @@ export default class extends Vue {
 
 dfn div {
   display: inline;
+}
+
+.textbox-field {
+  font-size: 18px;
+  padding-top: 20px;
+  line-height: 1.5;
 }
 </style>

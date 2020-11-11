@@ -2,6 +2,7 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
 import { UserModule } from '@/store/modules/user'
+import _ from 'lodash'
 
 export const raw_route_ns = 'raw'
 export const raw_category_route_ns = 'raw_category'
@@ -36,6 +37,7 @@ class RawService extends VuexModule {
   public rawEditMode = false
   public currentCategory = new RawCategory()
   public currentRaw = new Raw()
+  // public currentData: RawCategory | Raw = new RawCategory()
 
   public rawDataSource = base_ds.getBaseDataSource(raw_route_ns)
   public crudRaw = base_ds.getBaseCrud(raw_route_ns)
@@ -96,6 +98,16 @@ class RawService extends VuexModule {
   public SetCurrentCategory(value: RawCategory) {
     this.SET_CURRENT_CATEGORY(value)
   }
+
+  //  @Mutation
+  // private SET_CURRENT_DATA(value: RawCategory | Raw) {
+  //   this.currentData = _.cloneDeep(value)
+  // }
+  //
+  // @Action
+  // public SetCurrentData(value: RawCategory | Raw) {
+  //   this.SET_CURRENT_DATA(value)
+  // }
 
   @Mutation
   private RESET_CURRENT() {
