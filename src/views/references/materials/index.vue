@@ -51,12 +51,12 @@
           </div>
         </el-tree>
       </DxScrollView>
-      <div class="doc-view-box">
+      <div class="doc-view-box" v-if="state.currentRow">
         <table-actions
           :on-create-new="createNewRaw"
           :show-create-new="!showCategory"
           :on-edit="showCategory ? editCategory : editRaw"
-          :on-delete="showCategory ? removeCategory : deleteRaw"
+          :on-delete="showCategory ? deleteCategory : deleteRaw"
           :table-title="showCategory ? state.currentCategory.name : state.currentRaw.name"
           :selected="showCategory ? state.currentCategory.id : state.currentRaw.id"
         />
@@ -65,29 +65,39 @@
           show-scrollbar="always"
         >
           <div v-if="showCategory">
-            <d-textarea
-              :input-data="state.currentCategory.description"
-              title="Описание"
-              :height="200"
-              :is-read-only="true"/>
+            <table-grid
+              ref="tablegrid"
+              :data-source="rawDataSource"
+              :columns="rawColumns"
+              :row-click="empty"
+              :dbl-row-click="empty"
+            />
           </div>
           <div v-else>
-            <img :src="state.currentRaw.images.length > 0 ? state.currentRaw.images[0] :
+            <div class="flex-l-b">
+              <img :src="state.currentRaw.image > 0 ? state.currentRaw.image :
               ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']" alt="" width="25%">
-            <d-textarea
-              :input-data="state.currentRaw.description"
-              title="Описание"
-              :height="200"
-              :is-read-only="true"/>
+              <p style="margin-left: 20px; width: 100%"> {{ state.currentRaw.description }}</p>
+            </div>
+            <div class="flex-l-c">
+              <d-numberbox
+                class="textbox-field"
+                :input-data="state.currentRaw.quantity"
+                title="Общий остаток на складе"
+                :is-read-only="true"/>
+              <d-button
+                style="margin-left: 20px;"
+                btn-text="Детализация"
+                icon="info"
+                btn-type="default"
+                :on-click="detailView"
+              />
+            </div>
+
             <d-numberbox
               class="textbox-field"
               :input-data="state.currentRaw.price"
-              title="Цена"
-              :is-read-only="true"/>
-            <d-numberbox
-              class="textbox-field"
-              :input-data="state.currentRaw.quantity"
-              title="Остаток на складе"
+              title="Суммарная стоимость остатка"
               :is-read-only="true"/>
             <d-textbox
               class="textbox-field"
@@ -95,6 +105,7 @@
               title="Единица измерения"
               :is-read-only="true"/>
             <d-numberbox
+              v-if="state.currentRaw.per_pack"
               class="textbox-field"
               :input-data="state.currentRaw.per_pack"
               title="Количество в упаковке"
@@ -133,12 +144,15 @@ import RawPopupEdit from './components/raw-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
 import DTextbox from '@/components/DTextbox/textbox.vue'
 import DNuberbox from '@/components/DNumberbox/numberbox.vue'
+import TableGrid from '@/components/TableGrid/grid.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import DTextarea from '@/components/DTextarea/textarea.vue';
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
 import DNumberbox from "@/components/DNumberbox/numberbox.vue";
+import dbSchemaService from "@/services/db_schema_service";
+import {table_name} from "./service";
 
 @Component({
   name: 'Materials',
@@ -153,6 +167,7 @@ import DNumberbox from "@/components/DNumberbox/numberbox.vue";
     DTextbox,
     DNuberbox,
     TableActions,
+    TableGrid,
     DTextarea,
     RawCategoryPopupEdit,
     RawPopupEdit
@@ -164,11 +179,24 @@ export default class extends Vue {
   public categoryDataSource = this.state.rawCategoryDataSource
   public showCategory = true
   private filterText = ''
+  public rawColumns: Array<any> = [];
+  public emptyEntity: any = {};
 
   private defaultProps = {
     id: 'id',
     children: 'raws',
     label: 'name'
+  }
+
+  created() {
+    this.initColumns()
+  }
+
+  initColumns() {
+    const included = ['name', 'image', 'unit', 'price', 'quantity'];
+
+    [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
+      table_name, included)
   }
 
   @Watch('filterText')
@@ -191,7 +219,7 @@ export default class extends Vue {
     //
   }
 
-  removeCategory() {
+  deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всего ее сырья. Удалить выбранную категорию?', 'Удаление категории')
       .then(async (answer: boolean) => {
         if (!answer) {
@@ -213,13 +241,14 @@ export default class extends Vue {
   }
 
   handleNodeClick(data: any, node: any) {
-    if (data.raws) {
+    let {is_active, ...rowData} = data;
+    this.state.SetCurrentRow(rowData)
+    if (rowData.raws) {
       this.showCategory = true
-      let {is_active, ...category} = data;
-      this.state.SetCurrentCategory(category)
+      this.state.SetCurrentCategory(rowData)
     } else {
       this.showCategory = false
-      this.state.SetCurrentRaw(data)
+      this.state.SetCurrentRaw(rowData)
     }
   }
 
@@ -231,15 +260,32 @@ export default class extends Vue {
     this.state.SetRawEditVisible(true)
   }
 
-  editRaw() {
+  detailView() {
     //
+  }
+
+  editRaw() {
+    this.state.SetRawEditVisible(true)
+    this.state.SetRawEditMode(true)
   }
 
   deleteRaw() {
-    //
+    confirm('Вы уверены, что хотите удалить?', 'Удаление сырья')
+      .then(async (answer: boolean) => {
+        if (!answer) {
+          return
+        }
+        try {
+          await this.state.crudRaw.delete(this.state.currentRaw.id)
+          await this.state.initItems()
+          this.state.ResetCurrentRow()
+        } catch (e) {
+          console.log(e)
+        }
+      })
   }
 
-  onRefresh() {
+  empty() {
     //
   }
 }

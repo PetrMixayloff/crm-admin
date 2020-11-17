@@ -10,6 +10,8 @@
         :height="height"
         :read-only="isReadOnly"
         :disabled="isDisabled"
+        :hover-state-enabled="isReadOnly"
+        :focus-state-enabled="isReadOnly"
         :visible="true"
         styling-mode="outlined"
         @valueChanged="$emit('update:syncInputData', syncInputData)"

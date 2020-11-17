@@ -44,6 +44,7 @@
         <DxItem
           data-field="per-pack"
           :label="{text: 'Количество в упаковке'}"
+          help-text="Если сырье поставляется штучно, оставьте равным нулю"
           editor-type="dxNumberBox"
         />
         <DxItem
@@ -61,20 +62,34 @@
           :label="{text: 'Красный остаток'}"
           editor-type="dxNumberBox"
         />
-        <DxItem
-          data-field="images"
-          editor-type="dxGallery"
-          :label="{text: 'Изображения'}"
-          :editor-options="{dataSource: entity.images.length > 0 ? entity.images : ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png'],
-                            width: 200}"
-        />
       </DxForm>
-      <DxFileUploader
-        select-button-text="Выбрать фото"
-        label-text=""
+      <h5>Изображение</h5>
+      <img :src="state.currentRaw.image ? state.currentRaw.image :
+              ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']" alt="" width="25%">
+      <el-upload
+        ref="rawImage"
+        class="btn-upload"
         accept="image/*"
-        upload-mode="useButtons"
-        :multiple="true"/>
+        :headers="{'Authorization': token}"
+        :show-file-list="true"
+        :auto-upload="true"
+        :action="uploadUrl"
+        :multiple="false"
+        :on-success="onUploaded">
+        <d-button
+          btn-text="Сменить изображение"
+          btn-type="primary"
+          styling-mode="contained"
+          :on-click="empty"
+        />
+      </el-upload>
+      <d-button
+        v-if="state.currentRaw.image"
+        btn-text="Удалить изображение"
+        btn-type="danger"
+        styling-mode="contained"
+        :on-click="onRemove"
+      />
     </div>
   </d-edit-popup>
 </template>
@@ -85,13 +100,16 @@ import {DxForm, DxItem} from 'devextreme-vue/form'
 import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {Raw, RawModule} from '../service'
+import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
+import {UserModule} from '@/store/modules/user'
 
 @Component({
   name: 'RawPopupEdit',
   components: {
     DxForm,
     DxItem,
+    DButton,
     DEditPopup,
     DxFileUploader
   }
@@ -99,6 +117,9 @@ import _ from 'lodash'
 export default class extends Vue {
   private entity: Raw = new Raw();
   public state = RawModule;
+  private token = `Bearer ${UserModule.token}`
+
+  private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
 
   public validationRules: any = {
     name: [
@@ -143,6 +164,14 @@ export default class extends Vue {
 
   onCancel(e: any) {
     this.state.SetRawEditVisible(false)
+  }
+
+  onUploaded(e: any) {
+    //
+  }
+
+  onRemove() {
+    //
   }
 }
 </script>

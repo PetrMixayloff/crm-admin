@@ -7,6 +7,8 @@ import _ from 'lodash'
 export const raw_route_ns = 'raw'
 export const raw_category_route_ns = 'raw_category'
 
+export const table_name = 'public.raw'
+
 export class RawCategory {
   id: string | null = null
   shop_id: string = UserModule.shopId
@@ -19,7 +21,7 @@ export class Raw {
   shop_id: string = UserModule.shopId
   name = ''
   description = ''
-  images = []
+  image: string | null = ''
   price = 0.00
   quantity = 0
   per_pack = 0
@@ -37,7 +39,7 @@ class RawService extends VuexModule {
   public rawEditMode = false
   public currentCategory = new RawCategory()
   public currentRaw = new Raw()
-  // public currentData: RawCategory | Raw = new RawCategory()
+  public currentRow: Raw | RawCategory | null = null
 
   public rawDataSource = base_ds.getBaseDataSource(raw_route_ns)
   public crudRaw = base_ds.getBaseCrud(raw_route_ns)
@@ -99,15 +101,19 @@ class RawService extends VuexModule {
     this.SET_CURRENT_CATEGORY(value)
   }
 
-  //  @Mutation
-  // private SET_CURRENT_DATA(value: RawCategory | Raw) {
-  //   this.currentData = _.cloneDeep(value)
-  // }
-  //
-  // @Action
-  // public SetCurrentData(value: RawCategory | Raw) {
-  //   this.SET_CURRENT_DATA(value)
-  // }
+   @Mutation
+  private SET_CURRENT_ROW(value: RawCategory | Raw | null) {
+    if (!_.isNull(value)) {
+      this.currentRow = _.cloneDeep(value)
+    } else {
+      this.currentRow = null
+    }
+  }
+
+  @Action
+  public SetCurrentRow(value: RawCategory | Raw | null) {
+    this.SET_CURRENT_ROW(value)
+  }
 
   @Mutation
   private RESET_CURRENT() {
