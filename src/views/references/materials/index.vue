@@ -1,55 +1,70 @@
 <template>
   <div class="app-container">
-    <div class="top-panel">
-      <div class="export">
-        <d-button
-          btn-text="Новая категория"
-          icon="plus"
-          btn-type="default"
-          :on-click="createNewCategory"
-        />
-      </div>
-      <div class="search">
-        <el-input
-          v-model="filterText"
-          placeholder="Поиск"
-          class="input-with-select"
-        >
-          <el-button
-            slot="append"
-            icon="el-icon-search"
-          />
-        </el-input>
-      </div>
-    </div>
+<!--    <div class="top-panel">-->
+    <!--      <div class="export">-->
+    <!--        <d-button-->
+    <!--          btn-text="Новая категория"-->
+    <!--          icon="plus"-->
+    <!--          btn-type="default"-->
+    <!--          :on-click="createNewCategory"-->
+    <!--        />-->
+    <!--      </div>-->
+      <!--      <div class="search">-->
+      <!--        <el-input-->
+      <!--          v-model="filterText"-->
+      <!--          placeholder="Поиск"-->
+      <!--          class="input-with-select"-->
+      <!--        >-->
+      <!--          <el-button-->
+      <!--            slot="append"-->
+      <!--            icon="el-icon-search"-->
+      <!--          />-->
+      <!--        </el-input>-->
+      <!--      </div>-->
+<!--    </div>-->
     <div class="main-box-content">
       <DxScrollView
         direction="both"
         show-scrollbar="always"
         class="filter-tree"
       >
-        <el-tree
-          ref="tree"
-          node-key="id"
-          :data="state.items"
-          :props="defaultProps"
-          default-expand-all
-          :expand-on-click-node="false"
-          :highlight-current="true"
-          :filter-node-method="filterNode"
-          @node-click="handleNodeClick"
-        >
-          <div
-            slot-scope="{node, data}"
-            class="custom-tree-node"
-          >
-            <div class="node-label">
-              {{ node.label }}
-            </div>
-            <div v-if="node.isCurrent && data.raws" class="manage-buttons">
-            </div>
-          </div>
-        </el-tree>
+        <d-button
+          btn-text="Новая категория"
+          icon="plus"
+          btn-type="default"
+          :on-click="createNewCategory"
+        />
+        <DxTreeView
+          id="treeview"
+          :data-source="categoryDataSource"
+          :search-enabled="true"
+          key-expr="id"
+          display-expr="name"
+          items-expr="raws"
+          @item-click="handleNodeClick"
+        />
+        <!--        <el-tree-->
+        <!--          ref="tree"-->
+        <!--          node-key="id"-->
+        <!--          :data="state.items"-->
+        <!--          :props="defaultProps"-->
+        <!--          default-expand-all-->
+        <!--          :expand-on-click-node="false"-->
+        <!--          :highlight-current="true"-->
+        <!--          :filter-node-method="filterNode"-->
+        <!--          @node-click="handleNodeClick"-->
+        <!--        >-->
+        <!--          <div-->
+        <!--            slot-scope="{node, data}"-->
+        <!--            class="custom-tree-node"-->
+        <!--          >-->
+        <!--            <div class="node-label">-->
+        <!--              {{ node.label }}-->
+        <!--            </div>-->
+        <!--            <div v-if="node.isCurrent && data.raws" class="manage-buttons">-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </el-tree>-->
       </DxScrollView>
       <div class="doc-view-box" v-if="state.currentRow">
         <table-actions
@@ -199,11 +214,11 @@ export default class extends Vue {
       table_name, included)
   }
 
-  @Watch('filterText')
-  findValue(val: any) {
-    const tree: any = this.$refs.tree
-    tree.filter(val)
-  }
+  // @Watch('filterText')
+  // findValue(val: any) {
+  //   const tree: any = this.$refs.tree
+  //   tree.filter(val)
+  // }
 
   async mounted() {
     await this.state.initItems()
@@ -240,15 +255,16 @@ export default class extends Vue {
     this.state.SetCategoryEditMode(true)
   }
 
-  handleNodeClick(data: any, node: any) {
-    let {is_active, ...rowData} = data;
-    this.state.SetCurrentRow(rowData)
-    if (rowData.raws) {
+  handleNodeClick(e: any) {
+    console.log(e)
+    // let {is_active, ...rowData} = data;
+    this.state.SetCurrentRow(e.itemData)
+    if (e.itemData.raws) {
       this.showCategory = true
-      this.state.SetCurrentCategory(rowData)
+      this.state.SetCurrentCategory(e.itemData)
     } else {
       this.showCategory = false
-      this.state.SetCurrentRaw(rowData)
+      this.state.SetCurrentRaw(e.itemData)
     }
   }
 
