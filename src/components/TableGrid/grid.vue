@@ -16,6 +16,7 @@
       :selected-row-keys.sync="syncedCheckedItems"
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
+      :row-template="rowTemplate ? 'dataRowTemplate' : null"
       @row-click="onRowClick"
       @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
@@ -63,6 +64,32 @@
           :rowKey="row.data.data.id"
           :rowData="row.data.data"
         />
+      </template>
+
+      <template #dataRowTemplate="{data: rowInfo}">
+        <tbody
+          :class="{'dx-row-alt': rowInfo.rowIndex % 2}"
+          class="employee dx-row"
+        >
+          <tr class="main-row">
+            <td
+              v-for="column in columns.filter((item) => {
+                return item.visible !== false
+              })"
+              :key="column.caption"
+              :style="column.dataField === 'image' ? 'width: 10%' : ''"
+            >
+              <img
+                v-if="column.dataField === 'image'"
+                src="https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png"
+                alt=""
+                width="30%"
+                heigh="30%"
+              >
+              <span v-else>{{ rowInfo.data[column.dataField] }}</span>
+            </td>
+          </tr>
+        </tbody>
       </template>
 
       <dx-remote-operations
@@ -169,6 +196,7 @@ export default class extends Vue {
   @Prop({ default: defaultPageSizes }) public pageSizes!: number[];
   @Prop() public addClass!: string;
   @Prop({ default: false }) public disabled!: boolean;
+  @Prop({ default: false }) public rowTemplate!: boolean;
 
   @Emit('cell-prepared')
   onCellPrepared(e: any) {

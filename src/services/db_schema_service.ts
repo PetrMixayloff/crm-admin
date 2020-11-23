@@ -15,23 +15,18 @@ export default {
   },
 
   prepareGridColumns(schema_table: string, included: string[] = [], excluded: string[] = []): any {
-    const columns = []
+    const columns: any[] = []
     const empty_entity: any = {}
-    const included_is = included.length
-    const excluded_is = excluded.length
 
     // @ts-ignore
     const schema: any[] = AppModule.db_schema[schema_table]
 
     if (schema) {
-      for (const item of schema) {
-        if (EXCLUDED_COLUMNS.indexOf(item.name) !== -1) continue
+      included.forEach((field: any) => {
+        const item = schema.filter((item) => { return item.name === field })[0]
 
         empty_entity[item.name] = null
         if (item.type === 'boolean') empty_entity[item.name] = false
-
-        if (included_is && included.indexOf(item.name) === -1) continue
-        if (excluded_is && excluded.indexOf(item.name) !== -1) continue
 
         const obj: any = {
           dataField: item.name,
@@ -41,8 +36,10 @@ export default {
         if (item.name === 'id') {
           obj.visible = false
         }
+        if (item.name === 'category_id') {
+          obj.visible = false
+        }
         if (item.name === 'image') {
-          console.log(item)
           obj.filterOperations = null
         } else if (item.type === 'number') {
           obj.dataType = 'number'
@@ -58,7 +55,7 @@ export default {
           obj.filterOperations = ['contains']
         }
         columns.push(obj)
-      }
+      })
     }
     return [columns, empty_entity]
   }

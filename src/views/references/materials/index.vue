@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-<!--    <div class="top-panel">-->
+    <!--    <div class="top-panel">-->
     <!--      <div class="export">-->
     <!--        <d-button-->
     <!--          btn-text="Новая категория"-->
@@ -9,19 +9,19 @@
     <!--          :on-click="createNewCategory"-->
     <!--        />-->
     <!--      </div>-->
-      <!--      <div class="search">-->
-      <!--        <el-input-->
-      <!--          v-model="filterText"-->
-      <!--          placeholder="Поиск"-->
-      <!--          class="input-with-select"-->
-      <!--        >-->
-      <!--          <el-button-->
-      <!--            slot="append"-->
-      <!--            icon="el-icon-search"-->
-      <!--          />-->
-      <!--        </el-input>-->
-      <!--      </div>-->
-<!--    </div>-->
+    <!--      <div class="search">-->
+    <!--        <el-input-->
+    <!--          v-model="filterText"-->
+    <!--          placeholder="Поиск"-->
+    <!--          class="input-with-select"-->
+    <!--        >-->
+    <!--          <el-button-->
+    <!--            slot="append"-->
+    <!--            icon="el-icon-search"-->
+    <!--          />-->
+    <!--        </el-input>-->
+    <!--      </div>-->
+    <!--    </div>-->
     <div class="main-box-content">
       <DxScrollView
         direction="both"
@@ -66,7 +66,10 @@
         <!--          </div>-->
         <!--        </el-tree>-->
       </DxScrollView>
-      <div class="doc-view-box" v-if="state.currentRow">
+      <div
+        v-if="state.currentRow"
+        class="doc-view-box"
+      >
         <table-actions
           :on-create-new="createNewRaw"
           :show-create-new="!showCategory"
@@ -84,22 +87,32 @@
               ref="tablegrid"
               :data-source="rawDataSource"
               :columns="rawColumns"
+              :filter-sync-enabled="true"
+              :filter-value="['category_id', '=', state.currentCategory.id]"
               :row-click="empty"
               :dbl-row-click="empty"
+              :row-template="true"
             />
           </div>
           <div v-else>
             <div class="flex-l-b">
-              <img :src="state.currentRaw.image > 0 ? state.currentRaw.image :
-              ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']" alt="" width="25%">
-              <p style="margin-left: 20px; width: 100%"> {{ state.currentRaw.description }}</p>
+              <img
+                :src="state.currentRaw.image > 0 ? state.currentRaw.image :
+                  ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']"
+                alt=""
+                width="25%"
+              >
+              <p style="margin-left: 20px; width: 100%">
+                {{ state.currentRaw.description }}
+              </p>
             </div>
             <div class="flex-l-c">
               <d-numberbox
                 class="textbox-field"
                 :input-data="state.currentRaw.quantity"
                 title="Общий остаток на складе"
-                :is-read-only="true"/>
+                :is-read-only="true"
+              />
               <d-button
                 style="margin-left: 20px;"
                 btn-text="Детализация"
@@ -113,47 +126,53 @@
               class="textbox-field"
               :input-data="state.currentRaw.price"
               title="Суммарная стоимость остатка"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
             <d-textbox
               class="textbox-field"
               :input-data="state.currentRaw.unit"
               title="Единица измерения"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
             <d-numberbox
               v-if="state.currentRaw.per_pack"
               class="textbox-field"
               :input-data="state.currentRaw.per_pack"
               title="Количество в упаковке"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
             <d-numberbox
               class="textbox-field"
               :input-data="state.currentRaw.green_signal"
               title="Зеленый остаток"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
             <d-numberbox
               class="textbox-field"
               :input-data="state.currentRaw.yellow_signal"
               title="Желтый остаток"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
             <d-numberbox
               class="textbox-field"
               :input-data="state.currentRaw.red_signal"
               title="Красный остаток"
-              :is-read-only="true"/>
+              :is-read-only="true"
+            />
           </div>
         </DxScrollView>
       </div>
     </div>
-    <RawCategoryPopupEdit/>
-    <RawPopupEdit/>
+    <RawCategoryPopupEdit />
+    <RawPopupEdit />
   </div>
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
-import {RawModule} from './service'
-import {DxForm, DxItem} from 'devextreme-vue/form'
+import { RawModule, table_name } from './service'
+import { DxForm, DxItem } from 'devextreme-vue/form'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
@@ -162,12 +181,11 @@ import DNuberbox from '@/components/DNumberbox/numberbox.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
 import TableActions from '@/components/TableActions/actions.vue'
-import DTextarea from '@/components/DTextarea/textarea.vue';
-import {DxScrollView} from 'devextreme-vue'
-import {confirm} from 'devextreme/ui/dialog'
-import DNumberbox from "@/components/DNumberbox/numberbox.vue";
-import dbSchemaService from "@/services/db_schema_service";
-import {table_name} from "./service";
+import DTextarea from '@/components/DTextarea/textarea.vue'
+import { DxScrollView } from 'devextreme-vue'
+import { confirm } from 'devextreme/ui/dialog'
+import DNumberbox from '@/components/DNumberbox/numberbox.vue'
+import dbSchemaService from '@/services/db_schema_service'
 
 @Component({
   name: 'Materials',
@@ -208,7 +226,7 @@ export default class extends Vue {
   }
 
   initColumns() {
-    const included = ['name', 'image', 'unit', 'price', 'quantity'];
+    const included = ['image', 'category_id', 'name', 'unit', 'price', 'quantity'];
 
     [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
       table_name, included)
@@ -236,7 +254,7 @@ export default class extends Vue {
 
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всего ее сырья. Удалить выбранную категорию?', 'Удаление категории')
-      .then(async (answer: boolean) => {
+      .then(async(answer: boolean) => {
         if (!answer) {
           return
         }
@@ -256,7 +274,6 @@ export default class extends Vue {
   }
 
   handleNodeClick(e: any) {
-    console.log(e)
     // let {is_active, ...rowData} = data;
     this.state.SetCurrentRow(e.itemData)
     if (e.itemData.raws) {
@@ -287,7 +304,7 @@ export default class extends Vue {
 
   deleteRaw() {
     confirm('Вы уверены, что хотите удалить?', 'Удаление сырья')
-      .then(async (answer: boolean) => {
+      .then(async(answer: boolean) => {
         if (!answer) {
           return
         }
