@@ -70,6 +70,9 @@ export default class extends Vue {
       this.entity = _.cloneDeep(this.state.currentCategory)
     } else {
       this.entity = new RawCategory()
+      if (!_.isNil(this.state.currentCategory.id)) {
+        this.entity.parent_id = this.state.currentCategory.id
+      }
       this.state.SetCurrentCategory(this.entity)
     }
   }
@@ -83,6 +86,7 @@ export default class extends Vue {
     if (result.isValid) {
       try {
         await this.state.crudRawCategory.save(this.entity)
+        await this.state.rawCategoryDataSource.reload()
         await this.state.initItems()
         this.state.SetCurrentCategory(this.entity)
         this.state.SetCategoryEditVisible(false)

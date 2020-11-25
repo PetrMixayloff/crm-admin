@@ -38,11 +38,27 @@
           id="treeview"
           :data-source="categoryDataSource"
           :search-enabled="true"
+          data-structure="plain"
+          parent-id-expr="parent_id"
           key-expr="id"
           display-expr="name"
-          items-expr="raws"
           @item-click="handleNodeClick"
-        />
+        >
+          <template #item="item">
+            <div class="flex-between-c">
+              <span>{{ item.data.name }}</span>
+              <dx-button
+                v-if="item.data.id === state.currentCategory.id"
+                icon="plus"
+                type="back"
+                styling-mode="text"
+                hint="Добавить подкатегорию"
+                :on-click="createNewCategory"
+              />
+            </div>
+
+          </template>
+        </DxTreeView>
         <!--        <el-tree-->
         <!--          ref="tree"-->
         <!--          node-key="id"-->
@@ -187,6 +203,7 @@ import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
 import DNumberbox from '@/components/DNumberbox/numberbox.vue'
 import dbSchemaService from '@/services/db_schema_service'
+import DxButton from 'devextreme-vue/button'
 import _ from 'lodash'
 
 @Component({
@@ -195,6 +212,7 @@ import _ from 'lodash'
     DNumberbox,
     DxTreeView,
     DButton,
+    DxButton,
     DHintBox,
     DxScrollView,
     DxForm,
@@ -296,6 +314,11 @@ export default class extends Vue {
   }
 
   createNewCategory() {
+    this.state.ResetCurrentCategory()
+    this.state.SetCategoryEditVisible(true)
+  }
+
+  createNewSubCategory() {
     this.state.SetCategoryEditVisible(true)
   }
 
@@ -314,7 +337,7 @@ export default class extends Vue {
 
   deleteRaw() {
     confirm('Вы уверены, что хотите удалить?', 'Удаление сырья')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }
@@ -329,7 +352,7 @@ export default class extends Vue {
       })
   }
 
-  onRowClick(e:any) {
+  onRowClick(e: any) {
     this.state.SetCurrentRaw(e.data)
   }
 
