@@ -1,7 +1,7 @@
-import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
-import { UserModule } from '@/store/modules/user'
+import {UserModule} from '@/store/modules/user'
 import _ from 'lodash'
 
 export const raw_route_ns = 'raw'
@@ -15,6 +15,7 @@ export class RawCategory {
   name: string = ''
   description: string = ''
 }
+
 export class Raw {
   id: string | null = null
   category_id: string | null = null
@@ -31,7 +32,7 @@ export class Raw {
   unit = 'шт'
 }
 
-@Module({ dynamic: true, store, name: 'raw', namespaced: true })
+@Module({dynamic: true, store, name: 'raw', namespaced: true})
 class RawService extends VuexModule {
   public categoryEditVisible = false
   public categoryEditMode = false
@@ -83,7 +84,7 @@ class RawService extends VuexModule {
 
   @Mutation
   private SET_CURRENT_RAW(value: Raw) {
-    this.currentRaw = { ...value }
+    this.currentRaw = {...value}
   }
 
   @Action
@@ -93,7 +94,7 @@ class RawService extends VuexModule {
 
   @Mutation
   private SET_CURRENT_CATEGORY(value: RawCategory) {
-    this.currentCategory = { ...value }
+    this.currentCategory = {...value}
   }
 
   @Action
@@ -101,7 +102,7 @@ class RawService extends VuexModule {
     this.SET_CURRENT_CATEGORY(value)
   }
 
-   @Mutation
+  @Mutation
   private SET_CURRENT_ROW(value: RawCategory | Raw | null) {
     if (!_.isNull(value)) {
       this.currentRow = _.cloneDeep(value)
@@ -124,6 +125,16 @@ class RawService extends VuexModule {
   @Action
   public ResetCurrentRow() {
     this.RESET_CURRENT()
+  }
+
+  @Action
+  public ResetCurrentRaw() {
+    this.RESET_CURRENT_RAW()
+  }
+
+  @Mutation
+  private RESET_CURRENT_RAW() {
+    this.currentRaw = new Raw()
   }
 
   @Mutation

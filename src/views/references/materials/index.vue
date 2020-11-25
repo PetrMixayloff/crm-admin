@@ -72,11 +72,11 @@
       >
         <table-actions
           :on-create-new="createNewRaw"
-          :show-create-new="!showCategory"
-          :on-edit="showCategory ? editCategory : editRaw"
-          :on-delete="showCategory ? deleteCategory : deleteRaw"
+          :show-create-new="showCategory"
+          :on-edit="editRaw"
+          :on-delete="deleteRaw"
           :table-title="showCategory ? state.currentCategory.name : state.currentRaw.name"
-          :selected="showCategory ? state.currentCategory.id : state.currentRaw.id"
+          :selected="state.currentRaw.id"
         />
         <DxScrollView
           direction="both"
@@ -89,9 +89,10 @@
               :columns="rawColumns"
               :filter-sync-enabled="true"
               :filter-value="['category_id', '=', state.currentCategory.id]"
-              :row-click="empty"
+              :row-click="onRowClick"
               :dbl-row-click="empty"
-              :row-template="true"
+              selection-mode="single"
+              @cell-prepared="onCellPrepared"
             />
           </div>
           <div v-else>
@@ -163,16 +164,16 @@
         </DxScrollView>
       </div>
     </div>
-    <RawCategoryPopupEdit />
-    <RawPopupEdit />
+    <RawCategoryPopupEdit/>
+    <RawPopupEdit/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import {Component, Vue, Watch} from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
-import { RawModule, table_name } from './service'
-import { DxForm, DxItem } from 'devextreme-vue/form'
+import {RawModule, table_name} from './service'
+import {DxForm, DxItem} from 'devextreme-vue/form'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
 import DButton from '@/components/DButton/button.vue'
@@ -182,10 +183,11 @@ import TableGrid from '@/components/TableGrid/grid.vue'
 import DHintBox from '@/components/DHintBox/index.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import DTextarea from '@/components/DTextarea/textarea.vue'
-import { DxScrollView } from 'devextreme-vue'
-import { confirm } from 'devextreme/ui/dialog'
+import {DxScrollView} from 'devextreme-vue'
+import {confirm} from 'devextreme/ui/dialog'
 import DNumberbox from '@/components/DNumberbox/numberbox.vue'
 import dbSchemaService from '@/services/db_schema_service'
+import _ from 'lodash'
 
 @Component({
   name: 'Materials',
@@ -214,6 +216,13 @@ export default class extends Vue {
   private filterText = ''
   public rawColumns: Array<any> = [];
   public emptyEntity: any = {};
+  public selection = {
+    allowSelectAll: true,
+    deferred: false,
+    mode: 'multiple',
+    selectAllMode: 'allPages',
+    showCheckBoxesMode: 'always'
+  }
 
   private defaultProps = {
     id: 'id',
@@ -229,7 +238,7 @@ export default class extends Vue {
     const included = ['image', 'category_id', 'name', 'unit', 'price', 'quantity'];
 
     [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
+      table_name, included, this.categoryDataSource)
   }
 
   // @Watch('filterText')
@@ -254,7 +263,7 @@ export default class extends Vue {
 
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всего ее сырья. Удалить выбранную категорию?', 'Удаление категории')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }
@@ -278,6 +287,7 @@ export default class extends Vue {
     this.state.SetCurrentRow(e.itemData)
     if (e.itemData.raws) {
       this.showCategory = true
+      this.state.ResetCurrentRaw()
       this.state.SetCurrentCategory(e.itemData)
     } else {
       this.showCategory = false
@@ -310,12 +320,28 @@ export default class extends Vue {
         }
         try {
           await this.state.crudRaw.delete(this.state.currentRaw.id)
+          await this.state.rawDataSource.reload()
           await this.state.initItems()
-          this.state.ResetCurrentRow()
+          this.state.ResetCurrentRaw()
         } catch (e) {
           console.log(e)
         }
       })
+  }
+
+  onRowClick(e:any) {
+    this.state.SetCurrentRaw(e.data)
+  }
+
+  onCellPrepared(e: any) {
+    if (e.columnIndex === 0 && e.cellElement.attributes[1].nodeName === 'aria-describedby') {
+      e.cellElement.innerHTML = '<img\n' +
+        '                src="https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png"\n' +
+        '                alt=""\n' +
+        '                width="30%"\n' +
+        '                heigh="30%"\n' +
+        '              >'
+    }
   }
 
   empty() {

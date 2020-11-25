@@ -14,7 +14,7 @@ export default {
     return EXCLUDED_COLUMNS
   },
 
-  prepareGridColumns(schema_table: string, included: string[] = [], excluded: string[] = []): any {
+  prepareGridColumns(schema_table: string, included: string[] = [], dataSource: DataSource | null = null): any {
     const columns: any[] = []
     const empty_entity: any = {}
 
@@ -23,7 +23,9 @@ export default {
 
     if (schema) {
       included.forEach((field: any) => {
-        const item = schema.filter((item) => { return item.name === field })[0]
+        const item = schema.filter((item) => {
+          return item.name === field
+        })[0]
 
         empty_entity[item.name] = null
         if (item.type === 'boolean') empty_entity[item.name] = false
@@ -36,11 +38,20 @@ export default {
         if (item.name === 'id') {
           obj.visible = false
         }
-        if (item.name === 'category_id') {
+        if (item.name === 'category_id' && schema_table === 'public.raw' && !_.isNull(dataSource)) {
+          obj.dataType = 'string'
+          // obj.groupIndex = 0
+          obj.caption = 'Категория'
           obj.visible = false
+          obj.lookup = {
+            dataSource: dataSource.store(),
+            valueExpr: 'id',
+            displayExpr: 'name'
+          }
         }
         if (item.name === 'image') {
-          obj.filterOperations = null
+          obj.allowFiltering = false
+          obj.width = '15%'
         } else if (item.type === 'number') {
           obj.dataType = 'number'
           obj.filterOperations = ['=']

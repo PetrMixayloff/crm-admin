@@ -16,7 +16,6 @@
       :selected-row-keys.sync="syncedCheckedItems"
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
-      :row-template="rowTemplate ? 'dataRowTemplate' : null"
       @row-click="onRowClick"
       @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
@@ -66,32 +65,6 @@
         />
       </template>
 
-      <template #dataRowTemplate="{data: rowInfo}">
-        <tbody
-          :class="{'dx-row-alt': rowInfo.rowIndex % 2}"
-          class="employee dx-row"
-        >
-          <tr class="main-row">
-            <td
-              v-for="column in columns.filter((item) => {
-                return item.visible !== false
-              })"
-              :key="column.caption"
-              :style="column.dataField === 'image' ? 'width: 10%' : ''"
-            >
-              <img
-                v-if="column.dataField === 'image'"
-                src="https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png"
-                alt=""
-                width="30%"
-                heigh="30%"
-              >
-              <span v-else>{{ rowInfo.data[column.dataField] }}</span>
-            </td>
-          </tr>
-        </tbody>
-      </template>
-
       <dx-remote-operations
         :sorting="true"
         :paging="true"
@@ -122,6 +95,7 @@
 
 <script lang="ts">
 import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator'
+import { DxCheckBox } from 'devextreme-vue/check-box'
 
 import {
   DxColumn,
@@ -164,7 +138,8 @@ function defaultPageSizes(): number[] {
     DxMasterDetail,
     DxColumnChooser,
     DxColumnFixing,
-    DxStateStoring
+    DxStateStoring,
+    DxCheckBox
   }
 })
 export default class extends Vue {
@@ -196,7 +171,6 @@ export default class extends Vue {
   @Prop({ default: defaultPageSizes }) public pageSizes!: number[];
   @Prop() public addClass!: string;
   @Prop({ default: false }) public disabled!: boolean;
-  @Prop({ default: false }) public rowTemplate!: boolean;
 
   @Emit('cell-prepared')
   onCellPrepared(e: any) {
@@ -289,6 +263,10 @@ export default class extends Vue {
 
   onGridRefresh() {
     this.dataSource.reload()
+  }
+
+  onValueChanged(e: any) {
+    console.log(e)
   }
 
   addMenuItems(e: any) {

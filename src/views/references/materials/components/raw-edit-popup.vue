@@ -145,6 +145,7 @@ export default class extends Vue {
 
   onClose() {
     this.state.SetRawEditVisible(false)
+    this.state.SetRawEditMode(false)
   }
 
   async onOk(e: any) {
@@ -152,6 +153,7 @@ export default class extends Vue {
     if (result.isValid) {
       try {
         await this.state.crudRaw.save(this.entity)
+        await this.state.rawDataSource.reload()
         await this.state.initItems()
         this.state.SetCurrentRaw(this.entity)
         this.state.SetRawEditVisible(false)
