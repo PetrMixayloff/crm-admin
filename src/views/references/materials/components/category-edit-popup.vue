@@ -79,6 +79,7 @@ export default class extends Vue {
 
   onClose() {
     this.state.SetCategoryEditVisible(false)
+    this.state.SetCategoryEditMode(false)
   }
 
   async onOk(e: any) {

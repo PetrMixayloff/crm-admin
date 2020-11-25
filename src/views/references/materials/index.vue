@@ -47,14 +47,30 @@
           <template #item="item">
             <div class="flex-between-c">
               <span>{{ item.data.name }}</span>
-              <dx-button
-                v-if="item.data.id === state.currentCategory.id"
-                icon="plus"
-                type="back"
-                styling-mode="text"
-                hint="Добавить подкатегорию"
-                :on-click="createNewCategory"
-              />
+              <div v-if="item.data.id === state.currentCategory.id">
+                <dx-button
+                  icon="plus"
+                  type="default"
+                  styling-mode="text"
+                  hint="Добавить подкатегорию"
+                  :on-click="createNewCategory"
+                />
+                <dx-button
+                  icon="edit"
+                  type="normal"
+                  styling-mode="text"
+                  hint="Редактировать категорию"
+                  :on-click="editCategory"
+                />
+                <dx-button
+                  icon="trash"
+                  type="danger"
+                  styling-mode="text"
+                  hint="Удалить категорию"
+                  :on-click="deleteCategory"
+                />
+              </div>
+
             </div>
           </template>
         </DxTreeView>
@@ -273,14 +289,14 @@ export default class extends Vue {
   }
 
   deleteCategory() {
-    confirm('Внимание!!! Удаление категории приведет к удалению всего ее сырья. Удалить выбранную категорию?', 'Удаление категории')
-      .then(async (answer: boolean) => {
+    confirm('Внимание!!! Удаление категории приведет к удалению всех дочерних подкатегорий и их сырья. Удалить выбранную категорию?', 'Удаление категории')
+      .then(async(answer: boolean) => {
         if (!answer) {
           return
         }
         try {
           await this.state.crudRawCategory.delete(this.state.currentCategory.id)
-          await this.state.initItems()
+          await this.state.rawCategoryDataSource.reload()
           this.state.ResetCurrentRow()
         } catch (e) {
           console.log(e)
@@ -328,7 +344,7 @@ export default class extends Vue {
 
   deleteRaw() {
     confirm('Вы уверены, что хотите удалить?', 'Удаление сырья')
-      .then(async (answer: boolean) => {
+      .then(async(answer: boolean) => {
         if (!answer) {
           return
         }
