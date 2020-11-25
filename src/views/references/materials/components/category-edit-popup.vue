@@ -87,7 +87,6 @@ export default class extends Vue {
       try {
         await this.state.crudRawCategory.save(this.entity)
         await this.state.rawCategoryDataSource.reload()
-        await this.state.initItems()
         this.state.SetCurrentCategory(this.entity)
         this.state.SetCategoryEditVisible(false)
         this.state.SetCategoryEditMode(false)

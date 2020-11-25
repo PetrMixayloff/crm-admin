@@ -56,7 +56,6 @@
                 :on-click="createNewCategory"
               />
             </div>
-
           </template>
         </DxTreeView>
         <!--        <el-tree-->
@@ -88,95 +87,89 @@
       >
         <table-actions
           :on-create-new="createNewRaw"
-          :show-create-new="showCategory"
+          :show-create-new="state.currentCategory.id"
           :on-edit="editRaw"
           :on-delete="deleteRaw"
-          :table-title="showCategory ? state.currentCategory.name : state.currentRaw.name"
+          :table-title="state.currentCategory.name"
           :selected="state.currentRaw.id"
         />
-        <DxScrollView
-          direction="both"
-          show-scrollbar="always"
-        >
-          <div v-if="showCategory">
-            <table-grid
-              ref="tablegrid"
-              :data-source="rawDataSource"
-              :columns="rawColumns"
-              :filter-sync-enabled="true"
-              :filter-value="['category_id', '=', state.currentCategory.id]"
-              :row-click="onRowClick"
-              :dbl-row-click="empty"
-              selection-mode="single"
-              @cell-prepared="onCellPrepared"
+        <div v-if="state.currentCategory.id">
+          <table-grid
+            ref="tablegrid"
+            :data-source="rawDataSource"
+            :columns="rawColumns"
+            :filter-sync-enabled="true"
+            :filter-value="['category_id', '=', state.currentCategory.id]"
+            :row-click="onRowClick"
+            :dbl-row-click="empty"
+            selection-mode="single"
+            @cell-prepared="onCellPrepared"
+          />
+        </div>
+        <DxScrollView v-else-if="showProductDeatils">
+          <div class="flex-l-b">
+            <img
+              :src="state.currentRaw.image > 0 ? state.currentRaw.image :
+                ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']"
+              alt=""
+              width="25%"
+            >
+            <p style="margin-left: 20px; width: 100%">
+              {{ state.currentRaw.description }}
+            </p>
+          </div>
+          <div class="flex-l-c">
+            <d-numberbox
+              class="textbox-field"
+              :input-data="state.currentRaw.quantity"
+              title="Общий остаток на складе"
+              :is-read-only="true"
+            />
+            <d-button
+              style="margin-left: 20px;"
+              btn-text="Детализация"
+              icon="info"
+              btn-type="default"
+              :on-click="detailView"
             />
           </div>
-          <div v-else>
-            <div class="flex-l-b">
-              <img
-                :src="state.currentRaw.image > 0 ? state.currentRaw.image :
-                  ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']"
-                alt=""
-                width="25%"
-              >
-              <p style="margin-left: 20px; width: 100%">
-                {{ state.currentRaw.description }}
-              </p>
-            </div>
-            <div class="flex-l-c">
-              <d-numberbox
-                class="textbox-field"
-                :input-data="state.currentRaw.quantity"
-                title="Общий остаток на складе"
-                :is-read-only="true"
-              />
-              <d-button
-                style="margin-left: 20px;"
-                btn-text="Детализация"
-                icon="info"
-                btn-type="default"
-                :on-click="detailView"
-              />
-            </div>
-
-            <d-numberbox
-              class="textbox-field"
-              :input-data="state.currentRaw.price"
-              title="Суммарная стоимость остатка"
-              :is-read-only="true"
-            />
-            <d-textbox
-              class="textbox-field"
-              :input-data="state.currentRaw.unit"
-              title="Единица измерения"
-              :is-read-only="true"
-            />
-            <d-numberbox
-              v-if="state.currentRaw.per_pack"
-              class="textbox-field"
-              :input-data="state.currentRaw.per_pack"
-              title="Количество в упаковке"
-              :is-read-only="true"
-            />
-            <d-numberbox
-              class="textbox-field"
-              :input-data="state.currentRaw.green_signal"
-              title="Зеленый остаток"
-              :is-read-only="true"
-            />
-            <d-numberbox
-              class="textbox-field"
-              :input-data="state.currentRaw.yellow_signal"
-              title="Желтый остаток"
-              :is-read-only="true"
-            />
-            <d-numberbox
-              class="textbox-field"
-              :input-data="state.currentRaw.red_signal"
-              title="Красный остаток"
-              :is-read-only="true"
-            />
-          </div>
+          <d-numberbox
+            class="textbox-field"
+            :input-data="state.currentRaw.price"
+            title="Суммарная стоимость остатка"
+            :is-read-only="true"
+          />
+          <d-textbox
+            class="textbox-field"
+            :input-data="state.currentRaw.unit"
+            title="Единица измерения"
+            :is-read-only="true"
+          />
+          <d-numberbox
+            v-if="state.currentRaw.per_pack"
+            class="textbox-field"
+            :input-data="state.currentRaw.per_pack"
+            title="Количество в упаковке"
+            :is-read-only="true"
+          />
+          <d-numberbox
+            class="textbox-field"
+            :input-data="state.currentRaw.green_signal"
+            title="Зеленый остаток"
+            :is-read-only="true"
+          />
+          <d-numberbox
+            class="textbox-field"
+            :input-data="state.currentRaw.yellow_signal"
+            title="Желтый остаток"
+            :is-read-only="true"
+          />
+          <d-numberbox
+            class="textbox-field"
+            :input-data="state.currentRaw.red_signal"
+            title="Красный остаток"
+            :is-read-only="true"
+          />
         </DxScrollView>
       </div>
     </div>
@@ -230,7 +223,7 @@ export default class extends Vue {
   public state = RawModule
   public rawDataSource = this.state.rawDataSource
   public categoryDataSource = this.state.rawCategoryDataSource
-  public showCategory = true
+  public showProductDeatils = false
   private filterText = ''
   public rawColumns: Array<any> = [];
   public emptyEntity: any = {};
@@ -304,11 +297,9 @@ export default class extends Vue {
     // let {is_active, ...rowData} = data;
     this.state.SetCurrentRow(e.itemData)
     if (e.itemData.raws) {
-      this.showCategory = true
       this.state.ResetCurrentRaw()
       this.state.SetCurrentCategory(e.itemData)
     } else {
-      this.showCategory = false
       this.state.SetCurrentRaw(e.itemData)
     }
   }
