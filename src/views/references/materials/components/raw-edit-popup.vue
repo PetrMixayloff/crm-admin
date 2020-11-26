@@ -28,16 +28,6 @@
           :label="{text: 'Описание'}"
         />
         <DxItem
-          data-field="price"
-          :label="{text: 'Цена'}"
-          editor-type="dxNumberBox"
-        />
-        <DxItem
-          data-field="quantity"
-          :label="{text: 'Остаток на складе'}"
-          editor-type="dxNumberBox"
-        />
-        <DxItem
           data-field="unit"
           :label="{text: 'Единица измерения'}"
         />

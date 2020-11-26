@@ -24,7 +24,7 @@ export class Raw {
   name = ''
   description = ''
   image: string | null = ''
-  price = 0.00
+  cost = 0.00
   quantity = 0
   per_pack = 0
   green_signal = 0

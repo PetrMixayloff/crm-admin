@@ -170,6 +170,20 @@ export default class extends Vue {
 
     [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
       table_name, included)
+    this.rawColumns.push({
+      width: '10%',
+      type: 'buttons',
+      buttons: [{
+        hint: 'Детализация остатков',
+        icon: 'info',
+        visible: true,
+        onClick: this.onRawDetail
+      }]
+    })
+  }
+
+  onRawDetail(e: any) {
+    console.log(e)
   }
 
   async mounted() {
@@ -188,7 +202,7 @@ export default class extends Vue {
 
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всех дочерних подкатегорий и их сырья. Удалить выбранную категорию?', 'Удаление категории')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }
@@ -242,7 +256,7 @@ export default class extends Vue {
 
   deleteRaw() {
     confirm('Вы уверены, что хотите удалить?', 'Удаление сырья')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }
