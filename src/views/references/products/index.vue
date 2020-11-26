@@ -71,7 +71,7 @@
           </div>
         </el-tree>
       </DxScrollView>
-      <div class="doc-view-box">
+      <div class="products-list">
         <div v-if="!state.currentProduct.id">
           <d-button
             btn-text="Новый товар в категорию"
@@ -242,7 +242,7 @@ export default class extends Vue {
   height: 100%;
 }
 
-.doc-view-box {
+.products-list {
   padding: 0 20px;
   width: 70%;
   height: 700px;

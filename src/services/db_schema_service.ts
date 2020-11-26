@@ -14,7 +14,7 @@ export default {
     return EXCLUDED_COLUMNS
   },
 
-  prepareGridColumns(schema_table: string, included: string[] = [], dataSource: DataSource | null = null): any {
+  prepareGridColumns(schema_table: string, included: string[] = []): any {
     const columns: any[] = []
     const empty_entity: any = {}
 
@@ -38,16 +38,10 @@ export default {
         if (item.name === 'id') {
           obj.visible = false
         }
-        if (item.name === 'category_id' && schema_table === 'public.raw' && !_.isNull(dataSource)) {
+        if (item.name === 'category_id' && schema_table === 'public.raw') {
           obj.dataType = 'string'
-          // obj.groupIndex = 0
           obj.caption = 'Категория'
           obj.visible = false
-          obj.lookup = {
-            dataSource: dataSource.store(),
-            valueExpr: 'id',
-            displayExpr: 'name'
-          }
         }
         if (item.name === 'image') {
           obj.allowFiltering = false
