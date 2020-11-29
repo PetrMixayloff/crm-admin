@@ -97,6 +97,7 @@
     </div>
     <RawCategoryPopupEdit/>
     <RawPopupEdit/>
+    <ShowRemainsDetailsPopup/>
   </div>
 </template>
 
@@ -107,6 +108,7 @@ import {RawModule, table_name} from './service'
 import {DxForm, DxItem} from 'devextreme-vue/form'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
+import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
 import DButton from '@/components/DButton/button.vue'
 import DTextbox from '@/components/DTextbox/textbox.vue'
 import DNuberbox from '@/components/DNumberbox/numberbox.vue'
@@ -138,7 +140,8 @@ import _ from 'lodash'
     TableGrid,
     DTextarea,
     RawCategoryPopupEdit,
-    RawPopupEdit
+    RawPopupEdit,
+    ShowRemainsDetailsPopup
   }
 })
 export default class extends Vue {
@@ -182,8 +185,8 @@ export default class extends Vue {
     })
   }
 
-  onRawDetail(e: any) {
-    console.log(e)
+  onRawDetail() {
+    this.state.ShowRemainsDetails(true)
   }
 
   async mounted() {

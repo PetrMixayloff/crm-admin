@@ -35,6 +35,7 @@ export class Raw {
 
 @Module({ dynamic: true, store, name: 'raw', namespaced: true })
 class RawService extends VuexModule {
+  public showRemainsDetails = false
   public categoryEditVisible = false
   public categoryEditMode = false
   public rawEditVisible = false
@@ -71,6 +72,16 @@ class RawService extends VuexModule {
   @Action
   public SetCategoryEditVisible(value: boolean) {
     this.SET_CATEGORY_EDIT_VISIBLE(value)
+  }
+
+  @Mutation
+  private SET_SHOW_REMAINS_DETAILS(value: boolean) {
+    this.showRemainsDetails = value
+  }
+
+  @Action
+  public ShowRemainsDetails(value: boolean) {
+    this.SET_SHOW_REMAINS_DETAILS(value)
   }
 
   @Mutation
