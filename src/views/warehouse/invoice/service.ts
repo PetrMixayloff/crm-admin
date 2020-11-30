@@ -23,13 +23,14 @@ export class Invoice {
   number: string | null = null
   date: Date = new Date()
   remark: string | null = null
+  supplier: string | null = null
   payment_method: string | null = null
   records: Array<IInvoiceRecord> = []
 }
 
 @Module({ dynamic: true, store, name: 'invoice', namespaced: true })
 class InvoiceService extends VuexModule {
-  public invoiceEditVisible = false
+  public editVisible = false
   public editMode = false
   public currentInvoice = new Invoice()
 
@@ -37,13 +38,13 @@ class InvoiceService extends VuexModule {
   public crud = base_ds.getBaseCrud(route_ns)
 
   @Mutation
-  private SET_INVOICE_EDIT_VISIBLE(value: boolean) {
-    this.invoiceEditVisible = value
+  private SET_EDIT_VISIBLE(value: boolean) {
+    this.editVisible = value
   }
 
   @Action
-  public SetInvoiceEditVisible(value: boolean) {
-    this.SET_INVOICE_EDIT_VISIBLE(value)
+  public SetEditVisible(value: boolean) {
+    this.SET_EDIT_VISIBLE(value)
   }
 
   @Mutation

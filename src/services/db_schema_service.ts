@@ -2,7 +2,7 @@ import DataSource from 'devextreme/data/data_source'
 import CustomStore from 'devextreme/data/custom_store'
 import * as _ from 'lodash'
 import request from '@/utils/request'
-import {AppModule} from '@/store/modules/app'
+import { AppModule } from '@/store/modules/app'
 
 const EXCLUDED_COLUMNS: string[] = ['date_created',
   'date_modified', 'deleted', 'created_by_id', 'modified_by_id'
