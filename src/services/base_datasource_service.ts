@@ -99,7 +99,7 @@ export default {
             'sort',
             'filter'
           ].forEach((i) => {
-            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
+            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '' && loadOptions[i] !== ['raw_id', 'not_in', []]) {
               params += `${i}=${JSON.stringify(loadOptions[i])}&`
             }
           })

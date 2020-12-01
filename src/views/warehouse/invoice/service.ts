@@ -8,16 +8,6 @@ export const route_ns = 'invoice'
 
 export const table_name = 'public.invoice'
 
-export interface IInvoiceRecord {
-  invoice_id: string,
-  invoice: Array<Invoice>
-  category_id: string,
-  raw_id: string,
-  price: number,
-  quantity: number,
-  total: number
-}
-
 export class Invoice {
   id: string | null = null
   number: string | null = null
@@ -25,7 +15,15 @@ export class Invoice {
   remark: string | null = null
   supplier: string | null = null
   payment_method: string | null = null
-  records: Array<IInvoiceRecord> = []
+  records: Array<InvoiceRecord> = []
+}
+
+export class InvoiceRecord {
+  id: string | null = null
+  invoice_id: string | null = null
+  raw_id: string| null = null
+  price: number = 0
+  quantity: number = 0
 }
 
 @Module({ dynamic: true, store, name: 'invoice', namespaced: true })

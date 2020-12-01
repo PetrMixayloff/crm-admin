@@ -12,7 +12,7 @@
     <div id="form-container">
       <table-grid
         ref="tablegrid"
-        :data-source="dataSource"
+        :data-source="[]"
         :columns="columns"
         :row-click="empty"
         :dbl-row-click="empty"

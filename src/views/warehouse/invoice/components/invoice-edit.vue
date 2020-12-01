@@ -1,8 +1,8 @@
 <template>
   <d-edit-popup
     :title="state.rawEditMode ? 'Изменение данных в накладной' : 'Создание новой накладной'"
-    default-width="600"
-    default-height="900"
+    default-width="1200"
+    default-height="1000"
     :visible="state.editVisible"
     validation-group="invoiceEntity"
     @hidden="onClose"
@@ -45,19 +45,33 @@
           editor-type="dxTextArea"
         />
       </DxForm>
+      <br>
+      <h3>Товарные позиции</h3>
+      <table-grid
+        ref="tablegrid"
+        :data-source="invoiceRecords"
+        :columns="columns"
+        :height="400"
+        :filter-row-visible="false"
+        :column-chooser-enable="false"
+        :allow-editing="true"
+        editing-mode="row"
+        :row-click="empty"
+        :dbl-row-click="empty"
+      />
     </div>
   </d-edit-popup>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { DxForm, DxItem } from 'devextreme-vue/form'
-import { DxFileUploader } from 'devextreme-vue/file-uploader'
+import {Component, Vue} from 'vue-property-decorator'
+import {DxForm, DxItem} from 'devextreme-vue/form'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import { InvoiceModule, Invoice } from '../service'
+import {InvoiceModule, Invoice, InvoiceRecord} from '../service'
+import {RawModule} from '@/views/references/materials/service'
 import DButton from '@/components/DButton/button.vue'
+import TableGrid from '@/components/TableGrid/grid.vue'
 import _ from 'lodash'
-import { UserModule } from '@/store/modules/user'
 
 @Component({
   name: 'InvoiceEditPopup',
@@ -66,19 +80,53 @@ import { UserModule } from '@/store/modules/user'
     DxItem,
     DButton,
     DEditPopup,
-    DxFileUploader
+    TableGrid
   }
 })
+
 export default class extends Vue {
   private entity: Invoice = new Invoice();
   public state = InvoiceModule;
+  public invoiceRecords: any[] = []
+  public columns = [
+    {
+      dataField: 'raw_id',
+      dataType: 'string',
+      caption: 'Наименование',
+      lookup: {
+        allowClearing: true,
+        dataSource: RawModule.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      },
+      validationRules: [{type: 'required'}]
+    },
+    {
+      dataField: 'price',
+      dataType: 'number',
+      caption: 'Цена за ед.',
+      validationRules: [{type: 'required'}]
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Количество',
+      validationRules: [{type: 'required'}]
+    },
+    {
+      dataField: 'total',
+      dataType: 'number',
+      caption: 'Сумма',
+      calculateCellValue: this.calculateTotal
+    }
+  ]
 
   public validationRules: any = {
     number: [
-      { type: 'required', message: 'Не задан номер накладной' }
+      {type: 'required', message: 'Не задан номер накладной'}
     ],
     date: [
-      { type: 'required', message: 'Укажите дату накладной' }
+      {type: 'required', message: 'Укажите дату накладной'}
     ]
   }
 
@@ -86,6 +134,13 @@ export default class extends Vue {
   }
 
   empty() {
+  }
+
+  calculateTotal(e: any) {
+    if (e.price && e.quantity) {
+      return e.price * e.quantity
+    }
+    return 0
   }
 
   onShow() {
@@ -102,16 +157,17 @@ export default class extends Vue {
   }
 
   async onOk(e: any) {
-    const result = e.validationGroup.validate()
-    if (result.isValid) {
-      try {
-        await this.state.crud.save(this.entity)
-        await this.state.dataSource.reload()
-        this.state.ResetCurrentInvoice()
-      } catch (e) {
-        console.log(e)
-      }
-    }
+    console.log(this.invoiceRecords)
+    // const result = e.validationGroup.validate()
+    // if (result.isValid) {
+    //   try {
+    //     await this.state.crud.save(this.entity)
+    //     await this.state.dataSource.reload()
+    //     this.state.ResetCurrentInvoice()
+    //   } catch (e) {
+    //     console.log(e)
+    //   }
+    // }
   }
 
   onCancel(e: any) {
