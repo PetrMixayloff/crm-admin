@@ -10,6 +10,7 @@ export const table_name = 'public.invoice'
 
 export class Invoice {
   id: string | null = null
+  shop_id: string = UserModule.shopId
   number: string | null = null
   date: Date = new Date()
   remark: string | null = null
@@ -20,6 +21,7 @@ export class Invoice {
 
 export class InvoiceRecord {
   id: string | null = null
+  shop_id: string = UserModule.shopId
   invoice_id: string | null = null
   raw_id: string| null = null
   price: number = 0

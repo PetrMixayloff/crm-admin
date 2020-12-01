@@ -55,7 +55,7 @@
         :filter-row-visible="false"
         :column-chooser-enable="false"
         :allow-editing="true"
-        editing-mode="row"
+        editing-mode="raw"
         :row-click="empty"
         :dbl-row-click="empty"
       />
@@ -89,6 +89,11 @@ export default class extends Vue {
   public state = InvoiceModule;
   public invoiceRecords: any[] = []
   public columns = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false,
+    },
     {
       dataField: 'raw_id',
       dataType: 'string',
@@ -140,7 +145,7 @@ export default class extends Vue {
     if (e.price && e.quantity) {
       return e.price * e.quantity
     }
-    return 0
+    return ''
   }
 
   onShow() {
@@ -157,17 +162,24 @@ export default class extends Vue {
   }
 
   async onOk(e: any) {
-    console.log(this.invoiceRecords)
-    // const result = e.validationGroup.validate()
-    // if (result.isValid) {
-    //   try {
-    //     await this.state.crud.save(this.entity)
-    //     await this.state.dataSource.reload()
-    //     this.state.ResetCurrentInvoice()
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
-    // }
+    const result = e.validationGroup.validate()
+    if (result.isValid) {
+      try {
+        this.invoiceRecords.forEach((item: any) => {
+          const recordToAdd = new InvoiceRecord()
+          recordToAdd.raw_id = item.raw_id
+          recordToAdd.price = item.price
+          recordToAdd.quantity = item.quantity
+          this.entity.records.push(recordToAdd)
+        })
+        await this.state.crud.save(this.entity)
+        await this.state.dataSource.reload()
+        this.state.ResetCurrentInvoice()
+        this.onClose()
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 
   onCancel(e: any) {

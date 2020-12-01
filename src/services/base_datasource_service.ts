@@ -2,7 +2,7 @@ import DataSource from 'devextreme/data/data_source'
 import CustomStore from 'devextreme/data/custom_store'
 import * as _ from 'lodash'
 import request from '@/utils/request'
-import { UserModule } from '@/store/modules/user'
+import {UserModule} from '@/store/modules/user'
 
 class CrudOperates {
   public url: string;
@@ -58,6 +58,7 @@ export default {
     return new DataSource({
       store: new CustomStore({
         key: 'id',
+        loadMode: 'raw',
         async byKey(key) {
           const resp = await request({
             url: `${api_route}/${key}`,
@@ -116,7 +117,7 @@ export default {
             //
           }
 
-          return resp
+          return resp.data
         }
       })
     })
