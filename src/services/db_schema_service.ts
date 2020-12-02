@@ -53,7 +53,7 @@ export default {
           obj.dataType = 'boolean'
           obj.filterOperations = ['=']
         } else if (item.type === 'date') {
-          obj.dataType = 'datetime'
+          obj.dataType = 'date'
           obj.filterOperations = ['=', '>', '<']
         } else {
           obj.dataType = 'string'

@@ -29,7 +29,7 @@
           :label="{text: 'Дата'}"
           editor-type="dxDateBox"
           :editor-options="{adaptivityEnabled: true, hint: 'Дата накладной', openOnFieldClick: true,
-                            pickerType: 'native', showClearButton: true}"
+                            pickerType: 'native', showClearButton: true, type: 'date'}"
         />
         <DxItem
           data-field="supplier"
@@ -92,7 +92,7 @@ export default class extends Vue {
     {
       dataField: 'id',
       dataType: 'string',
-      visible: false,
+      visible: false
     },
     {
       dataField: 'raw_id',
