@@ -54,45 +54,51 @@
         />
       </DxForm>
       <h5>Изображение</h5>
-      <img :src="state.currentRaw.image ? state.currentRaw.image :
-              ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png']" alt="" width="25%">
+      <img
+        :src="rawImage"
+        alt=""
+        width="25%"
+      >
       <el-upload
         ref="rawImage"
         class="btn-upload"
-        accept="image/*"
-        :headers="{'Authorization': token}"
-        :show-file-list="true"
-        :auto-upload="true"
+        accept="png"
+        :show-file-list="false"
+        :auto-upload="false"
         :action="uploadUrl"
         :multiple="false"
-        :on-success="onUploaded">
+        :on-change="onImageChange"
+        :on-success="onImageUploaded"
+      >
         <d-button
-          btn-text="Сменить изображение"
+          btn-text="Сменить"
           btn-type="primary"
           styling-mode="contained"
           :on-click="empty"
+          hint="Сменить изображение"
         />
       </el-upload>
       <d-button
-        v-if="state.currentRaw.image"
-        btn-text="Удалить изображение"
+        v-if="showDeleteButton"
+        btn-text="Удалить"
         btn-type="danger"
         styling-mode="contained"
-        :on-click="onRemove"
+        :on-click="onImageRemove"
+        hint="Удалить изображение"
       />
     </div>
   </d-edit-popup>
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
-import {DxForm, DxItem} from 'devextreme-vue/form'
-import {DxFileUploader} from 'devextreme-vue/file-uploader'
+import { Component, Vue } from 'vue-property-decorator'
+import { DxForm, DxItem } from 'devextreme-vue/form'
+import { DxFileUploader } from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {Raw, RawModule} from '../service'
+import { Raw, RawModule } from '../service'
 import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
-import {UserModule} from '@/store/modules/user'
+import { UserModule } from '@/store/modules/user'
 
 @Component({
   name: 'RawPopupEdit',
@@ -107,13 +113,14 @@ import {UserModule} from '@/store/modules/user'
 export default class extends Vue {
   private entity: Raw = new Raw();
   public state = RawModule;
+  private deletedRawImage: string | null = null
   private token = `Bearer ${UserModule.token}`
 
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
 
   public validationRules: any = {
     name: [
-      {type: 'required', message: 'Название сырья не задано'}
+      { type: 'required', message: 'Название сырья не задано' }
     ]
   }
 
@@ -164,6 +171,43 @@ export default class extends Vue {
 
   onRemove() {
     //
+  }
+
+  async onImageRemove() {
+    if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles)) {
+      (this.$refs.rawImage as any).clearFiles()
+    }
+    if (!_.isNil(this.entity.image)) {
+      this.deletedRawImage = this.entity.image.split('/')[0]
+      this.entity.image = null
+    }
+  }
+
+  get rawImage() {
+    if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles[0])) {
+      return URL.createObjectURL((this.$refs.rawImage as any).uploadFiles[0].raw)
+    }
+    if (!this.entity.image) {
+      return require('@/assets/defaults/default_baloon.png')
+    }
+    return this.state.currentRaw.image
+  }
+
+  get showDeleteButton() {
+    if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles) && (this.$refs.rawImage as any).uploadFiles.length > 0) {
+      return true
+    }
+    return !_.isNil(this.entity.image)
+  }
+
+  onImageChange() {
+    if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles) && (this.$refs.rawImage as any).uploadFiles.length > 1) {
+      (this.$refs.rawImage as any).uploadFiles.shift()
+    }
+  }
+
+  onImageUploaded(e: any) {
+    this.entity.image = e.file_name
   }
 }
 </script>
