@@ -1,27 +1,5 @@
 <template>
   <div class="app-container">
-    <!--    <div class="top-panel">-->
-    <!--      <div class="export">-->
-    <!--        <d-button-->
-    <!--          btn-text="Новая категория"-->
-    <!--          icon="plus"-->
-    <!--          btn-type="default"-->
-    <!--          :on-click="createNewCategory"-->
-    <!--        />-->
-    <!--      </div>-->
-    <!--      <div class="search">-->
-    <!--        <el-input-->
-    <!--          v-model="filterText"-->
-    <!--          placeholder="Поиск"-->
-    <!--          class="input-with-select"-->
-    <!--        >-->
-    <!--          <el-button-->
-    <!--            slot="append"-->
-    <!--            icon="el-icon-search"-->
-    <!--          />-->
-    <!--        </el-input>-->
-    <!--      </div>-->
-    <!--    </div>-->
     <div class="main-box-content">
       <DxScrollView
         direction="both"
@@ -185,7 +163,8 @@ export default class extends Vue {
     })
   }
 
-  onRawDetail() {
+  onRawDetail(e: any) {
+    this.state.SetCurrentRaw(e.row.data)
     this.state.ShowRemainsDetails(true)
   }
 

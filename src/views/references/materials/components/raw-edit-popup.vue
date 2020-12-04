@@ -91,14 +91,16 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { DxForm, DxItem } from 'devextreme-vue/form'
-import { DxFileUploader } from 'devextreme-vue/file-uploader'
+import {Component, Vue} from 'vue-property-decorator'
+import {DxForm, DxItem} from 'devextreme-vue/form'
+import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import { Raw, RawModule } from '../service'
+import {Raw, RawModule} from '../service'
 import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
-import { UserModule } from '@/store/modules/user'
+import {UserModule} from '@/store/modules/user'
+import request from '@/utils/request'
+import {filePost, fileDelete} from '@/utils/file-upload'
 
 @Component({
   name: 'RawPopupEdit',
@@ -113,14 +115,14 @@ import { UserModule } from '@/store/modules/user'
 export default class extends Vue {
   private entity: Raw = new Raw();
   public state = RawModule;
-  private deletedRawImage: string | null = null
+  private imageToDelete: string | null = null
   private token = `Bearer ${UserModule.token}`
 
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
 
   public validationRules: any = {
     name: [
-      { type: 'required', message: 'Название сырья не задано' }
+      {type: 'required', message: 'Название сырья не задано'}
     ]
   }
 
@@ -148,6 +150,27 @@ export default class extends Vue {
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
+      if (!_.isNil(this.imageToDelete)) {
+        try {
+          await fileDelete(this.imageToDelete)
+        } catch (e) {
+          console.log(e)
+          return
+        }
+      }
+      if (!_.isNil((this.$refs.rawImage as any).uploadFiles[0])) {
+        const file: File = (this.$refs.rawImage as any).uploadFiles[0].raw
+        try {
+          const rawImage = await filePost(file)
+          if (rawImage) {
+            this.entity.image = rawImage
+          }
+          (this.$refs.rawImage as any).clearFiles()
+        } catch (e) {
+          console.log(e)
+          return
+        }
+      }
       try {
         await this.state.crudRaw.save(this.entity)
         await this.state.rawDataSource.reload()
@@ -165,20 +188,12 @@ export default class extends Vue {
     this.state.SetRawEditVisible(false)
   }
 
-  onUploaded(e: any) {
-    //
-  }
-
-  onRemove() {
-    //
-  }
-
   async onImageRemove() {
     if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles)) {
       (this.$refs.rawImage as any).clearFiles()
     }
     if (!_.isNil(this.entity.image)) {
-      this.deletedRawImage = this.entity.image.split('/')[0]
+      this.imageToDelete = this.entity.image.split('/')[0]
       this.entity.image = null
     }
   }
