@@ -6,6 +6,7 @@ import _ from 'lodash'
 
 export const raw_route_ns = 'raw'
 export const raw_category_route_ns = 'raw_category'
+export const raw_details_route_ns = 'raw/details'
 
 export const table_name = 'public.raw'
 

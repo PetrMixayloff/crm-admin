@@ -18,7 +18,7 @@
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
         <table-grid
-          :data-source="rowData"
+          :data-source="rowData.records"
           :columns="recordsColumns"
           :row-click="empty"
           :dbl-row-click="empty"

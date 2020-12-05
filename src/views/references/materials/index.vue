@@ -67,7 +67,7 @@
           :columns="rawColumns"
           :filter-value="state.currentCategory.id ? ['category_id', '=', state.currentCategory.id] : null"
           :row-click="onRowClick"
-          :dbl-row-click="empty"
+          :dbl-row-click="editRaw"
           selection-mode="single"
         />
       </div>
@@ -151,7 +151,7 @@ export default class extends Vue {
     [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
       table_name, included)
     this.rawColumns.push({
-      width: '10%',
+      caption: 'Действия',
       type: 'buttons',
       buttons: [{
         hint: 'Детализация остатков',

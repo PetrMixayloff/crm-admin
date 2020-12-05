@@ -1,6 +1,6 @@
 <template>
   <d-edit-popup
-    :title="state.categoryEditMode ? 'Изменение данных категории' : 'Создание новой категории'"
+    title="Детализация остатков"
     default-width="600"
     default-height="800"
     :visible="state.showRemainsDetails"
@@ -12,7 +12,7 @@
     <div id="form-container">
       <table-grid
         ref="tablegrid"
-        :data-source="[]"
+        :data-source="dataSource"
         :columns="columns"
         :row-click="empty"
         :dbl-row-click="empty"
@@ -30,6 +30,7 @@ import request from '@/utils/request'
 import _ from 'lodash'
 import dbSchemaService from "@/services/db_schema_service";
 import {AxiosResponse} from "axios";
+import { InvoiceModule } from '@/views/warehouse/invoice/service'
 
 @Component({
   name: 'ShowRemainsDetailsPopup',
@@ -44,12 +45,22 @@ export default class extends Vue {
     {
       dataField: 'raw_id',
       caption: 'Название',
-      dataType: 'string'
+      lookup: {
+        allowClearing: true,
+        dataSource: RawModule.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      }
     },
     {
       dataField: 'invoice_id',
-      caption: 'Накладная',
-      dataType: 'string'
+      caption: '№ Накладной',
+      lookup: {
+        allowClearing: true,
+        dataSource: InvoiceModule.dataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'number'
+      }
     },
     {
       dataField: 'price',
@@ -58,16 +69,17 @@ export default class extends Vue {
     },
     {
       dataField: 'quantity',
-      caption: 'Количество',
+      caption: 'Остаток',
       dataType: 'number'
     },
     {
       dataField: 'total',
       caption: 'Сумма',
-      dataType: 'number'
+      dataType: 'number',
+      calculateCellValue: this.calculateTotal
     }
   ];
-  public dataSource: any
+  public dataSource: any = {}
 
   async created() {
   }
@@ -80,7 +92,8 @@ export default class extends Vue {
       url: `/raw/details/${this.state.currentRaw.id}`,
       method: 'get'
     })
-    this.dataSource = resp
+    console.log(resp)
+    this.dataSource = resp.data
   }
 
   onClose() {
@@ -93,6 +106,13 @@ export default class extends Vue {
 
   onCancel(e: any) {
     this.onClose()
+  }
+
+  calculateTotal(e: any) {
+    if (e.price && e.quantity) {
+      return e.price * e.quantity
+    }
+    return ''
   }
 }
 </script>
