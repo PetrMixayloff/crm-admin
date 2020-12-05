@@ -69,7 +69,6 @@
           :row-click="onRowClick"
           :dbl-row-click="empty"
           selection-mode="single"
-          @cell-prepared="onCellPrepared"
         />
       </div>
     </div>
@@ -255,17 +254,6 @@ export default class extends Vue {
 
   onRowClick(e: any) {
     this.state.SetCurrentRaw(e.data)
-  }
-
-  onCellPrepared(e: any) {
-    if (e.columnIndex === 0 && e.cellElement.attributes[1].nodeName === 'aria-describedby') {
-      e.cellElement.innerHTML = '<img\n' +
-        '                src="https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png"\n' +
-        '                alt=""\n' +
-        '                width="30%"\n' +
-        '                heigh="30%"\n' +
-        '              >'
-    }
   }
 
   empty() {

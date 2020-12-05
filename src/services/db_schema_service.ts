@@ -45,7 +45,7 @@ export default {
         }
         if (item.name === 'image') {
           obj.allowFiltering = false
-          obj.width = '15%'
+          obj.cellTemplate = 'image-cell-template'
         } else if (item.type === 'number') {
           obj.dataType = 'number'
           obj.filterOperations = ['=']
