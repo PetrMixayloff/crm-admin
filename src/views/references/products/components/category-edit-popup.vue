@@ -89,7 +89,6 @@ export default class extends Vue {
     if (result.isValid) {
       try {
         await this.state.crudCategory.save(this.entity)
-        await this.state.initItems()
         this.state.SetCurrentCategory(this.entity)
         this.state.SetCategoryEditVisible(false)
         this.state.SetCategoryEditMode(false)

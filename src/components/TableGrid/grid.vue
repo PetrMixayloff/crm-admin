@@ -90,7 +90,10 @@
       />
       <dx-paging :page-size="initialPageSize"/>
       <template #image-cell-template="{ data }">
-        <img :src="src(data.value)" alt=" Сырье" width="30%" height="30%">
+        <img :src="src(data.value)" alt="Сырье" width="30%" height="30%">
+      </template>
+      <template #images-cell-template="{ data }">
+        <img :src="src(data.value[0] )" alt="Товар" width="30%" height="30%">
       </template>
     </dx-data-grid>
   </div>

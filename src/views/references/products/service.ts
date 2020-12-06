@@ -2,9 +2,12 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
 import { UserModule } from '@/store/modules/user'
+import {Raw, RawCategory} from "@/views/references/materials/service";
 
 export const product_route_ns = 'product'
 export const category_route_ns = 'product_category'
+
+export const table_name = 'public.product'
 
 export class ProductCategory {
   id: string | null = null
@@ -43,20 +46,6 @@ class ProductsService extends VuexModule {
   public categoryDataSource = base_ds.getBaseDataSource(category_route_ns)
   public crudCategory = base_ds.getBaseCrud(category_route_ns)
 
-  public items: Array<any> = []
-
-  @Action
-  public async initItems() {
-    const categories: any = await this.crudCategory.load()
-    categories.data.sort((a: any, b: any) => a.name > b.name ? 1 : -1)
-    this.SET_ITEMS(categories.data)
-  }
-
-  @Mutation
-  private SET_ITEMS(items: Array<any>) {
-    this.items = items
-  }
-
   @Mutation
   private SET_CATEGORY_EDIT_VISIBLE(value: boolean) {
     this.categoryEditVisible = value
@@ -87,6 +76,16 @@ class ProductsService extends VuexModule {
     this.SET_CURRENT_PRODUCT(value)
   }
 
+  @Action
+  public ResetCurrentProduct() {
+    this.RESET_CURRENT_PRODUCT()
+  }
+
+  @Mutation
+  private RESET_CURRENT_PRODUCT() {
+    this.currentProduct = new Product()
+  }
+
   @Mutation
   private SET_CURRENT_CATEGORY(value: ProductCategory) {
     this.currentCategory = { ...value }
@@ -95,6 +94,16 @@ class ProductsService extends VuexModule {
   @Action
   public SetCurrentCategory(value: ProductCategory) {
     this.SET_CURRENT_CATEGORY(value)
+  }
+
+  @Action
+  public ResetCurrentCategory() {
+    this.RESET_CURRENT_CATEGORY()
+  }
+
+  @Mutation
+  private RESET_CURRENT_CATEGORY() {
+    this.currentCategory = new ProductCategory()
   }
 
   @Mutation

@@ -117,7 +117,6 @@ export default class extends Vue {
     if (result.isValid) {
       try {
         await this.state.crudProduct.save(this.entity)
-        await this.state.initItems()
         this.state.SetCurrentProduct(this.entity)
         this.state.SetProductEditVisible(false)
         this.state.SetProductEditMode(false)

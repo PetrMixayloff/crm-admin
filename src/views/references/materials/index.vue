@@ -6,15 +6,15 @@
         show-scrollbar="always"
         class="filter-tree"
       >
-        <d-button
-          btn-text="Новая категория"
+        <dx-button
+          text="Новая категория"
           icon="plus"
-          btn-type="default"
+          type="default"
           :on-click="createNewCategory"
         />
         <h3>Категории</h3>
         <DxTreeView
-          id="treeview"
+          id="materialsTreeView"
           :data-source="categoryDataSource"
           :search-enabled="true"
           data-structure="plain"
@@ -83,37 +83,23 @@
 import {Component, Vue, Watch} from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
 import {RawModule, table_name} from './service'
-import {DxForm, DxItem} from 'devextreme-vue/form'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
 import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
-import DButton from '@/components/DButton/button.vue'
-import DTextbox from '@/components/DTextbox/textbox.vue'
-import DNuberbox from '@/components/DNumberbox/numberbox.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
-import DHintBox from '@/components/DHintBox/index.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import DTextarea from '@/components/DTextarea/textarea.vue'
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
-import DNumberbox from '@/components/DNumberbox/numberbox.vue'
 import dbSchemaService from '@/services/db_schema_service'
 import DxButton from 'devextreme-vue/button'
-import _ from 'lodash'
 
 @Component({
   name: 'Materials',
   components: {
-    DNumberbox,
     DxTreeView,
-    DButton,
     DxButton,
-    DHintBox,
     DxScrollView,
-    DxForm,
-    DxItem,
-    DTextbox,
-    DNuberbox,
     TableActions,
     TableGrid,
     DTextarea,
@@ -128,19 +114,6 @@ export default class extends Vue {
   public categoryDataSource = this.state.rawCategoryDataSource
   public rawColumns: Array<any> = [];
   public emptyEntity: any = {};
-  public selection = {
-    allowSelectAll: true,
-    deferred: false,
-    mode: 'multiple',
-    selectAllMode: 'allPages',
-    showCheckBoxesMode: 'always'
-  }
-
-  private defaultProps = {
-    id: 'id',
-    children: 'raws',
-    label: 'name'
-  }
 
   created() {
     this.initColumns()
@@ -166,10 +139,6 @@ export default class extends Vue {
   onRawDetail(e: any) {
     this.state.SetCurrentRaw(e.row.data)
     this.state.ShowRemainsDetails(true)
-  }
-
-  async mounted() {
-    await this.state.initItems()
   }
 
   deleteCategory() {
@@ -224,7 +193,6 @@ export default class extends Vue {
         try {
           await this.state.crudRaw.delete(this.state.currentRaw.id)
           await this.state.rawDataSource.reload()
-          await this.state.initItems()
           this.state.ResetCurrentRaw()
         } catch (e) {
           console.log(e)
@@ -239,33 +207,11 @@ export default class extends Vue {
   empty() {
     //
   }
+
 }
 </script>
 
 <style scoped>
-.content-box {
-  width: 100%;
-  height: 100%;
-  padding-bottom: 50px;
-}
-
-.top-panel {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.export {
-  flex-grow: 0;
-  flex-shrink: 0;
-  margin: 0 10px 0 0;
-}
-
-.search {
-  flex-grow: 1;
-  flex-shrink: 1;
-}
 
 .main-box-content {
   display: flex;
@@ -284,36 +230,5 @@ export default class extends Vue {
   width: 70%;
   height: 700px;
   margin-bottom: 10px;
-}
-
-.custom-tree-node {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.custom-tree-node > .manage-buttons {
-  float: left;
-  z-index: 2;
-}
-
-.custom-icon {
-  font-size: 1.5rem;
-  color: black;
-}
-
-.custom-icon:hover {
-  opacity: 0.8;
-}
-
-dfn div {
-  display: inline;
-}
-
-.textbox-field {
-  font-size: 18px;
-  padding-top: 20px;
-  line-height: 1.5;
 }
 </style>
