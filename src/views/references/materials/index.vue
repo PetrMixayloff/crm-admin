@@ -66,7 +66,7 @@
           ref="tablegrid"
           :data-source="rawDataSource"
           :columns="rawColumns"
-          :filter-value="state.currentCategory.id ? ['category_id', '=', state.currentCategory.id] : null"
+          :filter-value="state.currentCategory.id && state.currentCategory.id !== '0' ? ['category_id', '=', state.currentCategory.id] : null"
           :row-click="onRowClick"
           :dbl-row-click="editRaw"
           selection-mode="single"
