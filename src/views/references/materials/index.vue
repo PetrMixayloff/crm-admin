@@ -172,16 +172,6 @@ export default class extends Vue {
     await this.state.initItems()
   }
 
-  filterNode(value: any, data: any) {
-    // фильтр элементов дерева по введенному значению
-    if (!value) return true
-    return data.name.toLowerCase().indexOf(value.toLowerCase()) !== -1
-  }
-
-  async remove() {
-    //
-  }
-
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всех дочерних подкатегорий и их сырья. Удалить выбранную категорию?', 'Удаление категории')
       .then(async (answer: boolean) => {
@@ -218,10 +208,6 @@ export default class extends Vue {
 
   createNewRaw() {
     this.state.SetRawEditVisible(true)
-  }
-
-  detailView() {
-    //
   }
 
   editRaw() {
