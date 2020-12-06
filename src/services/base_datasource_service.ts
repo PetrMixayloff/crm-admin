@@ -3,6 +3,7 @@ import CustomStore from 'devextreme/data/custom_store'
 import * as _ from 'lodash'
 import request from '@/utils/request'
 import {UserModule} from '@/store/modules/user'
+import {AxiosResponse} from "axios";
 
 class CrudOperates {
   public url: string;
@@ -65,7 +66,6 @@ export default {
             url: `${api_route}/${key}`,
             method: 'get'
           })
-
           return resp
         },
         async insert(values) {
@@ -108,13 +108,20 @@ export default {
           })
           params = params.slice(0, -1)
 
-          const resp = await request({
+          const resp: AxiosResponse['data'] = await request({
             url: `${api_route}/${params}`,
             method: 'get'
           })
 
           if (resp && resp.data) {
-            //
+            if (api_route === 'raw_category' || api_route === 'product_category') {
+              resp.data.push({
+                id: 0,
+                name: "Все",
+                parent_id: null
+              })
+              resp.totalCount++
+            }
           } else {
             //
           }

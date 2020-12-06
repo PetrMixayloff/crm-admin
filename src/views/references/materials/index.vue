@@ -12,6 +12,7 @@
           btn-type="default"
           :on-click="createNewCategory"
         />
+        <h3>Категории</h3>
         <DxTreeView
           id="treeview"
           :data-source="categoryDataSource"
@@ -203,14 +204,7 @@ export default class extends Vue {
   }
 
   handleNodeClick(e: any) {
-    // let {is_active, ...rowData} = data;
-    this.state.SetCurrentRow(e.itemData)
-    if (e.itemData.raws) {
-      this.state.ResetCurrentRaw()
-      this.state.SetCurrentCategory(e.itemData)
-    } else {
-      this.state.SetCurrentRaw(e.itemData)
-    }
+    this.state.SetCurrentCategory(e.itemData)
   }
 
   createNewCategory() {
