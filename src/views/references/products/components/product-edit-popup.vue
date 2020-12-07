@@ -7,7 +7,7 @@
     validation-group="productEntity"
     @hidden="onClose"
     @ok="onOk"
-    @cancel="onCancel"
+    @cancel="onClose"
     @shown="onShow"
   >
     <div id="form-container">
@@ -28,10 +28,6 @@
           :label="{text: 'Описание'}"
         />
         <DxItem
-          data-field="url"
-          :label="{text: 'URL'}"
-        />
-        <DxItem
           data-field="price"
           :label="{text: 'Цена'}"
           editor-type="dxNumberBox"
@@ -42,25 +38,45 @@
           editor-type="dxNumberBox"
         />
         <DxItem
-          data-field="images"
-          editor-type="dxGallery"
-          :label="{text: 'Изображения товара'}"
-          :editor-options="{dataSource: entity.images.length > 0 ? entity.images : ['https://baloon-crm.s3-eu-west-1.amazonaws.com/default.png'],
-                            width: 200}"
-        />
-        <DxItem
           data-field="show_on_store"
           editor-type="dxCheckBox"
           :label="{text: 'Отображать на витрине'}"
           :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
-      <DxFileUploader
-        select-button-text="Выбрать фото"
-        label-text=""
-        accept="image/*"
-        upload-mode="useButtons"
-        :multiple="true"/>
+      <el-upload
+        action="#"
+        list-type="picture-card"
+        :auto-upload="false"
+        :limit="3">
+        <i slot="default" class="el-icon-plus"></i>
+        <div slot="file" slot-scope="{file}">
+          <img
+            class="el-upload-list__item-thumbnail"
+            :src="file.url" alt=""
+          >
+          <span class="el-upload-list__item-actions">
+        <span
+          class="el-upload-list__item-preview"
+          @click="handlePictureCardPreview(file)"
+        >
+          <i class="el-icon-zoom-in"></i>
+        </span>
+        <span
+          class="el-upload-list__item-delete"
+          @click="handleDownload(file)"
+        >
+          <i class="el-icon-download"></i>
+        </span>
+        <span
+          class="el-upload-list__item-delete"
+          @click="handleRemove(file)"
+        >
+          <i class="el-icon-delete"></i>
+        </span>
+      </span>
+        </div>
+      </el-upload>
     </div>
   </d-edit-popup>
 </template>
@@ -110,6 +126,7 @@ export default class extends Vue {
 
   onClose() {
     this.state.SetProductEditVisible(false)
+    this.state.SetProductEditMode(false)
   }
 
   async onOk(e: any) {
@@ -117,18 +134,24 @@ export default class extends Vue {
     if (result.isValid) {
       try {
         await this.state.crudProduct.save(this.entity)
-        await this.state.initItems()
         this.state.SetCurrentProduct(this.entity)
-        this.state.SetProductEditVisible(false)
-        this.state.SetProductEditMode(false)
+        this.onClose()
       } catch (e) {
         console.log(e)
       }
     }
   }
 
-  onCancel(e: any) {
-    this.state.SetProductEditVisible(false)
+  handleRemove(file: any) {
+    console.log(file);
+  }
+
+  handlePictureCardPreview(file: any) {
+    //
+  }
+
+  handleDownload(file: any) {
+    console.log(file);
   }
 }
 </script>

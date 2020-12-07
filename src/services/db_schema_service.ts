@@ -38,14 +38,17 @@ export default {
         if (item.name === 'id') {
           obj.visible = false
         }
-        if (item.name === 'category_id' && schema_table === 'public.raw') {
+        if (item.name === 'category_id' && (schema_table === 'public.raw' || schema_table === 'public.product')) {
           obj.dataType = 'string'
           obj.caption = 'Категория'
           obj.visible = false
         }
         if (item.name === 'image') {
           obj.allowFiltering = false
-          obj.width = '15%'
+          obj.cellTemplate = 'image-cell-template'
+        } else if (item.name === 'images') {
+          obj.allowFiltering = false
+          obj.cellTemplate = 'images-cell-template'
         } else if (item.type === 'number') {
           obj.dataType = 'number'
           obj.filterOperations = ['=']

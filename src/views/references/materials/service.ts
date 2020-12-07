@@ -6,6 +6,7 @@ import _ from 'lodash'
 
 export const raw_route_ns = 'raw'
 export const raw_category_route_ns = 'raw_category'
+export const raw_details_route_ns = 'raw/details'
 
 export const table_name = 'public.raw'
 
@@ -49,20 +50,6 @@ class RawService extends VuexModule {
 
   public rawCategoryDataSource = base_ds.getBaseDataSource(raw_category_route_ns)
   public crudRawCategory = base_ds.getBaseCrud(raw_category_route_ns)
-
-  public items: Array<any> = []
-
-  @Action
-  public async initItems() {
-    const categories: any = await this.crudRawCategory.load()
-    categories.data.sort((a: any, b: any) => a.name > b.name ? 1 : -1)
-    this.SET_ITEMS(categories.data)
-  }
-
-  @Mutation
-  private SET_ITEMS(items: Array<any>) {
-    this.items = items
-  }
 
   @Mutation
   private SET_CATEGORY_EDIT_VISIBLE(value: boolean) {

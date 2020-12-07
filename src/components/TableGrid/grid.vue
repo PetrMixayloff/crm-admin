@@ -78,8 +78,8 @@
       <dx-filter-row
         :visible="filterRowVisible"
       />
-      <dx-group-panel :visible="groupingEnabled" />
-      <dx-grouping :auto-expand-all="false" />
+      <dx-group-panel :visible="groupingEnabled"/>
+      <dx-grouping :auto-expand-all="false"/>
       <dx-search-panel
         :visible="false"
         :highlight-case-sensitive="true"
@@ -88,14 +88,20 @@
         :allowed-page-sizes="pageSizes"
         :show-page-size-selector="true"
       />
-      <dx-paging :page-size="initialPageSize" />
+      <dx-paging :page-size="initialPageSize"/>
+      <template #image-cell-template="{ data }">
+        <img :src="src(data.value)" alt="Сырье" width="30%" height="30%">
+      </template>
+      <template #images-cell-template="{ data }">
+        <img :src="src(data.value[0] )" alt="Товар" width="30%" height="30%">
+      </template>
     </dx-data-grid>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Emit, Prop, PropSync, Vue } from 'vue-property-decorator'
-import { DxCheckBox } from 'devextreme-vue/check-box'
+import {Component, Emit, Prop, PropSync, Vue} from 'vue-property-decorator'
+import {DxCheckBox} from 'devextreme-vue/check-box'
 
 import {
   DxColumn,
@@ -115,6 +121,7 @@ import {
   DxSelection,
   DxStateStoring
 } from 'devextreme-vue/data-grid'
+import _ from "lodash";
 
 function defaultPageSizes(): number[] {
   return [10, 25, 50, 100]
@@ -145,32 +152,32 @@ function defaultPageSizes(): number[] {
 export default class extends Vue {
   @Prop() public dataSource!: any;
   @PropSync('checkedItems') public syncedCheckedItems!: Array<any>;
-  @Prop({ required: false }) public keyExpr!: string | undefined;
+  @Prop({required: false}) public keyExpr!: string | undefined;
   @Prop() public columns!: any;
   @Prop() public masterDetailEnable!: boolean;
-  @Prop({ default: 'single' }) public selectionMode!: string;
-  @Prop({ required: true }) private rowClick!: Function;
-  @Prop({ required: true }) private dblRowClick!: Function;
+  @Prop({default: 'single'}) public selectionMode!: string;
+  @Prop({required: true}) private rowClick!: Function;
+  @Prop({required: true}) private dblRowClick!: Function;
   @Prop() public initNewRow!: Function;
   @Prop() public height!: any;
   @Prop() public filterValue!: any;
   @Prop() public filterSyncEnabled!: boolean;
-  @Prop({ default: true }) public filterRowVisible!: boolean;
+  @Prop({default: true}) public filterRowVisible!: boolean;
   @Prop() public relationMode!: any;
-  @Prop({ default: false }) public columnChooserEnable!: boolean;
-  @Prop({ default: false }) public stateStoringEnable!: boolean;
+  @Prop({default: false}) public columnChooserEnable!: boolean;
+  @Prop({default: false}) public stateStoringEnable!: boolean;
   @Prop() public stateStoringKey!: string;
   @Prop() public contextMenuItems!: Array<any>;
   @Prop() public groupingEnabled!: boolean;
   @Prop() public buttons!: any;
-  @Prop({ default: true }) public showColumnHeaders!: boolean;
+  @Prop({default: true}) public showColumnHeaders!: boolean;
   @Prop() public allowEditing!: boolean;
-  @Prop({ default: true }) public allowRowsAddDelete!: boolean;
-  @Prop({ default: 'batch' }) public editingMode!: string;
-  @Prop({ default: 10 }) public initialPageSize!: number;
-  @Prop({ default: defaultPageSizes }) public pageSizes!: number[];
+  @Prop({default: true}) public allowRowsAddDelete!: boolean;
+  @Prop({default: 'batch'}) public editingMode!: string;
+  @Prop({default: 10}) public initialPageSize!: number;
+  @Prop({default: defaultPageSizes}) public pageSizes!: number[];
   @Prop() public addClass!: string;
-  @Prop({ default: false }) public disabled!: boolean;
+  @Prop({default: false}) public disabled!: boolean;
 
   @Emit('cell-prepared')
   onCellPrepared(e: any) {
@@ -178,7 +185,7 @@ export default class extends Vue {
   }
 
   @Emit('selection-changed')
-  onSelectionChanged({ selectedRowsData }: any) {
+  onSelectionChanged({selectedRowsData}: any) {
     return selectedRowsData
   }
 
@@ -195,6 +202,10 @@ export default class extends Vue {
   @Emit('cell-dbl-click')
   onCellDblClick(e: any): any {
     return e
+  }
+
+  getCellData(data: any) {
+    console.log(data)
   }
 
   public getSelectedData() {
@@ -220,6 +231,14 @@ export default class extends Vue {
     if (this.initNewRow) {
       this.initNewRow(e)
     }
+  }
+
+  src(data: any) {
+    console.log(data)
+    if (!data) {
+      return require('@/assets/defaults/default_baloon.png')
+    }
+    return data
   }
 
   get gridHeight() {

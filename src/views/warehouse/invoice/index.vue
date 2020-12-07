@@ -18,7 +18,7 @@
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
         <table-grid
-          :data-source="rowData"
+          :data-source="rowData.records"
           :columns="recordsColumns"
           :row-click="empty"
           :dbl-row-click="empty"
@@ -57,15 +57,8 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'raw_id',
-      dataType: 'string',
+      dataField: 'raw.name',
       caption: 'Наименование',
-      lookup: {
-        allowClearing: true,
-        dataSource: RawModule.rawDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      },
     },
     {
       dataField: 'price',

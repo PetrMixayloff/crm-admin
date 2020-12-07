@@ -174,7 +174,6 @@ export default class extends Vue {
       try {
         await this.state.crudRaw.save(this.entity)
         await this.state.rawDataSource.reload()
-        await this.state.initItems()
         this.state.SetCurrentRaw(this.entity)
         this.state.SetRawEditVisible(false)
         this.state.SetRawEditMode(false)
