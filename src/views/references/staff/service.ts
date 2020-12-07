@@ -16,7 +16,7 @@ export class User {
   description = ''
 }
 
-@Module({ dynamic: true, store, name: 'users', namespaced: true })
+@Module({ dynamic: true, store, name: 'staff', namespaced: true })
 class StaffService extends VuexModule {
   public editVisible = false;
   public editMode = false;

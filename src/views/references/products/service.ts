@@ -24,7 +24,7 @@ export class Product {
   name = ''
   description = ''
   url = ''
-  images = []
+  image: string | null = null
   price = 0.00
   old_price: number | null = null
   quantity = 0

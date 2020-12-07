@@ -44,42 +44,39 @@
           :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
+      <h5>Изображение</h5>
+      <img
+        :src="productImage"
+        alt=""
+        width="25%"
+      >
       <el-upload
-        ref="productImages"
-        action="#"
-        list-type="picture-card"
+        ref="productImage"
+        class="btn-upload"
+        accept="png"
+        :show-file-list="false"
         :auto-upload="false"
-        :limit="3"
+        :action="uploadUrl"
+        :multiple="false"
         :on-change="onImageChange"
-        :on-success="onImageUploaded">
-        <i slot="default" class="el-icon-plus"></i>
-        <div slot="file" slot-scope="{file}">
-          <img
-            class="el-upload-list__item-thumbnail"
-            :src="file.url" alt=""
-          >
-          <span class="el-upload-list__item-actions">
-        <span
-          class="el-upload-list__item-preview"
-          @click="handlePictureCardPreview(file)"
-        >
-          <i class="el-icon-zoom-in"></i>
-        </span>
-        <span
-          class="el-upload-list__item-delete"
-          @click="handleDownload(file)"
-        >
-          <i class="el-icon-download"></i>
-        </span>
-        <span
-          class="el-upload-list__item-delete"
-          @click="handleRemove(file)"
-        >
-          <i class="el-icon-delete"></i>
-        </span>
-      </span>
-        </div>
+        :on-success="onImageUploaded"
+      >
+        <d-button
+          btn-text="Сменить"
+          btn-type="primary"
+          styling-mode="contained"
+          :on-click="empty"
+          hint="Сменить изображение"
+        />
       </el-upload>
+      <d-button
+        v-if="showDeleteButton"
+        btn-text="Удалить"
+        btn-type="danger"
+        styling-mode="contained"
+        :on-click="onImageRemove"
+        hint="Удалить изображение"
+      />
     </div>
   </d-edit-popup>
 </template>
@@ -89,8 +86,10 @@ import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem} from 'devextreme-vue/form'
 import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
+import DButton from '@/components/DButton/button.vue'
 import {Product, ProductsModule} from '../service'
 import _ from 'lodash'
+import {fileDelete, filePost} from '@/utils/file-upload'
 
 @Component({
   name: 'ProductPopupEdit',
@@ -98,12 +97,15 @@ import _ from 'lodash'
     DxForm,
     DxItem,
     DEditPopup,
+    DButton,
     DxFileUploader
   }
 })
 export default class extends Vue {
   private entity: Product = new Product();
   public state = ProductsModule;
+  private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
+  private imageToDelete: string | null = null
 
   public validationRules: any = {
     name: [
@@ -135,6 +137,27 @@ export default class extends Vue {
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
+      if (!_.isNil(this.imageToDelete)) {
+        try {
+          await fileDelete(this.imageToDelete)
+        } catch (e) {
+          console.log(e)
+          return
+        }
+      }
+      if (!_.isNil((this.$refs.productImage as any).uploadFiles[0])) {
+        const file: File = (this.$refs.productImage as any).uploadFiles[0].raw
+        try {
+          const productImage = await filePost(file)
+          if (productImage) {
+            this.entity.image = productImage
+          }
+          (this.$refs.productImage as any).clearFiles()
+        } catch (e) {
+          console.log(e)
+          return
+        }
+      }
       try {
         await this.state.crudProduct.save(this.entity)
         this.state.SetCurrentProduct(this.entity)
@@ -145,27 +168,41 @@ export default class extends Vue {
     }
   }
 
-  handleRemove(file: any) {
-    console.log(file);
+  async onImageRemove() {
+    if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles)) {
+      (this.$refs.productImage as any).clearFiles()
+    }
+    if (!_.isNil(this.entity.image)) {
+      this.imageToDelete = this.entity.image.split('/')[0]
+      this.entity.image = null
+    }
   }
 
-  handlePictureCardPreview(file: any) {
-    //
+  get productImage() {
+    if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles[0])) {
+      return URL.createObjectURL((this.$refs.productImage as any).uploadFiles[0].raw)
+    }
+    if (!this.entity.image) {
+      return require('@/assets/defaults/default_baloon.png')
+    }
+    return this.state.currentProduct.image
   }
 
-  handleDownload(file: any) {
-    console.log(file);
+  get showDeleteButton() {
+    if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles) && (this.$refs.productImage as any).uploadFiles.length > 0) {
+      return true
+    }
+    return !_.isNil(this.entity.image)
   }
 
-  onImageChange(e: any) {
-    console.log(this.$refs.productImages)
-    // if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles) && (this.$refs.rawImage as any).uploadFiles.length > 1) {
-    //   (this.$refs.rawImage as any).uploadFiles.shift()
-    // }
+  onImageChange() {
+    if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles) && (this.$refs.productImage as any).uploadFiles.length > 1) {
+      (this.$refs.productImage as any).uploadFiles.shift()
+    }
   }
 
   onImageUploaded(e: any) {
-    console.log(this.$refs.productImages)
+    this.entity.image = e.file_name
   }
 }
 </script>
