@@ -99,7 +99,6 @@ import {Raw, RawModule} from '../service'
 import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
 import {UserModule} from '@/store/modules/user'
-import request from '@/utils/request'
 import {filePost, fileDelete} from '@/utils/file-upload'
 
 @Component({

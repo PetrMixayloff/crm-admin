@@ -45,10 +45,13 @@
         />
       </DxForm>
       <el-upload
+        ref="productImages"
         action="#"
         list-type="picture-card"
         :auto-upload="false"
-        :limit="3">
+        :limit="3"
+        :on-change="onImageChange"
+        :on-success="onImageUploaded">
         <i slot="default" class="el-icon-plus"></i>
         <div slot="file" slot-scope="{file}">
           <img
@@ -152,6 +155,17 @@ export default class extends Vue {
 
   handleDownload(file: any) {
     console.log(file);
+  }
+
+  onImageChange(e: any) {
+    console.log(this.$refs.productImages)
+    // if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles) && (this.$refs.rawImage as any).uploadFiles.length > 1) {
+    //   (this.$refs.rawImage as any).uploadFiles.shift()
+    // }
+  }
+
+  onImageUploaded(e: any) {
+    console.log(this.$refs.productImages)
   }
 }
 </script>

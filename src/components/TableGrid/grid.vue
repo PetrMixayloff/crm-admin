@@ -93,7 +93,7 @@
         <img :src="src(data.value)" alt="Сырье" width="30%" height="30%">
       </template>
       <template #images-cell-template="{ data }">
-        <img :src="src(data.value[0] )" alt="Товар" width="30%" height="30%">
+        <img :src="src(data.value)" alt="Товар" width="30%" height="30%">
       </template>
     </dx-data-grid>
   </div>
@@ -234,7 +234,6 @@ export default class extends Vue {
   }
 
   src(data: any) {
-    console.log(data)
     if (!data) {
       return require('@/assets/defaults/default_baloon.png')
     }

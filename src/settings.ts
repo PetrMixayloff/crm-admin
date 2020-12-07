@@ -12,7 +12,7 @@ interface ISettings {
 
 // You can customize below settings :)
 const settings: ISettings = {
-  title: 'Baloon-crm',
+  title: 'Bubble-crm',
   showSettings: false,
   showTagsView: false,
   fixedHeader: false,

@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 import { AxiosResponse } from 'axios'
 
-export function requestDeleteFile(file_id: string): void {
+export function fileDelete(file_id: string): void {
   request({
     url: `/files/${file_id}`,
     method: 'delete'
