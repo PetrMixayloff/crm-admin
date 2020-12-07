@@ -26,7 +26,7 @@
           <template #item="item">
             <div class="flex-between-c">
               <span>{{ item.data.name }}</span>
-              <div v-if="item.data.id === state.currentCategory.id">
+              <div v-if="item.data.id === state.currentCategory.id && item.data.id !== '0'">
                 <dx-button
                   icon="plus"
                   type="default"
@@ -56,7 +56,7 @@
       <div class="products-list">
         <table-actions
           :on-create-new="createNewProduct"
-          :show-create-new="state.currentCategory.id"
+          :show-create-new="state.currentCategory.id && state.currentCategory.id !== '0'"
           :on-edit="editProduct"
           :on-delete="deleteProduct"
           :table-title="state.currentCategory.name"
@@ -147,6 +147,7 @@ export default class extends Vue {
 
   handleNodeClick(e: any) {
     this.state.SetCurrentCategory(e.itemData)
+    this.state.ResetCurrentProduct()
   }
 
   createNewCategory() {

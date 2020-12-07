@@ -26,7 +26,7 @@
           <template #item="item">
             <div class="flex-between-c">
               <span>{{ item.data.name }}</span>
-              <div v-if="item.data.id === state.currentCategory.id">
+              <div v-if="item.data.id === state.currentCategory.id && item.data.id !== '0'">
                 <dx-button
                   icon="plus"
                   type="default"
@@ -56,7 +56,7 @@
       <div class="products-list">
         <table-actions
           :on-create-new="createNewRaw"
-          :show-create-new="state.currentCategory.id"
+          :show-create-new="state.currentCategory.id && state.currentCategory.id !== '0'"
           :on-edit="editRaw"
           :on-delete="deleteRaw"
           :table-title="state.currentCategory.name"
@@ -112,19 +112,39 @@ export default class extends Vue {
   public state = RawModule
   public rawDataSource = this.state.rawDataSource
   public categoryDataSource = this.state.rawCategoryDataSource
-  public rawColumns: Array<any> = [];
-  public emptyEntity: any = {};
-
-  created() {
-    this.initColumns()
-  }
-
-  initColumns() {
-    const included = ['image', 'name', 'quantity', 'unit', 'cost', 'category_id'];
-
-    [this.rawColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
-    this.rawColumns.push({
+  public rawColumns = [
+    {
+      dataField: 'id',
+      visible: false
+    },
+    {
+      dataField: 'category_id',
+      visible: false
+    },
+    {
+      dataField: 'image',
+      caption: 'Изображение',
+      allowFiltering: false,
+      cellTemplate: 'image-cell-template'
+    },
+    {
+      dataField: 'name',
+      caption: 'Название'
+    },
+    {
+      dataField: 'unit',
+      caption: 'Ед. изм.'
+    },
+    {
+      caption: 'Общее количество'
+    },
+    {
+      caption: 'В резерве'
+    },
+    {
+      caption: 'Стоимость остатка'
+    },
+    {
       caption: 'Действия',
       type: 'buttons',
       buttons: [{
@@ -133,8 +153,10 @@ export default class extends Vue {
         visible: true,
         onClick: this.onRawDetail
       }]
-    })
-  }
+    }
+  ]
+
+  public emptyEntity: any = {};
 
   onRawDetail(e: any) {
     this.state.SetCurrentRaw(e.row.data)
@@ -164,6 +186,7 @@ export default class extends Vue {
 
   handleNodeClick(e: any) {
     this.state.SetCurrentCategory(e.itemData)
+    this.state.ResetCurrentRaw()
   }
 
   createNewCategory() {

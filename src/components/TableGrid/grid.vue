@@ -237,7 +237,7 @@ export default class extends Vue {
     if (!data) {
       return require('@/assets/defaults/default_baloon.png')
     }
-    return data
+    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${data}`
   }
 
   get gridHeight() {
