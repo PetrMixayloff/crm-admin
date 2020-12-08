@@ -77,4 +77,4 @@ class ClientService extends VuexModule {
   }
 }
 
-export const ClientModule = getModule(ClientService)
+export const Clients = getModule(ClientService)
