@@ -33,7 +33,10 @@ const referencesRoutes: RouteConfig = {
       path: 'staff',
       component: () => import('@/views/references/staff/index.vue'),
       name: 'Staff',
-      meta: { title: 'Сотрудники' }
+      meta: {
+        title: 'Сотрудники',
+        roles: ['admin']
+      }
     }
   ]
 }

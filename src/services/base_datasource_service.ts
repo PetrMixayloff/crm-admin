@@ -2,7 +2,8 @@ import DataSource from 'devextreme/data/data_source'
 import CustomStore from 'devextreme/data/custom_store'
 import * as _ from 'lodash'
 import request from '@/utils/request'
-import { UserModule } from '@/store/modules/user'
+import {UserModule} from '@/store/modules/user'
+import {AxiosResponse} from "axios";
 
 class CrudOperates {
   public url: string;
@@ -22,15 +23,16 @@ class CrudOperates {
 
   public async load() {
     return request({
-      url: `${this.url}`,
+      url: `${this.url}/`,
       method: 'get'
     })
   }
 
   public async save(entity: any) {
+    console.log(entity)
     if (_.isNil(entity.id)) {
       return request({
-        url: this.url,
+        url: `${this.url}/`,
         method: 'post',
         data: entity
       })
@@ -54,20 +56,20 @@ class CrudOperates {
 }
 
 export default {
-
   getBaseDataSource(api_route: string) {
     return new DataSource({
       store: new CustomStore({
         key: 'id',
+        loadMode: 'raw',
         async byKey(key) {
           const resp = await request({
             url: `${api_route}/${key}`,
             method: 'get'
           })
-
           return resp
         },
         async insert(values) {
+          console.log(values)
           const resp = await request({
             url: `${api_route}`,
             data: values,
@@ -100,25 +102,31 @@ export default {
             'sort',
             'filter'
           ].forEach((i) => {
-            // if (i === 'filter') {
-            //   if (!_.isNil(loadOptions[i]) || loadOptions[i] !== '') {
-            //     loadOptions[i] = [ "shop_id", "=", UserModule.shopId ]
-            //   }
-            // }
-
-            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '') {
+            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '' && loadOptions[i] !== ['raw_id', 'not_in', []]) {
               params += `${i}=${JSON.stringify(loadOptions[i])}&`
             }
           })
           params = params.slice(0, -1)
 
-          const resp = await request({
+          const resp: AxiosResponse['data'] = await request({
             url: `${api_route}/${params}`,
             method: 'get'
           })
 
           if (resp && resp.data) {
-            //
+            if (api_route === 'raw_category' || api_route === 'product_category') {
+              resp.data.forEach((item: any) => {
+                if (!item.parent_id) {
+                  item.parent_id = '0'
+                }
+              })
+              resp.data.push({
+                id: '0',
+                name: "Все",
+                parent_id: null
+              })
+              resp.totalCount++
+            }
           } else {
             //
           }

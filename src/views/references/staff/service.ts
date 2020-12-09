@@ -9,13 +9,14 @@ export const table_name = 'public.user'
 export class User {
   id = null
   phone = ''
-  password = ''
+  password: string | null = null
   shop_id = UserModule.shopId
   full_name = ''
   position = ''
+  description = ''
 }
 
-@Module({ dynamic: true, store, name: 'users', namespaced: true })
+@Module({ dynamic: true, store, name: 'staff', namespaced: true })
 class StaffService extends VuexModule {
   public editVisible = false;
   public editMode = false;

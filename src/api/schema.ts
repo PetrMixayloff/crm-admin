@@ -6,6 +6,6 @@ export const getDbSchema = () => {
     url: '/meta',
     method: 'get'
   }).then(resp => {
-    AppModule.SetDbSchema(resp.data)
+    AppModule.SetDbSchema(resp)
   })
 }

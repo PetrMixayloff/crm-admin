@@ -26,7 +26,7 @@
         <DxItem
           data-field="password"
           :editor-options="{mode: 'password'}"
-          :validation-rules="validationRules.password"
+          :validation-rules="!state.editMode ? validationRules.password : null"
           :label="{text: 'Пароль'}"
         />
         <DxItem
@@ -41,14 +41,20 @@
           editor-type="dxSelectBox"
           :editor-options="{dataSource: positionsDataSource, displayExpr: 'name', valueExpr: 'name'}"
         />
+        <DxItem
+          data-field="description"
+          :label="{text: 'Данные сотрудника'}"
+          editor-type="dxTextArea"
+        />
       </DxForm>
     </div>
   </d-edit-popup>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { DxForm, DxItem } from 'devextreme-vue/form'
+import { DxFileUploader } from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import { User, StaffModule } from '../service'
 import ArrayStore from 'devextreme/data/array_store'
@@ -60,7 +66,8 @@ import _ from 'lodash'
   components: {
     DxForm,
     DxItem,
-    DEditPopup
+    DEditPopup,
+    DxFileUploader
   }
 })
 export default class extends Vue {
@@ -74,7 +81,12 @@ export default class extends Vue {
 
   public validationRules: any = {
     phone: [
-      { type: 'required', message: 'Номер телефона не заполнен' }
+      { type: 'required', message: 'Номер телефона не заполнен' },
+      {
+        type: 'custom',
+        validationCallback: this.phoneValidate,
+        message: 'Номер телефона должен быть в формате +79005551122'
+      }
     ],
     fullName: [
       { type: 'required', message: 'ФИО не заполнены' }
@@ -96,6 +108,7 @@ export default class extends Vue {
   onShow() {
     if (this.state.editMode) {
       this.entity = _.cloneDeep(this.state.currentRow)
+      this.entity.password = null
     } else {
       this.entity = new User()
       this.state.SetCurrentRow(this.entity)
@@ -117,6 +130,12 @@ export default class extends Vue {
         console.log(e)
       }
     }
+  }
+
+  phoneValidate(data: any) {
+    const re = new RegExp('[+][7][9][0-9]{9}')
+    const found = data.value.match(re)
+    return !_.isNull(found)
   }
 
   onCancel(e: any) {

@@ -9,16 +9,7 @@
       label-position="left"
     >
       <div class="title-container">
-        <h3
-          v-if="this.$route.path==='/create_admin'"
-          class="title"
-        >
-          Регистрация нового администратора
-        </h3>
-        <h3
-          v-else
-          class="title"
-        >
+        <h3 class="title">
           Вход
         </h3>
       </div>
@@ -69,18 +60,7 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
       <el-button
-        v-if="this.$route.path==='/create_admin'"
-        :loading="loading"
-        type="primary"
-        style="width:100%; margin-bottom:30px;"
-        @click.native.prevent="createAdmin"
-      >
-        Зарегистрировать
-      </el-button>
-      <el-button
-        v-else
         :loading="loading"
         type="primary"
         style="width:100%; margin-bottom:30px;"
@@ -98,9 +78,9 @@ import { Route } from 'vue-router'
 import { Dictionary } from 'vue-router/types/router'
 import { Form as ElForm, Input } from 'element-ui'
 import { UserModule } from '@/store/modules/user'
-import { login, getUserInfo, registerAdmin } from '@/api/users'
-import { getDbSchema } from '@/api/schema'
+import { login } from '@/api/users'
 import SocialSign from './components/SocialSignin.vue'
+import { AxiosResponse } from 'axios'
 
 @Component({
   name: 'Login',
@@ -137,7 +117,6 @@ export default class extends Vue {
 
   private passwordType = 'password'
   private loading = false
-  private showDialog = false
   private capsTooltip = false
   private redirect?: string
   private otherQuery: Dictionary<string> = {}
@@ -182,48 +161,15 @@ export default class extends Vue {
       if (valid) {
         this.loading = true
         try {
-          const resp = await login(this.loginForm)
+          const resp: AxiosResponse['data'] = await login(this.loginForm)
 
-          if (resp.data && resp.data.access_token) {
-            const token = resp.data.access_token
+          if (resp.access_token) {
+            const token = resp.access_token
             UserModule.SetToken(token)
-            const user = await getUserInfo()
-            if (user.data) {
-              const userInfo = {
-                name: user.data.full_name,
-                shopId: user.data.shop_id,
-                roles: user.data.is_staff ? ['user'] : ['admin']
-              }
-              UserModule.SetUserInfo(userInfo)
-            }
-            await getDbSchema()
             await this.$router.push({ path: '/' })
           } else {
             throw new Error('Не получен токен')
           }
-        } catch (e) {
-          return false
-        } finally {
-          this.loading = false
-        }
-      } else {
-        return false
-      }
-    })
-  }
-
-  private createAdmin() {
-    (this.$refs.loginForm as ElForm).validate(async(valid: boolean) => {
-      if (valid) {
-        this.loading = true
-        try {
-          const adminData = {
-            phone: this.loginForm.phone,
-            password: this.loginForm.password,
-            is_staff: false
-          }
-          await registerAdmin(adminData)
-          await this.$router.push('/')
         } catch (e) {
           return false
         } finally {

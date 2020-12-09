@@ -10,6 +10,7 @@ import { getUserInfo } from '@/api/users'
 import { getDbSchema } from '@/api/schema'
 import { AppModule } from '@/store/modules/app'
 import _ from 'lodash'
+import { AxiosResponse } from "axios";
 
 NProgress.configure({ showSpinner: false })
 
@@ -33,13 +34,17 @@ router.beforeEach(async(to: Route, from: Route, next: any) => {
     }
     if (UserModule.roles.length === 0) {
       try {
-        const user = await getUserInfo()
-        if (user.data) {
-          if (!user.data.is_superuser) {
+        const user: AxiosResponse['data'] = await getUserInfo()
+        if (user) {
+          if (!user.shop_id) {
+            next('/create_new_shop')
+            NProgress.done()
+          }
+          if (!user.is_superuser) {
             const userInfo = {
-              name: user.data.full_name,
-              shopId: user.data.shop_id,
-              roles: user.data.is_staff ? ['user'] : ['admin']
+              name: user.full_name,
+              shopId: user.shop_id,
+              roles: user.is_staff ? ['user'] : ['admin']
             }
             UserModule.SetUserInfo(userInfo)
           } else {
@@ -51,6 +56,20 @@ router.beforeEach(async(to: Route, from: Route, next: any) => {
             UserModule.SetUserInfo(userInfo)
           }
         }
+        if (_.isEmpty(AppModule.db_schema)) {
+          await getDbSchema()
+        }
+        // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
+        // await UserModule.GetUserInfo()
+        // const roles = ['admin'] // hack, set roles always 'admin' while developing
+        // UserModule.SetRoles(roles)
+        // Generate accessible routes map based on role
+        PermissionModule.GenerateRoutes(UserModule.roles)
+        // Dynamically add accessible routes
+        router.addRoutes(PermissionModule.dynamicRoutes)
+        // Hack: ensure addRoutes is complete
+        // Set the replace: true, so the navigation will not leave a history record
+        next({ ...to, replace: true })
       } catch (err) {
         // Remove token and redirect to login page
         UserModule.ResetToken()
@@ -58,24 +77,6 @@ router.beforeEach(async(to: Route, from: Route, next: any) => {
         next(`/login?redirect=${to.path}`)
         NProgress.done()
       }
-    }
-    if (!UserModule.shopId) {
-      next('/create_new_shop')
-      NProgress.done()
-    }
-    if (_.isEmpty(AppModule.db_schema)) {
-      await getDbSchema()
-      // Note: roles must be a object array! such as: ['admin'] or ['developer', 'editor']
-      // await UserModule.GetUserInfo()
-      // const roles = ['admin'] // hack, set roles always 'admin' while developing
-      // UserModule.SetRoles(roles)
-      // Generate accessible routes map based on role
-      PermissionModule.GenerateRoutes(UserModule.roles)
-      // Dynamically add accessible routes
-      router.addRoutes(PermissionModule.dynamicRoutes)
-      // Hack: ensure addRoutes is complete
-      // Set the replace: true, so the navigation will not leave a history record
-      next({ ...to, replace: true })
     } else {
       next()
     }

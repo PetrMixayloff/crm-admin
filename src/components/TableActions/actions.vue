@@ -6,6 +6,7 @@
       </h2>
       <div class="flex-r-c grid-actions">
         <d-button
+          v-if="showCreateNew"
           :btn-text="compactMode ? '': relationMode === 'many' ? 'Добавить' : 'Создать'"
           icon="plus"
           btn-type="default"
@@ -31,6 +32,7 @@
         />
 
         <d-button
+          v-if="onGridRefresh"
           :btn-text="compactMode ? '': 'Обновить'"
           icon="refresh"
           btn-type="normal"
@@ -56,12 +58,12 @@ export default class extends Vue {
   @Prop() private onEdit!: Function;
   @Prop() private onView!: Function;
   @Prop({ required: false }) private onDelete!: Function;
-  @Prop({ required: true }) private onGridRefresh!: Function;
+  @Prop({ required: false }) private onGridRefresh!: Function;
   @Prop({ required: true }) private selected!: boolean;
   @Prop() private tableTitle!: string;
   @Prop() public relationMode!: any;
   @Prop() public compactMode!: boolean;
-  @Prop() public oneToOneComplete!: boolean;
+  @Prop({ default: true }) public showCreateNew!: boolean;
 
   created() {
 
