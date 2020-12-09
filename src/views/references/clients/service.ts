@@ -14,13 +14,26 @@ export class Client {
   address: string | null = null
   discount: string | null = null
   comment: string | null = null
-  orders: any[] = []
+  orders: Array<Orders> = []
+}
+export class Orders {
+  id: string | null = null
+  shop_id = UserModule.shopId
+  total_cost: string | null = null
+  prepay: string | null = null
+  prepay_type: string | null = null
+  amount: string | null = null
+  amount_type: string | null = null
+  discount: string | null = null
+  rating: string | null = null
+  status: string | null = null
+  date_created: string | null = null
+  date_of_order: string | null = null
 }
 
 @Module({ dynamic: true, store, name: 'clients', namespaced: true })
 class ClientService extends VuexModule {
   public currentRow = new Client();
-
   public dataSource = base_ds.getBaseDataSource(route_ns);
   public crud = base_ds.getBaseCrud(route_ns);
 
