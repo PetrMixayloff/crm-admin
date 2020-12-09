@@ -2,12 +2,11 @@
   <div class="app-container">
     <h4>Клиенты</h4>
     <table-grid
-      ref="tablegrid"
+      ref="clientsTableGrid"
       :data-source="dataSource"
       :columns="columns"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
-      start-edit-action="dblClick"
     />
   </div>
 </template>
@@ -36,14 +35,12 @@ export default class extends Vue {
     this.state.dataSource.reload()
   }
 
-
   initColumns() {
     const included = ['name', 'phone', 'address', 'discount', 'comment'];
 
     [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
       table_name, included)
   }
-
 
   onRowClick(e: any) {
     this.state.SetCurrentRow(e.data)
