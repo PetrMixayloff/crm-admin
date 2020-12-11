@@ -37,6 +37,12 @@ const referencesRoutes: RouteConfig = {
         title: 'Сотрудники',
         roles: ['admin']
       }
+    },
+    {
+      path: 'rawusagestandards',
+      component: () => import('@/views/references/rawusagestandards/index.vue'),
+      name: 'RawUsageStandards',
+      meta: { title: 'Стандарты сырья' }
     }
   ]
 }
