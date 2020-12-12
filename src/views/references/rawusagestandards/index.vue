@@ -13,18 +13,9 @@
       :columns="columns"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
-      :master-detail-enable="true"
     >
-      <template #masterDetailTemplate="{rowKey, rowData}">
-        <table-grid
-          :data-source="rowData.records"
-          :columns="recordsColumns"
-          :row-click="empty"
-          :dbl-row-click="empty"
-          selection-mode="single"
-        />
-      </template>
     </table-grid>
+    <StandardsEditPopup/>
   </div>
 </template>
 
@@ -35,6 +26,7 @@ import TableGrid from '@/components/TableGrid/grid.vue'
 import dbSchemaService from '@/services/db_schema_service'
 import TableActions from "@/components/TableActions/actions.vue";
 import StandardsEditPopup from "./components/standards-edit.vue"
+import {RawModule} from "@/views/references/materials/service";
 
 @Component({
   name: 'rawusagestandards',
@@ -59,6 +51,13 @@ export default class extends Vue {
     dataField: 'raw_id',
     dataType: 'string',
     caption: 'Сырье',
+    lookup: {
+      allowClearing: true,
+      dataSource: RawModule.rawDataSource.store(),
+      valueExpr: 'id',
+      displayExpr: 'name'
+    },
+    validationRules: [{type: 'required'}]
   },
   {
     dataField: 'name',
