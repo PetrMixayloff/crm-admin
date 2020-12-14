@@ -5,7 +5,7 @@
       :on-edit="editRawUsageStandards"
       :on-delete="deleteRawUsageStandards"
       table-title="Стандарты сырья"
-      :selected="state.currentRow.id"
+      :selected="state.currentStandards.id"
     />
     <table-grid
       ref="rawusagestandardsTableGrid"

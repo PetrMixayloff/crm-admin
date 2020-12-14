@@ -9,20 +9,15 @@ export const table_name = 'public.rawusagestandards'
 
 export class RawUsageStandards {
   id: string | null = null
+  shop_id: string = UserModule.shopId
   raw_id: string | null = null
   name: string | null = null
   quantity: string | null = null
-  records: Array<Raw> = []
-}
-
-export class Raw {
-  id: string | null = null
-  raw_id: string | null = null
 }
 
 @Module({ dynamic: true, store, name: 'rawusagestandards', namespaced: true })
 class RawUsageStandardsService extends VuexModule {
-  public currentRow = new RawUsageStandards();
+  public currentStandards = new RawUsageStandards();
   public dataSource = base_ds.getBaseDataSource(route_ns);
   public crud = base_ds.getBaseCrud(route_ns);
   public editVisible = false
@@ -32,7 +27,7 @@ class RawUsageStandardsService extends VuexModule {
 
   @Mutation
   private SET_CURRENT(value: RawUsageStandards) {
-    this.currentRow = { ...value }
+    this.currentStandards = { ...value }
   }
 
   @Action
@@ -42,7 +37,7 @@ class RawUsageStandardsService extends VuexModule {
 
   @Mutation
   private RESET_CURRENT() {
-    this.currentRow = new RawUsageStandards()
+    this.currentStandards = new RawUsageStandards()
   }
 
   @Action

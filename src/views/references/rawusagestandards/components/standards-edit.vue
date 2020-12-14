@@ -18,8 +18,15 @@
         :show-validation-summary="true"
         validation-group="RawUsageStandardsEntity"
       >
+        <DxItem
+        data-field="name"
+        :label="{text: 'Название стандарта'}"
+        />
+        <DxItem
+        data-field="quantity"
+        :label="{text: 'Количество сырья на ед. стандарта'}"
+        />
       </DxForm>
-      <br>
       <h3>Сырье</h3>
       <table-grid
         ref="tablegrid"
@@ -62,13 +69,7 @@ export default class extends Vue {
   private entity: RawUsageStandards = new RawUsageStandards();
   public state = RawUsageStandardsModule;
   public Raw: any[] = []
-  public currentRawUsageStandards = new RawUsageStandards()
   public columns = [
-    {
-      dataField: 'id',
-      dataType: 'string',
-      visible: false
-    },
     {
       dataField: 'raw_id',
       dataType: 'string',
@@ -77,28 +78,10 @@ export default class extends Vue {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
         valueExpr: 'id',
-        displayExpr: 'name'
+        displayExpr: 'id'
       },
       validationRules: [{type: 'required'}]
     },
-    // {
-    //   dataField: 'price',
-    //   dataType: 'number',
-    //   caption: 'Цена за ед.',
-    //   validationRules: [{type: 'required'}]
-    // },
-    {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество',
-      validationRules: [{type: 'required'}]
-    },
-    {
-      dataField: 'total',
-      dataType: 'number',
-      caption: 'Сумма',
-      calculateCellValue: this.calculateTotal
-    }
   ]
 
   async created() {
@@ -107,16 +90,9 @@ export default class extends Vue {
   empty() {
   }
 
-  calculateTotal(e: any) {
-    if (e.price && e.quantity) {
-      return e.price * e.quantity
-    }
-    return ''
-  }
-
   onShow() {
     if (this.state.editMode) {
-      this.entity = _.cloneDeep(this.state.currentRow)
+      this.entity = _.cloneDeep(this.state.currentStandards)
     } else {
       this.entity = new RawUsageStandards()
     }
@@ -134,9 +110,6 @@ export default class extends Vue {
         this.Raw.forEach((item: any) => {
           const recordToAdd = new RawUsageStandards()
           recordToAdd.raw_id = item.raw_id
-          recordToAdd.name = item.name
-          recordToAdd.quantity = item.quantity
-          this.entity.records.push(recordToAdd)
         })
         await this.state.crud.save(this.entity)
         await this.state.dataSource.reload()
