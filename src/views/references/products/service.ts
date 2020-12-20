@@ -17,18 +17,24 @@ export class ProductCategory {
   show_on_store = true
 }
 
+export class ProductRawRelation {
+  id: string | null = null
+  product_id: string | null = null
+  raw_id: string | null = null
+  quantity: number = 0
+}
+
 export class Product {
   id: string | null = null
   category_id: string | null = null
   shop_id: string = UserModule.shopId
   name = ''
   description = ''
-  url = ''
   image: string | null = null
   price = 0.00
   old_price: number | null = null
-  quantity = 0
   show_on_store = true
+  raw: Array<ProductRawRelation> = []
 }
 
 @Module({ dynamic: true, store, name: 'products', namespaced: true })

@@ -44,6 +44,16 @@
           :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
+      <h5>Состав сырья</h5>
+      <table-grid
+        ref="productsTableGrid"
+        :data-source="entity.raw"
+        :columns="rawColumns"
+        :allow-editing="true"
+        :row-click="empty"
+        :dbl-row-click="empty"
+        editing-mode="row"
+      />
       <h5>Изображение</h5>
       <img
         :src="productImage"
@@ -90,6 +100,8 @@ import DButton from '@/components/DButton/button.vue'
 import {Product, ProductsModule} from '../service'
 import _ from 'lodash'
 import {fileDelete, filePost} from '@/utils/file-upload'
+import TableGrid from '@/components/TableGrid/grid.vue'
+import {RawModule} from "@/views/references/materials/service";
 
 @Component({
   name: 'ProductPopupEdit',
@@ -98,7 +110,8 @@ import {fileDelete, filePost} from '@/utils/file-upload'
     DxItem,
     DEditPopup,
     DButton,
-    DxFileUploader
+    DxFileUploader,
+    TableGrid
   }
 })
 export default class extends Vue {
@@ -106,6 +119,36 @@ export default class extends Vue {
   public state = ProductsModule;
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
   private imageToDelete: string | null = null
+
+  public rawColumns: any[] = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'product_id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'raw_id',
+      caption: 'Сырье',
+      lookup: {
+        allowClearing: true,
+        dataSource: RawModule.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      },
+      validationRules: [{type: 'required'}]
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Количество',
+      validationRules: [{type: 'required'}]
+    }
+  ]
 
   public validationRules: any = {
     name: [
@@ -160,7 +203,8 @@ export default class extends Vue {
       }
       try {
         await this.state.crudProduct.save(this.entity)
-        this.state.SetCurrentProduct(this.entity)
+        await this.state.productDataSource.reload()
+        this.state.ResetCurrentProduct()
         this.onClose()
       } catch (e) {
         console.log(e)

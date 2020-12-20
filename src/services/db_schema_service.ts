@@ -38,7 +38,7 @@ export default {
         if (item.name === 'id') {
           obj.visible = false
         }
-        if (item.name === 'category_id' && (schema_table === 'public.raw' || schema_table === 'public.product')) {
+        if (item.name === 'category_id') {
           obj.dataType = 'string'
           obj.caption = 'Категория'
           obj.visible = false
