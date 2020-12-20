@@ -44,16 +44,6 @@
           :editor-options="{text: 'Отображать на витрине'}"
         />
       </DxForm>
-      <h5>Состав сырья</h5>
-      <table-grid
-        ref="productsTableGrid"
-        :data-source="entity.raw"
-        :columns="rawColumns"
-        :allow-editing="true"
-        :row-click="empty"
-        :dbl-row-click="empty"
-        editing-mode="row"
-      />
       <h5>Изображение</h5>
       <img
         :src="productImage"
@@ -86,6 +76,16 @@
         styling-mode="contained"
         :on-click="onImageRemove"
         hint="Удалить изображение"
+      />
+      <h5>Состав сырья</h5>
+      <table-grid
+        ref="productsTableGrid"
+        :data-source="entity.raw"
+        :columns="rawColumns"
+        :allow-editing="true"
+        :row-click="empty"
+        :dbl-row-click="empty"
+        editing-mode="row"
       />
     </div>
   </d-edit-popup>
