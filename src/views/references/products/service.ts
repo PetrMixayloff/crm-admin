@@ -22,6 +22,7 @@ export class ProductRawRelation {
   product_id: string | null = null
   raw_id: string | null = null
   quantity: number = 0
+  standard_id: string | null = null
 }
 
 export class Product {

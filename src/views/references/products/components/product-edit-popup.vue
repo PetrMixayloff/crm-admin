@@ -83,6 +83,7 @@
         :data-source="entity.raw"
         :columns="rawColumns"
         :allow-editing="true"
+        :filter-row-visible="false"
         :row-click="empty"
         :dbl-row-click="empty"
         editing-mode="row"
@@ -102,6 +103,7 @@ import _ from 'lodash'
 import {fileDelete, filePost} from '@/utils/file-upload'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import {RawModule} from "@/views/references/materials/service";
+import { RawUsageStandardsModule } from '../../rawusagestandards/service'
 
 @Component({
   name: 'ProductPopupEdit',
@@ -147,7 +149,17 @@ export default class extends Vue {
       dataType: 'number',
       caption: 'Количество',
       validationRules: [{type: 'required'}]
-    }
+    },
+    {
+      dataField: 'standard_id',
+      caption: 'Название стандарта',
+      lookup: {
+        allowClearing: true,
+        dataSource: RawUsageStandardsModule.dataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      }
+    },
   ]
 
   public validationRules: any = {
