@@ -87,6 +87,7 @@
         :row-click="empty"
         :dbl-row-click="empty"
         editing-mode="row"
+        @row-removing="onRowRemoving"
       />
     </div>
   </d-edit-popup>
@@ -103,7 +104,8 @@ import _ from 'lodash'
 import {fileDelete, filePost} from '@/utils/file-upload'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import {RawModule} from "@/views/references/materials/service";
-import { RawUsageStandardsModule } from '../../rawusagestandards/service'
+import {RawUsageStandardsModule} from '../../rawusagestandards/service'
+import request from '@/utils/request'
 
 @Component({
   name: 'ProductPopupEdit',
@@ -121,6 +123,7 @@ export default class extends Vue {
   public state = ProductsModule;
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
   private imageToDelete: string | null = null
+  private rawToDelete: any[] = []
 
   public rawColumns: any[] = [
     {
@@ -172,9 +175,15 @@ export default class extends Vue {
   }
 
   empty() {
+
+  }
+
+  onRowRemoving(e: any) {
+    this.rawToDelete.push(e.data.id)
   }
 
   onShow() {
+    this.rawToDelete = []
     if (this.state.productEditMode) {
       this.entity = _.cloneDeep(this.state.currentProduct)
     } else {
@@ -187,6 +196,7 @@ export default class extends Vue {
   onClose() {
     this.state.SetProductEditVisible(false)
     this.state.SetProductEditMode(false)
+    this.rawToDelete = []
   }
 
   async onOk(e: any) {
@@ -211,6 +221,14 @@ export default class extends Vue {
         } catch (e) {
           console.log(e)
           return
+        }
+      }
+      if (this.rawToDelete.length > 0) {
+        for (const rawId of this.rawToDelete) {
+          await request({
+            url: `/raw_relation/${rawId}`,
+            method: 'delete'
+          })
         }
       }
       try {

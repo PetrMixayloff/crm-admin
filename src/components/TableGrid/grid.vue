@@ -25,6 +25,7 @@
       @init-new-row="onInitNewRow"
       @cell-prepared="onCellPrepared"
       @row-prepared="onRowPrepared"
+      @row-removing="onRowRemoving"
       @selection-changed="onSelectionChanged"
     >
       >
@@ -191,6 +192,11 @@ export default class extends Vue {
 
   @Emit('row-prepared')
   onRowPrepared(e: any) {
+    return e
+  }
+
+  @Emit('row-removing')
+  onRowRemoving(e: any) {
     return e
   }
 
