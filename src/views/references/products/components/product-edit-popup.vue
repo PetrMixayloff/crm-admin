@@ -226,7 +226,7 @@ export default class extends Vue {
       if (this.rawToDelete.length > 0) {
         for (const rawId of this.rawToDelete) {
           await request({
-            url: `/raw_relation/${rawId}`,
+            url: `/product/raw_relation/${rawId}`,
             method: 'delete'
           })
         }
@@ -259,7 +259,7 @@ export default class extends Vue {
     if (!this.entity.image) {
       return require('@/assets/defaults/default_baloon.png')
     }
-    return this.state.currentProduct.image
+    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${this.state.currentProduct.image}`
   }
 
   get showDeleteButton() {
