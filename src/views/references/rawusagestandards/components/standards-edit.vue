@@ -19,27 +19,23 @@
         validation-group="RawUsageStandardsEntity"
       >
         <DxItem
-        data-field="name"
-        :label="{text: 'Название стандарта'}"
+          data-field="name"
+          :label="{text: 'Название стандарта'}"
+          :validation-rules="validationRules.name"
         />
         <DxItem
-        data-field="quantity"
-        :label="{text: 'Количество сырья на ед. стандарта'}"
+          data-field="quantity"
+          :label="{text: 'Количество сырья на ед. стандарта'}"
+          :validation-rules="validationRules.quantity"
+        />
+        <DxItem
+          data-field="raw_id"
+          editor-type="dxSelectBox"
+          :label="{text: 'Сырье'}"
+          :data-source="Raw"
+          :validation-rules="validationRules.raw_id"
         />
       </DxForm>
-      <h3>Сырье</h3>
-      <table-grid
-        ref="tablegrid"
-        :data-source="Raw"
-        :columns="columns"
-        :height="400"
-        :filter-row-visible="false"
-        :column-chooser-enable="false"
-        :allow-editing="true"
-        editing-mode="raw"
-        :row-click="empty"
-        :dbl-row-click="empty"
-      />
     </div>
   </d-edit-popup>
 </template>
@@ -78,11 +74,23 @@ export default class extends Vue {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
         valueExpr: 'id',
-        displayExpr: 'id'
+        displayExpr: 'name'
       },
       validationRules: [{type: 'required'}]
     },
   ]
+
+  public validationRules: any = {
+    name: [
+      { type: 'required', message: 'Название стандарта' }
+      ],
+    quantity: [
+      { type: 'required', message: 'Количество сырья на ед. стандарта' }
+      ],
+    raw_id: [
+      { type: 'required', message: 'Сырье' }
+      ]
+  }
 
   async created() {
   }
@@ -106,18 +114,11 @@ export default class extends Vue {
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
-      try {
-        this.Raw.forEach((item: any) => {
-          const recordToAdd = new RawUsageStandards()
-          recordToAdd.raw_id = item.raw_id
-        })
-        await this.state.crud.save(this.entity)
-        await this.state.dataSource.reload()
-        this.state.ResetCurrentRow()
-        this.onClose()
-      } catch (e) {
-        console.log(e)
-      }
+      console.log(this.entity)
+      await this.state.crudStandards.save(this.entity)
+      await this.state.dataSource.reload()
+      this.state.ResetCurrentRow()
+      this.onClose()
     }
   }
 

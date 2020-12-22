@@ -62,15 +62,28 @@ export default class extends Vue {
   {
     dataField: 'name',
     dataType: 'string',
-    caption: 'Название стандарта'
+    caption: 'Название стандарта',
+    validationRules: [{type: 'required'}]
   },
   {
     dataField: 'quantity',
     dataType: 'number',
-    caption: 'Количество сырья на ед. стандарта'
+    caption: 'Количество сырья на ед. стандарта',
+    validationRules: [{type: 'required'}]
   },
 ]
   public emptyEntity: any = {};
+  public validationRules: any = {
+    name: [
+      {type: 'required', message: 'Название сырья не задано'}
+    ],
+    quantity: [
+      {type: 'required', message: 'Количество сырья на ед. стандарта не задано'}
+    ],
+    raw_id: [
+      {type: 'required', message: 'Сырье не задано'}
+    ]
+  }
 
   created() {
     this.initColumns()
@@ -107,7 +120,19 @@ export default class extends Vue {
   }
 
   deleteRawUsageStandards() {
-
+    confirm('Удалить выбранный стандарт?', 'Удаление стандарта')
+      .then(async (answer: boolean) => {
+        if (!answer) {
+          return
+        }
+        try {
+          await this.state.crudStandards.delete(this.state.currentStandards.id)
+          await this.state.dataSource.reload()
+          this.state.ResetCurrentRow()
+        } catch (e) {
+          console.log(e)
+        }
+      })
   }
 }
 </script>
