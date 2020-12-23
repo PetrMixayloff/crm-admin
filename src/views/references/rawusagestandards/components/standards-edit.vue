@@ -1,8 +1,8 @@
 <template>
   <d-edit-popup
-    :title="state.rawEditMode ? 'Изменение данных cтандарта' : 'Создание cтандарта сырья'"
-    default-width="1200"
-    default-height="1000"
+    :title="state.editMode ? 'Изменение данных cтандарта' : 'Создание cтандарта сырья'"
+    default-width="600"
+    default-height="800"
     :visible="state.editVisible"
     validation-group="RawUsageStandardsEntity"
     @hidden="onClose"
@@ -24,16 +24,17 @@
           :validation-rules="validationRules.name"
         />
         <DxItem
-          data-field="quantity"
-          :label="{text: 'Количество сырья на ед. стандарта'}"
-          :validation-rules="validationRules.quantity"
-        />
-        <DxItem
           data-field="raw_id"
           editor-type="dxSelectBox"
           :label="{text: 'Сырье'}"
-          :data-source="Raw"
+          :editor-options="{dataSource: rawDataSource, valueExpr: 'id', displayExpr: 'name',
+                            showClearButton: true}"
           :validation-rules="validationRules.raw_id"
+        />
+        <DxItem
+          data-field="quantity"
+          :label="{text: 'Количество сырья на ед. стандарта'}"
+          :validation-rules="validationRules.quantity"
         />
       </DxForm>
     </div>
@@ -41,8 +42,8 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
-import {DxForm, DxItem} from 'devextreme-vue/form'
+import { Component, Vue } from 'vue-property-decorator'
+import { DxForm, DxItem } from 'devextreme-vue/form'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import { RawUsageStandardsModule, RawUsageStandards } from '../service'
 import { RawModule } from '@/views/references/materials/service'
@@ -64,32 +65,18 @@ import _ from 'lodash'
 export default class extends Vue {
   private entity: RawUsageStandards = new RawUsageStandards();
   public state = RawUsageStandardsModule;
-  public Raw: any[] = []
-  public columns = [
-    {
-      dataField: 'raw_id',
-      dataType: 'string',
-      caption: 'Наименование',
-      lookup: {
-        allowClearing: true,
-        dataSource: RawModule.rawDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      },
-      validationRules: [{type: 'required'}]
-    },
-  ]
+  public rawDataSource = RawModule.rawDataSource
 
   public validationRules: any = {
     name: [
-      { type: 'required', message: 'Название стандарта' }
-      ],
+      { type: 'required', message: 'Не указано название стандарта' }
+    ],
     quantity: [
-      { type: 'required', message: 'Количество сырья на ед. стандарта' }
-      ],
+      { type: 'required', message: 'Не указано количество сырья на ед. стандарта' }
+    ],
     raw_id: [
-      { type: 'required', message: 'Сырье' }
-      ]
+      { type: 'required', message: 'Не выбрано сырье' }
+    ]
   }
 
   async created() {
@@ -114,7 +101,6 @@ export default class extends Vue {
   async onOk(e: any) {
     const result = e.validationGroup.validate()
     if (result.isValid) {
-      console.log(this.entity)
       await this.state.crudStandards.save(this.entity)
       await this.state.dataSource.reload()
       this.state.ResetCurrentRow()
@@ -123,16 +109,7 @@ export default class extends Vue {
   }
 
   onCancel(e: any) {
-    this.state.SetEditVisible(false)
-    this.state.SetEditMode(false)
-  }
-
-  onUploaded(e: any) {
-    //
-  }
-
-  onRemove() {
-    //
+    this.onClose()
   }
 }
 </script>

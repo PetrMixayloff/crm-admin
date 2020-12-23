@@ -7,7 +7,6 @@ import {raw_route_ns} from "@/views/references/materials/service";
 export const route_ns = 'rawusagestandards'
 export const table_name = 'public.rawusagestandards'
 
-
 export class RawUsageStandards {
   id: string | null = null
   shop_id: string = UserModule.shopId

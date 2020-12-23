@@ -10,12 +10,11 @@
     <table-grid
       ref="rawusagestandardsTableGrid"
       :data-source="dataSource"
-      :columns="columns"
+      :columns="recordsColumns"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
-    >
-    </table-grid>
-    <StandardsEditPopup/>
+    />
+    <StandardsEditPopup />
   </div>
 </template>
 
@@ -24,9 +23,10 @@ import { Component, Vue } from 'vue-property-decorator'
 import { table_name, RawUsageStandardsModule } from './service'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import dbSchemaService from '@/services/db_schema_service'
-import TableActions from "@/components/TableActions/actions.vue";
-import StandardsEditPopup from "./components/standards-edit.vue"
-import {RawModule} from "@/views/references/materials/service";
+import TableActions from '@/components/TableActions/actions.vue'
+import StandardsEditPopup from './components/standards-edit.vue'
+import { RawModule } from '@/views/references/materials/service'
+import { confirm } from 'devextreme/ui/dialog'
 
 @Component({
   name: 'rawusagestandards',
@@ -41,61 +41,55 @@ export default class extends Vue {
   public state = RawUsageStandardsModule;
   public dataSource = this.state.dataSource;
   public columns: Array<any> = [];
-  public recordsColumns = [
-  {
-    dataField: 'id',
-    dataType: 'string',
-    visible: false
-  },
-  {
-    dataField: 'raw_id',
-    dataType: 'string',
-    caption: 'Сырье',
-    lookup: {
-      allowClearing: true,
-      dataSource: RawModule.rawDataSource.store(),
-      valueExpr: 'id',
-      displayExpr: 'name'
-    },
-    validationRules: [{type: 'required'}]
-  },
-  {
-    dataField: 'name',
-    dataType: 'string',
-    caption: 'Название стандарта',
-    validationRules: [{type: 'required'}]
-  },
-  {
-    dataField: 'quantity',
-    dataType: 'number',
-    caption: 'Количество сырья на ед. стандарта',
-    validationRules: [{type: 'required'}]
-  },
-]
-  public emptyEntity: any = {};
+  public recordsColumns: any[] = []
   public validationRules: any = {
     name: [
-      {type: 'required', message: 'Название сырья не задано'}
+      { type: 'required', message: 'Название сырья не задано' }
     ],
     quantity: [
-      {type: 'required', message: 'Количество сырья на ед. стандарта не задано'}
+      { type: 'required', message: 'Количество сырья на ед. стандарта не задано' }
     ],
     raw_id: [
-      {type: 'required', message: 'Сырье не задано'}
+      { type: 'required', message: 'Сырье не задано' }
     ]
   }
 
   created() {
     this.initColumns()
-    this.state.ResetCurrentRow()
-    this.state.dataSource.reload()
   }
 
   initColumns() {
-    const included = ['raw_id', 'name', 'quantity'];
-
-    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
+    this.recordsColumns = [
+      {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false
+      },
+      {
+        dataField: 'raw_id',
+        dataType: 'string',
+        caption: 'Сырье',
+        lookup: {
+          allowClearing: true,
+          dataSource: RawModule.rawDataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'name'
+        },
+        validationRules: [{ type: 'required' }]
+      },
+      {
+        dataField: 'name',
+        dataType: 'string',
+        caption: 'Название стандарта',
+        validationRules: [{ type: 'required' }]
+      },
+      {
+        dataField: 'quantity',
+        dataType: 'number',
+        caption: 'Количество сырья на ед. стандарта',
+        validationRules: [{ type: 'required' }]
+      }
+    ]
   }
 
   onRowClick(e: any) {
@@ -103,9 +97,8 @@ export default class extends Vue {
   }
 
   onRowDblClick(e: any) {
-  this.state.SetCurrentRow(e.data)
+    this.editRawUsageStandards()
   }
-
 
   empty() {
 
@@ -116,12 +109,13 @@ export default class extends Vue {
   }
 
   editRawUsageStandards() {
-
+    this.state.SetEditVisible(true)
+    this.state.SetEditMode(true)
   }
 
   deleteRawUsageStandards() {
     confirm('Удалить выбранный стандарт?', 'Удаление стандарта')
-      .then(async (answer: boolean) => {
+      .then(async(answer: boolean) => {
         if (!answer) {
           return
         }
@@ -136,4 +130,3 @@ export default class extends Vue {
   }
 }
 </script>
-
