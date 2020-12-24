@@ -9,14 +9,16 @@ export function fileDelete(file_id: string): void {
 }
 
 export async function filePost(file: File) {
-  const formData = new FormData()
-  formData.append('file', file)
+  // const formData = new FormData()
+  // formData.append('file_name', file.name)
+  const data = {
+    file_name: file.name,
+    file_type: file.type
+  }
   const resp: AxiosResponse['data'] = await request({
     url: '/files',
     method: 'post',
-    data: formData,
-    headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 60000
+    params: data
   })
   if (resp) {
     return resp

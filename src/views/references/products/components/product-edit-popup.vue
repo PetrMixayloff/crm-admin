@@ -94,18 +94,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
-import {DxForm, DxItem} from 'devextreme-vue/form'
-import {DxFileUploader} from 'devextreme-vue/file-uploader'
+import { Component, Vue } from 'vue-property-decorator'
+import { DxForm, DxItem } from 'devextreme-vue/form'
+import { DxFileUploader } from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import DButton from '@/components/DButton/button.vue'
-import {Product, ProductsModule} from '../service'
+import { Product, ProductsModule } from '../service'
 import _ from 'lodash'
-import {fileDelete, filePost} from '@/utils/file-upload'
+import { fileDelete, filePost } from '@/utils/file-upload'
 import TableGrid from '@/components/TableGrid/grid.vue'
-import {RawModule} from "@/views/references/materials/service";
-import {RawUsageStandardsModule} from '../../rawusagestandards/service'
+import { RawModule } from '@/views/references/materials/service'
+import { RawUsageStandardsModule } from '../../rawusagestandards/service'
 import request from '@/utils/request'
+import axios, { AxiosResponse } from 'axios'
 
 @Component({
   name: 'ProductPopupEdit',
@@ -145,13 +146,13 @@ export default class extends Vue {
         valueExpr: 'id',
         displayExpr: 'name'
       },
-      validationRules: [{type: 'required'}]
+      validationRules: [{ type: 'required' }]
     },
     {
       dataField: 'quantity',
       dataType: 'number',
       caption: 'Количество',
-      validationRules: [{type: 'required'}]
+      validationRules: [{ type: 'required' }]
     },
     {
       dataField: 'standard_id',
@@ -162,12 +163,12 @@ export default class extends Vue {
         valueExpr: 'id',
         displayExpr: 'name'
       }
-    },
+    }
   ]
 
   public validationRules: any = {
     name: [
-      {type: 'required', message: 'Название товара не задано'}
+      { type: 'required', message: 'Название товара не задано' }
     ]
   }
 
@@ -212,10 +213,16 @@ export default class extends Vue {
       }
       if (!_.isNil((this.$refs.productImage as any).uploadFiles[0])) {
         const file: File = (this.$refs.productImage as any).uploadFiles[0].raw
+        this.entity.image = file.name
         try {
-          const productImage = await filePost(file)
-          if (productImage) {
-            this.entity.image = productImage
+          const signedUrl: AxiosResponse['data'] = await filePost(file)
+          if (signedUrl) {
+            const options = {
+              headers: {
+                'Content-Type': file.type
+              }
+            }
+            await axios.put(signedUrl, file, options)
           }
           (this.$refs.productImage as any).clearFiles()
         } catch (e) {
@@ -242,7 +249,7 @@ export default class extends Vue {
     }
   }
 
-  async onImageRemove() {
+  onImageRemove() {
     if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles)) {
       (this.$refs.productImage as any).clearFiles()
     }
@@ -275,7 +282,10 @@ export default class extends Vue {
     }
   }
 
-  onImageUploaded(e: any) {
+  onImageUploaded(e
+                    :
+                    any
+  ) {
     this.entity.image = e.file_name
   }
 }
