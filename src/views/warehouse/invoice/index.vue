@@ -37,7 +37,7 @@ import TableActions from '@/components/TableActions/actions.vue'
 import {InvoiceModule, table_name} from './service'
 import dbSchemaService from '@/services/db_schema_service'
 import InvoiceEditPopup from './components/invoice-edit.vue'
-import {RawModule} from "@/views/references/materials/service";
+import {RawModule} from '@/views/references/materials/service';
 
 @Component({
   name: 'Invoice',
@@ -57,8 +57,15 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'raw.name',
+      dataField: 'raw_id',
+      dataType: 'string',
       caption: 'Наименование',
+      lookup: {
+        allowClearing: true,
+        dataSource: RawModule.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      }
     },
     {
       dataField: 'price',
