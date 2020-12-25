@@ -24,7 +24,7 @@ export class Raw {
   shop_id: string = UserModule.shopId
   name = ''
   description = ''
-  image: string | null = ''
+  image: string | null = null
   cost = 0.00
   quantity = 0
   per_pack = 0

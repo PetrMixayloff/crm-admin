@@ -29,7 +29,6 @@ class CrudOperates {
   }
 
   public async save(entity: any) {
-    console.log(entity)
     if (_.isNil(entity.id)) {
       return request({
         url: `${this.url}/`,
@@ -69,7 +68,6 @@ export default {
           return resp
         },
         async insert(values) {
-          console.log(values)
           const resp = await request({
             url: `${api_route}`,
             data: values,

@@ -68,7 +68,6 @@
         :action="uploadUrl"
         :multiple="false"
         :on-change="onImageChange"
-        :on-success="onImageUploaded"
       >
         <d-button
           btn-text="Сменить"
@@ -100,6 +99,7 @@ import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
 import {UserModule} from '@/store/modules/user'
 import {filePost, fileDelete} from '@/utils/file-upload'
+import axios, {AxiosResponse} from 'axios';
 
 @Component({
   name: 'RawPopupEdit',
@@ -115,8 +115,6 @@ export default class extends Vue {
   private entity: Raw = new Raw();
   public state = RawModule;
   private imageToDelete: string | null = null
-  private token = `Bearer ${UserModule.token}`
-
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
 
   public validationRules: any = {
@@ -144,6 +142,10 @@ export default class extends Vue {
   onClose() {
     this.state.SetRawEditVisible(false)
     this.state.SetRawEditMode(false)
+    if (!_.isNil((this.$refs.rawImage as any).uploadFiles[0])) {
+      (this.$refs.rawImage as any).clearFiles()
+    }
+    this.imageToDelete = null
   }
 
   async onOk(e: any) {
@@ -159,10 +161,16 @@ export default class extends Vue {
       }
       if (!_.isNil((this.$refs.rawImage as any).uploadFiles[0])) {
         const file: File = (this.$refs.rawImage as any).uploadFiles[0].raw
+        this.entity.image = file.name
         try {
-          const rawImage = await filePost(file)
-          if (rawImage) {
-            this.entity.image = rawImage
+          const signedUrl: AxiosResponse['data'] = await filePost(file)
+          if (signedUrl) {
+            const options = {
+              headers: {
+                'Content-Type': file.type
+              }
+            }
+            await axios.put(signedUrl, file, options)
           }
           (this.$refs.rawImage as any).clearFiles()
         } catch (e) {
@@ -203,7 +211,7 @@ export default class extends Vue {
     if (!this.entity.image) {
       return require('@/assets/defaults/default_baloon.png')
     }
-    return this.state.currentRaw.image
+    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${this.entity.image}`
   }
 
   get showDeleteButton() {
@@ -214,13 +222,12 @@ export default class extends Vue {
   }
 
   onImageChange() {
+    if (!_.isNil(this.state.currentRaw.image)) {
+      this.imageToDelete = this.state.currentRaw.image
+    }
     if (!_.isNil(this.$refs.rawImage) && !_.isNil((this.$refs.rawImage as any).uploadFiles) && (this.$refs.rawImage as any).uploadFiles.length > 1) {
       (this.$refs.rawImage as any).uploadFiles.shift()
     }
-  }
-
-  onImageUploaded(e: any) {
-    this.entity.image = e.file_name
   }
 }
 </script>

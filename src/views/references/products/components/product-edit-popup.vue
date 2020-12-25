@@ -59,7 +59,6 @@
         :action="uploadUrl"
         :multiple="false"
         :on-change="onImageChange"
-        :on-success="onImageUploaded"
       >
         <d-button
           btn-text="Сменить"
@@ -184,6 +183,7 @@ export default class extends Vue {
   }
 
   onShow() {
+    this.imageToDelete = null
     this.rawToDelete = []
     if (this.state.productEditMode) {
       this.entity = _.cloneDeep(this.state.currentProduct)
@@ -197,7 +197,11 @@ export default class extends Vue {
   onClose() {
     this.state.SetProductEditVisible(false)
     this.state.SetProductEditMode(false)
+    if (!_.isNil((this.$refs.productImage as any).uploadFiles[0])) {
+      (this.$refs.productImage as any).clearFiles()
+    }
     this.rawToDelete = []
+    this.imageToDelete = null
   }
 
   async onOk(e: any) {
@@ -254,7 +258,7 @@ export default class extends Vue {
       (this.$refs.productImage as any).clearFiles()
     }
     if (!_.isNil(this.entity.image)) {
-      this.imageToDelete = this.entity.image.split('/')[0]
+      this.imageToDelete = this.entity.image
       this.entity.image = null
     }
   }
@@ -266,7 +270,7 @@ export default class extends Vue {
     if (!this.entity.image) {
       return require('@/assets/defaults/default_baloon.png')
     }
-    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${this.state.currentProduct.image}`
+    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${this.entity.image}`
   }
 
   get showDeleteButton() {
@@ -277,16 +281,12 @@ export default class extends Vue {
   }
 
   onImageChange() {
+    if (!_.isNil(this.state.currentProduct.image)) {
+      this.imageToDelete = this.state.currentProduct.image
+    }
     if (!_.isNil(this.$refs.productImage) && !_.isNil((this.$refs.productImage as any).uploadFiles) && (this.$refs.productImage as any).uploadFiles.length > 1) {
       (this.$refs.productImage as any).uploadFiles.shift()
     }
-  }
-
-  onImageUploaded(e
-                    :
-                    any
-  ) {
-    this.entity.image = e.file_name
   }
 }
 </script>

@@ -22,14 +22,12 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue} from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {RawModule, table_name} from '../service'
+import { RawModule } from '../service'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import request from '@/utils/request'
-import _ from 'lodash'
-import dbSchemaService from "@/services/db_schema_service";
-import {AxiosResponse} from "axios";
+import { AxiosResponse } from 'axios'
 import { InvoiceModule } from '@/views/warehouse/invoice/service'
 
 @Component({
@@ -79,6 +77,7 @@ export default class extends Vue {
       calculateCellValue: this.calculateTotal
     }
   ];
+
   public dataSource: any = {}
 
   async created() {
