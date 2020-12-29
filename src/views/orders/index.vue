@@ -6,12 +6,21 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
-import { Tree as ElTree } from 'element-ui'
-import { TreeData } from 'element-ui/types/tree'
+import {OrdersModule} from './service'
+import TableGrid from '@/components/TableGrid/grid.vue'
+import TableActions from '@/components/TableActions/actions.vue'
+import {confirm} from 'devextreme/ui/dialog'
 
 @Component({
-  name: 'Orders'
+  name: 'Orders',
+  components: {
+    TableGrid,
+    TableActions
+  }
 })
 export default class extends Vue {
+  public state = OrdersModule
+  public dataSource = this.state.productDataSource
+  public columns: Array<any> = [];
 }
 </script>
