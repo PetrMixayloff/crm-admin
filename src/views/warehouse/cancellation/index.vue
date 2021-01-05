@@ -57,7 +57,7 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'rawremainsdetail_id',
+      dataField: 'raw_remains_detail',
       dataType: 'string',
       caption: 'Название',
       lookup: {
@@ -65,17 +65,6 @@ export default class extends Vue {
         dataSource: RawModule.rawDataSource.store(),
         valueExpr: 'raw_id',
         displayExpr: 'name'
-      }
-    },
-    {
-      dataField: 'cancellation_id',
-      dataType: 'string',
-      caption: 'Порядковый номер',
-      lookup: {
-        allowClearing: true,
-        dataSource: CancellationModule.dataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'number'
       }
     },
     {

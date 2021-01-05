@@ -35,7 +35,7 @@ import { confirm } from 'devextreme/ui/dialog'
 })
 export default class extends Vue {
   public state = OrdersModule
-  public dataSource = this.state.productDataSource
+  public dataSource = this.state.dataSource
   public columns: Array<any> = [];
 
   onCreateNew() {
