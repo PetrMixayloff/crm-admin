@@ -26,7 +26,7 @@
         />
       </template>
     </table-grid>
-<!--    <CancellationEditPopup/>-->
+    <CancellationEditPopup/>
   </div>
 </template>
 
@@ -37,14 +37,14 @@ import TableActions from '@/components/TableActions/actions.vue'
 import { CancellationModule, table_name } from "./service";
 import dbSchemaService from '@/services/db_schema_service'
 import { RawModule } from "@/views/references/materials/service";
-
+import CancellationEditPopup from './components/cancellation-edit.vue'
 
 @Component({
   name: 'Cancellation',
   components: {
     TableGrid,
     TableActions,
-    // CancellationEditPopup
+    CancellationEditPopup
   }
 })
 export default class extends Vue {
@@ -57,13 +57,13 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'raw_remains_detail',
+      dataField: 'raw_remains_detail.raw_id',
       dataType: 'string',
       caption: 'Название',
       lookup: {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
-        valueExpr: 'raw_id',
+        valueExpr: 'id',
         displayExpr: 'name'
       }
     },

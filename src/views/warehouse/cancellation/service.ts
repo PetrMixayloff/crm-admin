@@ -47,23 +47,23 @@ class CancellationService extends VuexModule {
   }
 
   @Mutation
-  private SET_CURRENT_INVOICE(value: Cancellation) {
+  private SET_CURRENT_CANCELLATION(value: Cancellation) {
     this.currentCancellation = { ...value }
   }
 
   @Action
-  public SetCurrentInvoice(value: Cancellation) {
-    this.SET_CURRENT_INVOICE(value)
+  public SetCurrentCancellation(value: Cancellation) {
+    this.SET_CURRENT_CANCELLATION(value)
   }
 
   @Mutation
-  private RESET_CURRENT_INVOICE() {
+  private RESET_CURRENT_CANCELLATION() {
     this.currentCancellation = new Cancellation()
   }
 
   @Action
-  public ResetCurrentInvoice() {
-    this.RESET_CURRENT_INVOICE()
+  public ResetCurrentCancellation() {
+    this.RESET_CURRENT_CANCELLATION()
   }
 
   @Action
