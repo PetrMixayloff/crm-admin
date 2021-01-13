@@ -64,10 +64,10 @@ import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem} from 'devextreme-vue/form'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {CancellationModule, Cancellation, CancellationRecord} from '../service'
-import {RawModule} from '@/views/references/materials/service'
 import DButton from '@/components/DButton/button.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import _ from 'lodash'
+import {RemainsModule} from "@/views/warehouse/remains/service";
 
 @Component({
   name: 'CancellationEditPopup',
@@ -96,8 +96,8 @@ export default class extends Vue {
       caption: 'Название',
       lookup: {
         allowClearing: true,
-        dataSource: CancellationModule.dataSource.store(),
-        valueExpr: 'records[0].raw_remains_detail.id',
+        dataSource: RemainsModule.dataSource.store(),
+        valueExpr: 'id',
         displayExpr: 'id',
       },
       validationRules: [{type: 'required'}]
