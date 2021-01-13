@@ -4,7 +4,7 @@
     default-width="1200"
     default-height="1000"
     :visible="state.editVisible"
-    validation-group="invoiceEntity"
+    validation-group="cancellationEntity"
     @hidden="onClose"
     @ok="onOk"
     @cancel="onCancel"
@@ -91,14 +91,14 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'raw_remains_detail.raw_id',
+      dataField: 'rawremainsdetail_id',
       dataType: 'string',
       caption: 'Название',
       lookup: {
         allowClearing: true,
-        dataSource: RawModule.rawDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
+        dataSource: CancellationModule.dataSource.store(),
+        valueExpr: 'records[0].raw_remains_detail.id',
+        displayExpr: 'id',
       },
       validationRules: [{type: 'required'}]
     },
@@ -146,7 +146,6 @@ export default class extends Vue {
           const recordToAdd = new CancellationRecord()
           recordToAdd.rawremainsdetail_id = item.rawremainsdetail_id
           recordToAdd.quantity = item.quantity
-          recordToAdd.cancellation_id = item.cancellation_id
           this.entity.records.push(recordToAdd)
         })
         await this.state.crud.save(this.entity)
