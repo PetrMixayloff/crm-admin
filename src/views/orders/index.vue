@@ -16,12 +16,14 @@
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
     />
+    <OrderEditPopup/>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { OrdersModule } from './service'
+import OrderEditPopup from './components/order-edit-popup.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import { confirm } from 'devextreme/ui/dialog'
@@ -30,7 +32,8 @@ import { confirm } from 'devextreme/ui/dialog'
   name: 'Orders',
   components: {
     TableGrid,
-    TableActions
+    TableActions,
+    OrderEditPopup
   }
 })
 export default class extends Vue {
