@@ -533,3 +533,29 @@ export const messagesRu = {
     'dxGantt-fullScreen': 'Полноэкранный режим'
   }
 }
+
+export const Reasons = [
+  { id: 1, name: 'Свадьба' },
+  { id: 2, name: 'Юбилей' },
+  { id: 3, name: 'День рождения друга' },
+  { id: 4, name: 'День рождения ребенка' },
+  { id: 5, name: 'День рождения любимого человека' },
+  { id: 6, name: 'Выписка' },
+  { id: 7, name: 'Открытие магазина' },
+  { id: 8, name: 'Без повода' },
+  { id: 9, name: 'Выпускной' },
+  { id: 10, name: 'Другое' }
+]
+
+export const SalesChannel = [
+  { id: 1, name: 'VK' },
+  { id: 2, name: 'Instagram' },
+  { id: 3, name: 'Google' },
+  { id: 4, name: 'Yandex' },
+  { id: 5, name: 'Интернет магазин' },
+  { id: 6, name: 'Прохожие' },
+  { id: 7, name: 'Постоянный клиент' },
+  { id: 8, name: 'По рекомендации от друзей' },
+  { id: 9, name: 'С листовки' },
+  { id: 10, name: 'Другое' }
+]

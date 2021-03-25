@@ -18,6 +18,21 @@
         :show-validation-summary="true"
         validation-group="orderEntity"
       >
+<!--        <DxGroupItem caption="Детали заказа">-->
+<!--          // дата заказа-->
+<!--          // Интервал времени с-->
+<!--          // телефон-->
+<!--          // адрес-->
+
+<!--        </DxGroupItem>-->
+
+<!--        <DxGroupItem caption="Получатель заказа">-->
+
+<!--        </DxGroupItem>-->
+
+<!--        <DxGroupItem caption="Заказ">-->
+
+<!--        </DxGroupItem>-->
         <DxGroupItem
           caption="Детали заказа"
           :col-count="2"
@@ -40,10 +55,69 @@
             valueExpr: 'value', displayExpr: 'text'}"
           />
           <DxItem
-          data-field="client.phone"
-          :label="{text: 'Номер телефона'}"
-        />
-
+            data-field="client.phone"
+            :label="{text: 'Номер телефона'}"
+          />
+          <DxItem
+            data-field="courier_id"
+            :label="{text: 'Курьер'}"
+            editor-type="dxSelectBox"
+            :editor-options="{
+              showClearButton: true,
+              value: entity.courier_id,
+              dataSource: staffState.dataSource,
+              valueExpr: 'id',
+              displayExpr: 'full_name'
+            }"
+          />
+          <DxItem
+            data-field="client.name"
+            :label="{text: 'Имя'}"
+          />
+          <DxItem
+            data-field="prepay"
+            :label="{text: 'Предоплата'}"
+          />
+          <DxItem
+            data-field="client.street"
+            :label="{text: 'Улица/мкрн'}"
+          />
+          <DxItem
+            data-field="client.entrance"
+            :label="{text: 'Подъезд'}"
+          />
+          <DxItem
+            data-field="client.floor"
+            :label="{text: 'Этаж'}"
+          />
+          <DxItem
+            data-field="client.flat"
+            :label="{text: 'Квартира/офис'}"
+          />
+          <DxItem
+            data-field="reason"
+            :label="{text: 'Повод'}"
+            editor-type="dxSelectBox"
+            :editor-options="{
+              showClearButton: true,
+              value: entity.reason,
+              dataSource: reasons,
+              valueExpr: 'id',
+              displayExpr: 'name'
+            }"
+          />
+          <DxItem
+            data-field="sales_channel"
+            :label="{text: 'Канал продаж'}"
+            editor-type="dxSelectBox"
+            :editor-options="{
+              showClearButton: true,
+              value: entity.sales_channel,
+              dataSource: salesChannel,
+              valueExpr: 'id',
+              displayExpr: 'name'
+            }"
+          />
         </DxGroupItem>
 
       </DxForm>
@@ -57,8 +131,10 @@ import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem, DxGroupItem} from 'devextreme-vue/form'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {OrdersModule, Order} from '../service'
+import {StaffModule} from "@/views/references/staff/service";
 import _ from 'lodash'
 import TableGrid from '@/components/TableGrid/grid.vue'
+import {Reasons, SalesChannel} from "@/const";
 import {RawModule} from '@/views/references/materials/service'
 import request from '@/utils/request'
 import axios, {AxiosResponse} from 'axios'
@@ -76,9 +152,13 @@ import axios, {AxiosResponse} from 'axios'
 export default class extends Vue {
   private entity: Order = new Order();
   public state = OrdersModule;
+  private staffState = StaffModule;
 
   public columns: any[] = [
   ]
+
+  public reasons = Reasons
+  public salesChannel = SalesChannel
 
   public validationRules: any = {}
 

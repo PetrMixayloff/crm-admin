@@ -1,7 +1,7 @@
-import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+import {Action, getModule, Module, Mutation, VuexModule} from 'vuex-module-decorators'
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
-import { UserModule } from '@/store/modules/user'
+import {UserModule} from '@/store/modules/user'
 
 export const route_ns = 'orders'
 export const table_name = 'public.orders'
@@ -14,10 +14,20 @@ export class Client {
   shop_id: string = UserModule.shopId
   phone: string | null = null
   name: string | null = null
-  address: string | null = null
+  address: Address = new Address()
   orders: Array<Order> = []
   discount: string | null = null
   comment: string | null = null
+}
+
+export class Address {
+  id: string | null = null
+  shop_id: string = UserModule.shopId
+  street: string = ''
+  house: string = ''
+  entrance: string = ''
+  floor: string = ''
+  flat: string = ''
 }
 
 export class OrderProduct {
@@ -57,9 +67,11 @@ export class Order {
   status: OrderStatus = 'Новый'
   date_created: Date = new Date()
   date_of_order: Date | null = null
+  reason: any | null = null
+  sales_channel: any | null = null
 }
 
-@Module({ dynamic: true, store, name: 'orders', namespaced: true })
+@Module({dynamic: true, store, name: 'orders', namespaced: true})
 class OrdersService extends VuexModule {
   public editVisible = false
   public editMode = false
@@ -80,7 +92,7 @@ class OrdersService extends VuexModule {
 
   @Mutation
   private SET_CURRENT_ROW(value: Order) {
-    this.currentRow = { ...value }
+    this.currentRow = {...value}
   }
 
   @Action
