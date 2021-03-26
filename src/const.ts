@@ -559,3 +559,11 @@ export const SalesChannel = [
   { id: 9, name: 'С листовки' },
   { id: 10, name: 'Другое' }
 ]
+
+export const PaymentMethod = [
+  { id: 1, name: 'Наличные' },
+  { id: 2, name: 'Перевод на карту' },
+  { id: 3, name: 'Эквайринг' },
+  { id: 4, name: 'Наличными курьеру' },
+  { id: 5, name: 'Расчетный счет' }
+]

@@ -69,6 +69,7 @@ export class Order {
   date_of_order: Date | null = null
   reason: any | null = null
   sales_channel: any | null = null
+  remark: string = ''
 }
 
 @Module({dynamic: true, store, name: 'orders', namespaced: true})
