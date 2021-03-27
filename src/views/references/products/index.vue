@@ -122,7 +122,6 @@ export default class extends Vue {
   initColumns() {
     const included = ['image', 'name', 'price', 'old_price', 'category_id'];
     [this.productColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(table_name, included)
-
   }
 
   deleteCategory() {
