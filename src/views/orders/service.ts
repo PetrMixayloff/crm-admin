@@ -33,8 +33,9 @@ export class Address {
 export class OrderProduct {
   id: string | null = null
   product_id: string | null = null
+  price: number = 0
   order_id: string | null = null
-  quantity: number | null = null
+  quantity: number | null = 0
   raw: Array<OrderProductRaw> = []
 }
 

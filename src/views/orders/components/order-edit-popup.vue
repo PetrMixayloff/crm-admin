@@ -142,7 +142,8 @@
         :data-source="entity.products"
         :columns="productColumns"
         :allow-editing="true"
-        editing-mode="row"
+        :filter-row-visible="false"
+        editing-mode="batch"
         :row-click="empty"
         :dbl-row-click="empty"
         selection-mode="single"
@@ -187,18 +188,41 @@ export default class extends Vue {
   private productState = ProductsModule;
   private productColumns: any[] = [
     {
-      dataField: 'image',
+      dataType: 'string',
+      caption: 'Изображение',
       allowFiltering: false,
+      allowEditing: false,
+      allowSorting: false,
       cellTemplate: 'image-cell-template'
     },
     {
-      dataField: 'name',
+      dataField: 'product_id',
+      dataType: 'string',
       caption: 'Товар',
       lookup: {
         dataSource: this.productState.productDataSource.store(),
         valueExpr: 'id',
         displayExpr: 'name'
-      }
+      },
+      setCellValue: this.setPriceValue
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Количество',
+      editorOptions: {min: 0, showSpinButtons: true}
+    },
+    {
+      dataField: 'price',
+      dataType: 'number',
+      caption: 'Цена',
+      allowEditing: false
+    },
+    {
+      dataType: 'number',
+      caption: 'Стоимость',
+      allowEditing: false,
+      calculateCellValue: this.calculateTotalPrice
     }
   ]
   public columns: any[] = []
@@ -276,6 +300,20 @@ export default class extends Vue {
       //   ]
       // }
     ]
+  }
+
+  async setPriceValue(newData: any, value: any, currentRowData: any) {
+    const resp: AxiosResponse['data'] = await this.productState.crudProduct.get(value)
+    newData.product_id = value
+    newData.quantity = 0
+    newData.price = resp.price
+  }
+
+  calculateTotalPrice(rowData: any) {
+    if (!rowData.quantity || !rowData.price) {
+      return 0
+    }
+    return rowData.quantity * rowData.price
   }
 
 

@@ -39,7 +39,7 @@
         :allow-updating="true"
         :allow-deleting="allowRowsAddDelete"
         :mode="editingMode"
-        start-edit-action="dblClick"
+        start-edit-action="click"
       />
       <DxStateStoring
         :enabled="stateStoringEnable"
