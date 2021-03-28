@@ -146,8 +146,22 @@
         editing-mode="batch"
         :row-click="empty"
         :dbl-row-click="empty"
+        :master-detail-enable="true"
         selection-mode="single"
-      />
+      >
+        <template #masterDetailTemplate="{rowKey, rowData}">
+          <table-grid
+            :data-source="rowData.raw"
+            :columns="rawColumns"
+            :row-click="empty"
+            :dbl-row-click="empty"
+            :allow-editing="true"
+            editing-mode="raw"
+            :filter-row-visible="false"
+            selection-mode="single"
+          />
+        </template>
+      </table-grid>
     </div>
   </d-edit-popup>
 </template>
@@ -160,6 +174,7 @@ import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {OrdersModule, Order} from '../service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
+import {RawModule} from "@/views/references/materials/service";
 import _ from 'lodash'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import {Reasons, SalesChannel, PaymentMethod} from "@/const";
@@ -186,6 +201,7 @@ export default class extends Vue {
   private state = OrdersModule;
   private staffState = StaffModule;
   private productState = ProductsModule;
+  private rawState = RawModule;
   private productColumns: any[] = [
     {
       dataType: 'string',
@@ -225,8 +241,32 @@ export default class extends Vue {
       calculateCellValue: this.calculateTotalPrice
     }
   ]
-  public columns: any[] = []
-
+  private rawColumns: any[] = [
+    {
+      dataType: 'string',
+      caption: 'Изображение',
+      allowFiltering: false,
+      allowEditing: false,
+      allowSorting: false,
+      cellTemplate: 'image-cell-template'
+    },
+    {
+      dataField: 'raw_id',
+      dataType: 'string',
+      caption: 'Сырье',
+      lookup: {
+        dataSource: this.rawState.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      }
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Количество',
+      editorOptions: {min: 0, showSpinButtons: true}
+    }
+  ]
   public reasons = Reasons
   public salesChannel = SalesChannel
   public paymentMethod = PaymentMethod
@@ -307,6 +347,7 @@ export default class extends Vue {
     newData.product_id = value
     newData.quantity = 0
     newData.price = resp.price
+    newData.raw = resp.raw
   }
 
   calculateTotalPrice(rowData: any) {
