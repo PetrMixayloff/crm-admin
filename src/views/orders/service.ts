@@ -35,7 +35,7 @@ export class OrderProduct {
   product_id: string | null = null
   price: number = 0
   order_id: string | null = null
-  quantity: number | null = 0
+  quantity: number = 0
   raw: Array<OrderProductRaw> = []
 }
 
@@ -57,13 +57,15 @@ export class Order {
   client: Client = new Client()
   products: Array<OrderProduct> = []
   delivery: boolean = false
+  delivery_cost: number = 0
+  decoration_cost: number = 0
   courier_id: string | null = null
   total_cost: number | null = null
-  prepay: number | null = null
+  prepay: number = 0
   prepay_type: PaymentMethod | null = null
   amount: number | null = null
   amount_type: PaymentMethod | null = null
-  discount: number | null = null
+  discount: number = 0
   rating: number | null = null
   status: OrderStatus = 'Новый'
   date_created: Date = new Date()

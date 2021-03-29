@@ -15,7 +15,6 @@
         :data-source="tabsArray"
         :selected-index.sync="tabIndex"
       />
-
       <DxForm
         v-show="tabIndex === 0"
         :form-data.sync="entity"
@@ -29,6 +28,7 @@
           :editor-options="{
             type: 'datetime',
             openOnFieldClick: true}"
+          :is-required="true"
         />
         <DxItem
           data-field="delivery"
@@ -40,7 +40,6 @@
             valueExpr: 'value', displayExpr: 'text'}"
         />
         <DxItem
-          v-if="entity.delivery"
           data-field="courier_id"
           :label="{text: 'Курьер'}"
           editor-type="dxSelectBox"
@@ -57,7 +56,6 @@
           :label="{text: 'Предоплата'}"
           editor-type="dxNumberBox"
           :editor-options="{
-              showClearButton: true,
               value: entity.prepay,
               min: 0
             }"
@@ -90,10 +88,16 @@
         <DxItem
           data-field="client.phone"
           :label="{text: 'Номер телефона'}"
+          :editorOptions="{
+          mask: '+7 (000) 000-00-00',
+          useMaskedValue: true
+          }"
+          :is-required="true"
         />
         <DxItem
           data-field="client.name"
           :label="{text: 'Имя'}"
+          :is-required="true"
         />
         <DxItem
           data-field="client.street"
@@ -163,6 +167,46 @@
         </template>
       </table-grid>
     </div>
+    <template v-slot:prefooter>
+      <div class="prefooter">
+        <div class="flex-r-c field">
+          <span>Стоимость доставки:</span>
+          <DxNumberBox
+            :min="0"
+            :value.sync="entity.delivery_cost"
+            :width="100"
+          />
+          <span>руб</span>
+        </div>
+        <div class="flex-r-c field">
+          <span>Стоимость монтажа:</span>
+          <DxNumberBox
+            :min="0"
+            :value.sync="entity.decoration_cost"
+            :width="100"
+          />
+          <span>руб</span>
+        </div>
+        <div class="flex-r-c field">
+          <span>Итого {{ totalCost }} руб</span>
+        </div>
+        <div class="flex-r-c field">
+          <span>Скидка:</span>
+          <DxNumberBox
+            :min="0"
+            :value.sync="entity.discount"
+            :width="100"
+          />
+          <span>руб</span>
+        </div>
+        <div class="flex-r-c field">
+          <span>Предоплата {{ entity.prepay }} руб</span>
+        </div>
+        <div class="flex-r-c" style="padding: 0">
+          <span>Всего к доплате {{ amountCost }} руб</span>
+        </div>
+      </div>
+    </template>
   </d-edit-popup>
 </template>
 
@@ -170,8 +214,9 @@
 import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem, DxGroupItem, DxTabbedItem, DxTab} from 'devextreme-vue/form'
 import DxTabs from 'devextreme-vue/tabs';
+import {DxNumberBox} from "devextreme-vue";
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {OrdersModule, Order} from '../service'
+import {OrdersModule, Order, OrderProduct} from '../service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
@@ -192,6 +237,7 @@ import {table_name} from "@/views/references/products/service";
     DxTabbedItem,
     DxTab,
     DxTabs,
+    DxNumberBox,
     DEditPopup,
     TableGrid
   }
@@ -202,71 +248,8 @@ export default class extends Vue {
   private staffState = StaffModule;
   private productState = ProductsModule;
   private rawState = RawModule;
-  private productColumns: any[] = [
-    {
-      dataType: 'string',
-      caption: 'Изображение',
-      allowFiltering: false,
-      allowEditing: false,
-      allowSorting: false,
-      cellTemplate: 'image-cell-template'
-    },
-    {
-      dataField: 'product_id',
-      dataType: 'string',
-      caption: 'Товар',
-      lookup: {
-        dataSource: this.productState.productDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      },
-      setCellValue: this.setPriceValue
-    },
-    {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество',
-      editorOptions: {min: 0, showSpinButtons: true}
-    },
-    {
-      dataField: 'price',
-      dataType: 'number',
-      caption: 'Цена',
-      allowEditing: false
-    },
-    {
-      dataType: 'number',
-      caption: 'Стоимость',
-      allowEditing: false,
-      calculateCellValue: this.calculateTotalPrice
-    }
-  ]
-  private rawColumns: any[] = [
-    {
-      dataType: 'string',
-      caption: 'Изображение',
-      allowFiltering: false,
-      allowEditing: false,
-      allowSorting: false,
-      cellTemplate: 'image-cell-template'
-    },
-    {
-      dataField: 'raw_id',
-      dataType: 'string',
-      caption: 'Сырье',
-      lookup: {
-        dataSource: this.rawState.rawDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      }
-    },
-    {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество',
-      editorOptions: {min: 0, showSpinButtons: true}
-    }
-  ]
+  private productColumns: any[] = []
+  private rawColumns: any[] = []
   public reasons = Reasons
   public salesChannel = SalesChannel
   public paymentMethod = PaymentMethod
@@ -296,49 +279,91 @@ export default class extends Vue {
 
   }
 
+  get totalCost() {
+    let productsCost: number = 0;
+    this.entity.products.forEach((product: OrderProduct) => {
+      productsCost = productsCost + product.price * product.quantity
+    })
+    return this.entity.delivery_cost + this.entity.decoration_cost + productsCost - this.entity.discount
+  }
+
+  get amountCost() {
+    return this.totalCost - this.entity.prepay
+  }
+
   initColumns() {
     this.productColumns = [
       {
-        dataField: 'image',
+        dataType: 'string',
+        caption: 'Изображение',
         allowFiltering: false,
+        allowEditing: false,
+        allowSorting: false,
         cellTemplate: 'image-cell-template'
       },
       {
-        dataField: 'name',
+        dataField: 'product_id',
+        dataType: 'string',
         caption: 'Товар',
         lookup: {
           dataSource: this.productState.productDataSource.store(),
           valueExpr: 'id',
           displayExpr: 'name'
-        }
+        },
+        editorOptions: {
+          showClearButton: true,
+          searchEnabled: true
+        },
+        setCellValue: this.setPriceValue
+      },
+      {
+        dataField: 'quantity',
+        dataType: 'number',
+        caption: 'Количество',
+        editorOptions: {min: 0, showSpinButtons: true}
+      },
+      {
+        dataField: 'price',
+        dataType: 'number',
+        caption: 'Цена',
+        allowEditing: false
+      },
+      {
+        dataType: 'number',
+        caption: 'Стоимость',
+        allowEditing: false,
+        calculateCellValue: this.calculateTotalPrice
       }
-      // {
-      //   width: '300',
-      //   type: 'buttons',
-      //   caption: 'Действия',
-      //   buttons: [{
-      //     text: 'Перейти',
-      //     hint: 'Перейти',
-      //     cssClass: 'dx-link__goto',
-      //     visible: true,
-      //     onClick: this.empty
-      //   },
-      //     {
-      //       text: 'Редактировать',
-      //       hint: 'Редактировать',
-      //       cssClass: 'dx-link__edit',
-      //       visible: true,
-      //       onClick: this.empty
-      //     },
-      //     {
-      //       text: 'Удалить',
-      //       hint: 'Удалить',
-      //       cssClass: 'dx-link__delete',
-      //       visible: true,
-      //       onClick: this.empty
-      //     }
-      //   ]
-      // }
+    ]
+    this.rawColumns = [
+      {
+        dataType: 'string',
+        caption: 'Изображение',
+        allowFiltering: false,
+        allowEditing: false,
+        allowSorting: false,
+        cellTemplate: 'image-cell-template'
+      },
+      {
+        dataField: 'raw_id',
+        dataType: 'string',
+        caption: 'Сырье',
+        lookup: {
+          dataSource: this.rawState.rawDataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'name'
+        },
+        editorOptions: {
+          showClearButton: true,
+          searchEnabled: true
+        }
+      },
+      {
+        dataField: 'quantity',
+        dataType: 'number',
+        caption: 'Количество',
+        editorOptions: {min: 0, showSpinButtons: true}
+      }
     ]
   }
 
@@ -359,7 +384,7 @@ export default class extends Vue {
 
 
   onShow() {
-    // this.initColumns()
+    this.initColumns()
     if (this.state.editMode) {
       this.entity = _.cloneDeep(this.state.currentRow)
     } else {
@@ -374,16 +399,25 @@ export default class extends Vue {
   }
 
   async onOk(e: any) {
-    console.log(this.entity)
-    // const result = e.validationGroup.validate()
-    // if (result.isValid)
-    //   try {
-    //     await this.state.crud.save(this.entity)
-    //     await this.state.dataSource.reload()
-    //     this.onClose()
-    //   } catch (e) {
-    //     console.log(e)
-    //   }
+    const result = e.validationGroup.validate()
+    if (result.isValid) {
+      this.entity.amount = this.amountCost
+      this.entity.total_cost = this.totalCost
+      try {
+        // create/update client
+        const resp: AxiosResponse['data'] = await this.staffState.crud.save(this.entity.client)
+        this.entity.client_id = resp.id
+        delete this.entity.client
+
+        // create/update order
+        await this.state.crud.save(this.entity)
+        await this.state.dataSource.reload()
+        this.onClose()
+      } catch (e) {
+        console.log(e)
+      }
+    }
+
   }
 }
 </script>
@@ -391,5 +425,17 @@ export default class extends Vue {
 <style lang="scss" scoped>
 #form-container {
   margin: 10px 10px 30px;
+}
+
+.prefooter {
+  span {
+    margin-right: 10px;
+    margin-left: 10px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .field {
+    margin-bottom: 10px;
+  }
 }
 </style>
