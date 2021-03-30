@@ -404,12 +404,6 @@ export default class extends Vue {
       this.entity.amount = this.amountCost
       this.entity.total_cost = this.totalCost
       try {
-        // create/update client
-        const resp: AxiosResponse['data'] = await this.staffState.crud.save(this.entity.client)
-        this.entity.client_id = resp.id
-        delete this.entity.client
-
-        // create/update order
         await this.state.crud.save(this.entity)
         await this.state.dataSource.reload()
         this.onClose()
