@@ -216,7 +216,7 @@ import {DxForm, DxItem, DxGroupItem, DxTabbedItem, DxTab} from 'devextreme-vue/f
 import DxTabs from 'devextreme-vue/tabs';
 import {DxNumberBox} from "devextreme-vue";
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {OrdersModule, Order, OrderProduct} from '../service'
+import {OrdersModule, Order, OrderProduct, Address} from '../service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
@@ -387,6 +387,9 @@ export default class extends Vue {
     this.initColumns()
     if (this.state.editMode) {
       this.entity = _.cloneDeep(this.state.currentRow)
+      if (!this.entity.client.address) {
+        this.entity.client.address = new Address()
+      }
     } else {
       this.entity = new Order()
     }
@@ -403,13 +406,11 @@ export default class extends Vue {
     if (result.isValid) {
       this.entity.amount = this.amountCost
       this.entity.total_cost = this.totalCost
+      if (!this.entity.delivery) {
+        this.entity.client.address = null
+        this.entity.courier_id = null
+      }
       try {
-        // create/update client
-        const resp: AxiosResponse['data'] = await this.staffState.crud.save(this.entity.client)
-        this.entity.client_id = resp.id
-        delete this.entity.client
-
-        // create/update order
         await this.state.crud.save(this.entity)
         await this.state.dataSource.reload()
         this.onClose()

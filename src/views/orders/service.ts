@@ -14,7 +14,7 @@ export class Client {
   shop_id: string = UserModule.shopId
   phone: string | null = null
   name: string | null = null
-  address: Address = new Address()
+  address: Address | null = new Address()
   orders: Array<Order> = []
   discount: string | null = null
   comment: string | null = null
@@ -62,7 +62,7 @@ export class Order {
   courier_id: string | null = null
   total_cost: number | null = null
   prepay: number = 0
-  prepay_type: PaymentMethod | null = null
+  prepay_type: PaymentMethod = 'Наличные'
   amount: number | null = null
   amount_type: PaymentMethod | null = null
   discount: number = 0
