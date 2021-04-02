@@ -100,19 +100,23 @@
           :is-required="true"
         />
         <DxItem
-          data-field="client.street"
+          data-field="client.address.street"
           :label="{text: 'Улица/мкрн'}"
         />
         <DxItem
-          data-field="client.entrance"
+          data-field="client.address.house"
+          :label="{text: '№ дома/строения'}"
+        />
+        <DxItem
+          data-field="client.address.entrance"
           :label="{text: 'Подъезд'}"
         />
         <DxItem
-          data-field="client.floor"
+          data-field="client.address.floor"
           :label="{text: 'Этаж'}"
         />
         <DxItem
-          data-field="client.flat"
+          data-field="client.address.flat"
           :label="{text: 'Квартира/офис'}"
         />
         <DxItem

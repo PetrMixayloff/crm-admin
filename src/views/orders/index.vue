@@ -23,10 +23,14 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator'
 import { OrdersModule } from './service'
+import {StaffModule} from "@/views/references/staff/service";
+import {ProductsModule} from "@/views/references/products/service";
+import {RawModule} from "@/views/references/materials/service";
 import OrderEditPopup from './components/order-edit-popup.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import { confirm } from 'devextreme/ui/dialog'
+import {AxiosResponse} from "axios";
 
 @Component({
   name: 'Orders',
@@ -39,7 +43,68 @@ import { confirm } from 'devextreme/ui/dialog'
 export default class extends Vue {
   public state = OrdersModule
   public dataSource = this.state.dataSource
+  private staffState = StaffModule;
+  private productState = ProductsModule;
+  private rawState = RawModule;
   public columns: Array<any> = [];
+
+  initColumns() {
+    this.columns = [
+      {
+        dataType: 'number',
+        caption: 'Номер',
+        dataField: 'order_number'
+      },
+      {
+        dataField: 'created_by_id',
+        dataType: 'string',
+        caption: 'Принял',
+        lookup: {
+          dataSource: this.staffState.dataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'full_name'
+        }
+      },
+      {
+        dataField: 'make_by_id',
+        dataType: 'string',
+        caption: 'Выполнил',
+        lookup: {
+          dataSource: this.staffState.dataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'full_name'
+        }
+      },
+      {
+        dataType: 'string',
+        caption: 'Клиент',
+        calculateDisplayValue: this.setClientValue
+      },
+      {
+        dataType: 'string',
+        caption: 'Доставка',
+        calculateDisplayValue: this.setDeliveryValue
+      }
+    ]
+  }
+
+  mounted() {
+    this.initColumns()
+  }
+
+  setClientValue(rowData: any) {
+    return rowData.client.name + '\n' + rowData.client.phone
+  }
+
+  setDeliveryValue(rowData: any) {
+    if (rowData.delivery) {
+      return 'Доставка' + '\n' + rowData.client.address.street + ', '
+        + rowData.client.address.house + ', ' + rowData.client.address.entrance + ', '
+        + rowData.client.address.floor + ', ' + rowData.client.address.flat
+    } else {
+      return 'Самовывоз'
+    }
+  }
 
   onCreateNew() {
     this.state.SetEditVisible(true)
