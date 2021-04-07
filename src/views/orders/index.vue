@@ -51,6 +51,11 @@ export default class extends Vue {
   initColumns() {
     this.columns = [
       {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false,
+      },
+      {
         dataType: 'number',
         caption: 'Номер',
         dataField: 'order_number'
@@ -78,12 +83,12 @@ export default class extends Vue {
       {
         dataType: 'string',
         caption: 'Клиент',
-        calculateDisplayValue: this.setClientValue
+        cellTemplate: 'order-client-cell-template'
       },
       {
         dataType: 'string',
         caption: 'Доставка',
-        calculateDisplayValue: this.setDeliveryValue
+        cellTemplate: 'order-delivery-cell-template'
       }
     ]
   }
