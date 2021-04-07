@@ -28,7 +28,6 @@
       @row-removing="onRowRemoving"
       @selection-changed="onSelectionChanged"
     >
-      >
       <dx-load-panel
         :enabled="true"
       />
@@ -67,9 +66,9 @@
       </template>
 
       <dx-remote-operations
-        :sorting="true"
-        :paging="true"
-        :filtering="true"
+        :sorting="remoteFps"
+        :paging="remoteFps"
+        :filtering="remoteFps"
       />
 
       <dx-selection
@@ -120,6 +119,19 @@
           п. {{ data.data.client.address.entrance }}, э. {{ data.data.client.address.flat }}</span>
         </div>
         <div v-else> Самовывоз</div>
+      </template>
+      <template #order-products-cell-template="{data}">
+        <div v-for="product in data.data.products" :key="product.id">
+          <div class="flex-between-c">
+            <img
+              :src="src(product.image)"
+              alt="Товар"
+              width="50px"
+            >
+            <span> {{ product.name }}</span>
+            <span> {{ product.quantity }} шт</span>
+          </div>
+        </div>
       </template>
     </dx-data-grid>
   </div>
@@ -204,6 +216,7 @@ export default class extends Vue {
   @Prop({default: defaultPageSizes}) public pageSizes!: number[];
   @Prop() public addClass!: string;
   @Prop({default: false}) public disabled!: boolean;
+  @Prop({default: true}) public remoteFps!: boolean;
 
   @Emit('cell-prepared')
   onCellPrepared(e: any) {

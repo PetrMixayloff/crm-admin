@@ -33,6 +33,8 @@ export class Address {
 export class OrderProduct {
   id: string | null = null
   product_id: string | null = null
+  image: string | null = null
+  name: string = ''
   price: number = 0
   order_id: string | null = null
   quantity: number = 0
@@ -43,6 +45,8 @@ export class OrderProductRaw {
   id: string | null = null
   order_product_id: string | null = null
   raw_id: string | null = null
+  name: string = ''
+  image: string | null = null
   standard_id: string | null = null
   quantity: number | null = null
 }

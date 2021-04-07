@@ -12,7 +12,9 @@
     <table-grid
       ref="ordersTableGrid"
       :data-source="dataSource"
+      :grouping-enabled="true"
       :columns="columns"
+      :filter-sync-enabled="true"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
     />
@@ -61,6 +63,16 @@ export default class extends Vue {
         dataField: 'order_number'
       },
       {
+        dataField: 'date_created',
+        dataType: 'datetime',
+        caption: 'Дата принятия заказа'
+      },
+      {
+        dataField: 'date_of_order',
+        dataType: 'datetime',
+        caption: 'Дата заказа'
+      },
+      {
         dataField: 'created_by_id',
         dataType: 'string',
         caption: 'Принял',
@@ -89,7 +101,12 @@ export default class extends Vue {
         dataType: 'string',
         caption: 'Доставка',
         cellTemplate: 'order-delivery-cell-template'
-      }
+      },
+      {
+        dataType: 'object',
+        caption: 'Заказ',
+        cellTemplate: 'order-products-cell-template'
+      },
     ]
   }
 
