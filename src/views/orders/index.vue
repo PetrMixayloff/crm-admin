@@ -107,6 +107,11 @@ export default class extends Vue {
         caption: 'Заказ',
         cellTemplate: 'order-products-cell-template'
       },
+      {
+        dataType: 'object',
+        caption: 'Сумма',
+        cellTemplate: 'order-cost-cell-template'
+      }
     ]
   }
 

@@ -133,6 +133,14 @@
           </div>
         </div>
       </template>
+      <template #order-cost-cell-template="{data}">
+        <div>
+          <p><b>Всего: </b>{{ data.data.total_cost }} руб</p>
+          <p><b>Предоплата: </b>{{ data.data.prepay }} руб ({{ data.data.prepay_type }})</p>
+          <p><b>Остаток: </b>{{ data.data.amount }} руб ({{ data.data.amount_type ? data.data.amount_type : 'Не оплачено' }})</p>
+        </div>
+
+      </template>
     </dx-data-grid>
   </div>
 </template>
