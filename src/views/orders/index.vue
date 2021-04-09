@@ -17,21 +17,23 @@
       :filter-sync-enabled="true"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
+      @status-changed="onStatusChanged"
     />
     <OrderEditPopup/>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator'
-import { OrdersModule } from './service'
+import {Component, Vue, Watch} from 'vue-property-decorator'
+import {OrdersModule, Order} from './service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
 import OrderEditPopup from './components/order-edit-popup.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
-import { confirm } from 'devextreme/ui/dialog'
+import {orderStatus} from '@/const'
+import {confirm} from 'devextreme/ui/dialog'
 import {AxiosResponse} from "axios";
 
 @Component({
@@ -111,8 +113,39 @@ export default class extends Vue {
         dataType: 'object',
         caption: 'Сумма',
         cellTemplate: 'order-cost-cell-template'
+      },
+      {
+        caption: "Статус",
+        cellTemplate: 'order-status-cell-template'
       }
+      // {
+      //   width: '220',
+      //   type: 'buttons',
+      //   caption: 'Действия',
+      //   buttons: [
+      //     {
+      //       text: 'Изменить',
+      //       hint: 'Изменить',
+      //       cssClass: 'dx-link__edit',
+      //       onClick: this.onEditLink
+      //     },
+      //
+      //   ]
+      // }
     ]
+  }
+
+  onStatusChanged(args: any[]) {
+    let data: Order;
+    let e: any;
+    [e, data] = [...args]
+    console.log(e)
+    console.log(data)
+    if (data.status === 'Выполнен' && data.amount !== 0) {
+      // открытие попап окна для выбора способа внесения остатка оплаты
+    } else if (data.status === 'Отменен') {
+      // отмена заказа
+    }
   }
 
   mounted() {
@@ -153,7 +186,7 @@ export default class extends Vue {
 
   onDelete() {
     confirm('Удалить выбранный заказ?', 'Удаление заказа')
-      .then(async(answer: boolean) => {
+      .then(async (answer: boolean) => {
         if (!answer) {
           return
         }

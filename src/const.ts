@@ -567,3 +567,11 @@ export const PaymentMethod = [
   { id: 4, name: 'Наличными курьеру' },
   { id: 5, name: 'Расчетный счет' }
 ]
+
+export const orderStatus = [
+  { id: 1, name: 'Новый' },
+  { id: 2, name: 'Подготовлен' },
+  { id: 3, name: 'На доставке' },
+  { id: 4, name: 'Выполнен' },
+  { id: 5, name: 'Отменен' }
+]
