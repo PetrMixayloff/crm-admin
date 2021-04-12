@@ -376,6 +376,8 @@ export default class extends Vue {
     newData.product_id = value
     newData.quantity = 0
     newData.price = resp.price
+    newData.name = resp.name
+    newData.image = resp.image
     newData.raw = resp.raw
   }
 
