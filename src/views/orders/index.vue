@@ -13,6 +13,7 @@
       ref="ordersTableGrid"
       :data-source="dataSource"
       :grouping-enabled="true"
+      :column-chooser-enable="true"
       :columns="columns"
       :filter-sync-enabled="true"
       :row-click="onRowClick"
@@ -58,21 +59,31 @@ export default class extends Vue {
         dataField: 'id',
         dataType: 'string',
         visible: false,
+        allowHiding: false
       },
       {
         dataType: 'number',
         caption: 'Номер',
-        dataField: 'order_number'
+        dataField: 'order_number',
+        visible: false
       },
       {
         dataField: 'date_created',
-        dataType: 'datetime',
-        caption: 'Дата принятия заказа'
+        dataType: 'date',
+        caption: 'Дата принятия заказа',
+        visible: false
       },
       {
         dataField: 'date_of_order',
-        dataType: 'datetime',
-        caption: 'Дата заказа'
+        dataType: 'date',
+        caption: 'Дата заказа',
+        allowHiding: false
+      },
+      {
+        caption: 'Время',
+        dataType: 'string',
+        calculateCellValue: this.getOrderTime,
+        allowHiding: false
       },
       {
         dataField: 'created_by_id',
@@ -82,7 +93,8 @@ export default class extends Vue {
           dataSource: this.staffState.dataSource.store(),
           valueExpr: 'id',
           displayExpr: 'full_name'
-        }
+        },
+        visible: false
       },
       {
         dataField: 'make_by_id',
@@ -92,17 +104,20 @@ export default class extends Vue {
           dataSource: this.staffState.dataSource.store(),
           valueExpr: 'id',
           displayExpr: 'full_name'
-        }
+        },
+        visible: false
       },
       {
         dataType: 'string',
         caption: 'Клиент',
-        cellTemplate: 'order-client-cell-template'
+        cellTemplate: 'order-client-cell-template',
+        allowHiding: false
       },
       {
         dataType: 'string',
         caption: 'Доставка',
-        cellTemplate: 'order-delivery-cell-template'
+        cellTemplate: 'order-delivery-cell-template',
+        allowHiding: false
       },
       {
         dataType: 'object',
@@ -116,22 +131,9 @@ export default class extends Vue {
       },
       {
         caption: "Статус",
-        cellTemplate: 'order-status-cell-template'
+        cellTemplate: 'order-status-cell-template',
+        allowHiding: false
       }
-      // {
-      //   width: '220',
-      //   type: 'buttons',
-      //   caption: 'Действия',
-      //   buttons: [
-      //     {
-      //       text: 'Изменить',
-      //       hint: 'Изменить',
-      //       cssClass: 'dx-link__edit',
-      //       onClick: this.onEditLink
-      //     },
-      //
-      //   ]
-      // }
     ]
   }
 
@@ -139,13 +141,15 @@ export default class extends Vue {
     let data: Order;
     let e: any;
     [e, data] = [...args]
-    console.log(e)
-    console.log(data)
     if (data.status === 'Выполнен' && data.amount !== 0) {
       // открытие попап окна для выбора способа внесения остатка оплаты
     } else if (data.status === 'Отменен') {
       // отмена заказа
     }
+  }
+
+  getOrderTime(rowData: any) {
+    return new Date(rowData.date_of_order).toLocaleTimeString().substring(0, 5)
   }
 
   mounted() {
