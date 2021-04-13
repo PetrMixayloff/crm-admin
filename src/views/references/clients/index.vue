@@ -7,24 +7,13 @@
       :columns="columns"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
-      :master-detail-enable="true"
-    >
-      <template #masterDetailTemplate="{rowKey, rowData}">
-        <table-grid
-          :data-source="rowData.orders"
-          :columns="ordersColumns"
-          :row-click="empty"
-          :dbl-row-click="empty"
-          selection-mode="single"
-        />
-      </template>
-    </table-grid>
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { table_name, Clients } from './service'
+import {Component, Vue} from 'vue-property-decorator'
+import {table_name, Clients} from './service'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import dbSchemaService from '@/services/db_schema_service'
 
@@ -38,64 +27,7 @@ export default class extends Vue {
   public state = Clients;
   public dataSource = this.state.dataSource;
   public columns: Array<any> = [];
-  public ordersColumns = [
-  {
-    dataField: 'id',
-    dataType: 'string',
-    visible: false
-  },
-  {
-    dataField: 'total_cost',
-    dataType: 'number',
-    caption: 'Сумма заказа',
-  },
-  {
-    dataField: 'prepay',
-    dataType: 'number',
-    caption: 'Предоплата'
-  },
-  {
-    dataField: 'prepay_type',
-    dataType: 'string',
-    caption: 'Тип внесения предоплаты'
-  },
-  {
-    dataField: 'amount',
-    dataType: 'number',
-    caption: 'К оплате с учетом предоплаты'
-  },
-  {
-    dataField: 'amount_type',
-    dataType: 'string',
-    caption: 'Тип внесения оплаты'
-  },
-  {
-    dataField: 'discount',
-    dataType: 'number',
-    caption: 'Скидка'
-  },
-  {
-    dataField: 'rating',
-    dataType: 'number',
-    caption: 'Оценка от клиента'
-  },
-  {
-    dataField: 'status',
-    dataType: 'string',
-    caption: 'Статус'
-  },
-  {
-    dataField: 'date_created',
-    dataType: 'string',
-    caption: 'Дата создания заказа'
-  },
-  {
-    dataField: 'date_of_order',
-    dataType: 'string',
-    caption: 'Дата выполнения заказа'
-  },
-]
-  public emptyEntity: any = {};
+  public ordersColumns: Array<any> = []
 
   created() {
     this.initColumns()
@@ -104,10 +36,94 @@ export default class extends Vue {
   }
 
   initColumns() {
-    const included = ['name', 'phone', 'address', 'discount', 'comment'];
-
-    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
+    this.columns = [
+      {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false
+      },
+      {
+        dataField: 'name',
+        dataType: 'string',
+        caption: 'Имя'
+      },
+      {
+        dataField: 'phone',
+        dataType: 'string',
+        caption: 'Номер телефона'
+      },
+      {
+        caption: 'Адрес',
+        cellTemplate: 'address-cell-template'
+      },
+      {
+        dataField: 'age',
+        dataType: 'number',
+        caption: 'Возраст'
+      },
+      {
+        dataField: 'sex',
+        dataType: 'string',
+        caption: 'Пол'
+      }
+    ]
+    this.ordersColumns = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'total_cost',
+      dataType: 'number',
+      caption: 'Сумма заказа',
+    },
+    {
+      dataField: 'prepay',
+      dataType: 'number',
+      caption: 'Предоплата'
+    },
+    {
+      dataField: 'prepay_type',
+      dataType: 'string',
+      caption: 'Тип внесения предоплаты'
+    },
+    {
+      dataField: 'amount',
+      dataType: 'number',
+      caption: 'К оплате с учетом предоплаты'
+    },
+    {
+      dataField: 'amount_type',
+      dataType: 'string',
+      caption: 'Тип внесения оплаты'
+    },
+    {
+      dataField: 'discount',
+      dataType: 'number',
+      caption: 'Скидка'
+    },
+    {
+      dataField: 'rating',
+      dataType: 'number',
+      caption: 'Оценка от клиента'
+    },
+    {
+      dataField: 'status',
+      dataType: 'string',
+      caption: 'Статус'
+    },
+    {
+      dataField: 'date_created',
+      dataType: 'string',
+      caption: 'Дата создания заказа'
+    },
+    {
+      dataField: 'date_of_order',
+      dataType: 'string',
+      caption: 'Дата выполнения заказа'
+    },
+  ]
   }
 
   onRowClick(e: any) {

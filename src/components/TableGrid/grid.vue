@@ -120,6 +120,12 @@
         </div>
         <div v-else> Самовывоз</div>
       </template>
+      <template #address-cell-template="{data}">
+        <div v-if="data.data.address">
+          <span>ул. {{ data.data.address.street }}, д. {{ data.data.address.house }}, кв. {{ data.data.address.flat }},
+          п. {{ data.data.address.entrance }}, э. {{ data.data.address.flat }}</span>
+        </div>
+      </template>
       <template #order-products-cell-template="{data}">
         <div v-for="product in data.data.products" :key="product.id">
           <div class="flex-between-c">
@@ -133,6 +139,23 @@
           </div>
         </div>
       </template>
+      <template #order-cost-cell-template="{data}">
+        <div>
+          <p><b>Всего: </b>{{ data.data.total_cost }} руб</p>
+          <p><b>Предоплата: </b>{{ data.data.prepay }} руб ({{ data.data.prepay_type }})</p>
+          <p><b>Остаток: </b>{{ data.data.amount }} руб ({{ data.data.amount_type ? data.data.amount_type : 'Не оплачено' }})</p>
+        </div>
+      </template>
+      <template #order-status-cell-template="{data}">
+        <dx-select-box
+          :value.sync="data.data.status"
+          :dataSource="orderStatuses"
+          value-expr="name"
+          display-expr="name"
+          styling-mode="outlined"
+          :on-value-changed="(e) => $emit('status-changed', [e, data.data])"
+        />
+      </template>
     </dx-data-grid>
   </div>
 </template>
@@ -140,7 +163,8 @@
 <script lang="ts">
 import {Component, Emit, Prop, PropSync, Vue} from 'vue-property-decorator'
 import {DxCheckBox} from 'devextreme-vue/check-box'
-
+import {DxSelectBox} from "devextreme-vue";
+import {orderStatus} from '@/const'
 import {
   DxColumn,
   DxColumnChooser,
@@ -184,7 +208,8 @@ function defaultPageSizes(): number[] {
     DxColumnChooser,
     DxColumnFixing,
     DxStateStoring,
-    DxCheckBox
+    DxCheckBox,
+    DxSelectBox
   }
 })
 export default class extends Vue {
@@ -217,6 +242,9 @@ export default class extends Vue {
   @Prop() public addClass!: string;
   @Prop({default: false}) public disabled!: boolean;
   @Prop({default: true}) public remoteFps!: boolean;
+
+  private orderStatuses: any[] = orderStatus
+
 
   @Emit('cell-prepared')
   onCellPrepared(e: any) {
