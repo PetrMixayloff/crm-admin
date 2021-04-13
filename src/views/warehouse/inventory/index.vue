@@ -31,51 +31,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import {Component, Vue} from 'vue-property-decorator'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
-import { InventoryModule, table_name } from './service'
-import dbSchemaService from '@/services/db_schema_service'
-import { RawModule } from "@/views/references/materials/service"
+import {InventoryModule} from './service'
+import {RawModule} from "@/views/references/materials/service"
 import InventoryEditPopup from './components/inventory-edit.vue'
 
-  @Component({
-    name: 'Inventory',
-    components: {
-      TableGrid,
-      TableActions,
-      InventoryEditPopup
-    }
-  })
+@Component({
+  name: 'Inventory',
+  components: {
+    TableGrid,
+    TableActions,
+    InventoryEditPopup
+  }
+})
 
 export default class extends Vue {
   public state = InventoryModule
   public columns: any[] = []
-  public recordsColumns = [
-    {
-      dataField: 'id',
-      dataType: 'string',
-      visible: false
-    },
-    {
-      dataField: 'raw_remains_detail.raw_id',
-      dataType: 'string',
-      caption: 'Название',
-      lookup: {
-        allowClearing: true,
-        dataSource: RawModule.rawDataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      }
-    },
-    {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество'
-    }
-  ]
-
-  public emptyEntity: any = {};
+  public recordsColumns: any[] = []
 
   created() {
     this.initColumns()
@@ -83,38 +58,65 @@ export default class extends Vue {
 
   initColumns() {
     this.columns = [
-    {
-      dataField: 'id',
-      visible: false
-    },
-    {
-      dataField: 'category_id',
-      visible: false
-    },
-    {
-      dataField: 'image',
-      caption: 'Изображение',
-      allowFiltering: false,
-      cellTemplate: 'image-cell-template'
-    },
-    {
-      dataField: 'name',
-      caption: 'Название'
-    },
-    {
-      dataField: 'unit',
-      caption: 'Ед. изм.'
-    },
-    {
-      caption: 'Общее количество'
-    },
-    {
-      caption: 'В резерве'
-    },
-    {
-      caption: 'Стоимость остатка'
+      {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false
+      },
+      {
+        dataField: 'number',
+        dataType: 'string',
+        caption: 'Номер'
+      },
+      {
+        dataField: 'date',
+        dataType: 'date',
+        caption: 'Дата'
+      },
+      {
+        dataField: 'remark',
+        dataType: 'string',
+        caption: 'Примечание'
+      }
+    ]
+    this.recordsColumns = [
+      {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false
+      },
+      {
+        dataField: 'raw_id',
+        dataType: 'string',
+        caption: 'Название',
+        lookup: {
+          dataSource: RawModule.rawDataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'name'
+        }
+      },
+      {
+        dataField: 'quantity',
+        dataType: 'number',
+        caption: 'Фактический остаток'
+      },
+      {
+        dataField: 'old_quantity',
+        dataType: 'number',
+        caption: 'Остаток по программе'
+      },
+      {
+        caption: 'Разница',
+        calculateCellValue: this.calculateDifference
+      }
+    ]
+  }
+
+  calculateDifference(e: any) {
+    if (e.quantity && e.old_quantity) {
+      return e.old_quantity - e.quantity
     }
-  ]
+    return ''
   }
 
   onRowClick() {

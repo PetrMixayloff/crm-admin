@@ -20,20 +20,16 @@
       >
         <DxItem
           data-field="number"
-          :validation-rules="validationRules.number"
           :label="{text: 'Номер'}"
+          :is-required="true"
         />
         <DxItem
           data-field="date"
-          :validation-rules="validationRules.number"
+          :is-required="true"
           :label="{text: 'Дата'}"
           editor-type="dxDateBox"
           :editor-options="{adaptivityEnabled: true, hint: 'Дата инвентаризации', openOnFieldClick: true,
                             pickerType: 'native', showClearButton: true, type: 'date'}"
-        />
-        <DxItem
-          data-field="supplier"
-          :label="{text: 'Поставщик'}"
         />
         <DxItem
           data-field="remark"
@@ -45,7 +41,7 @@
       <h3>Позиции к инвентаризации</h3>
       <table-grid
         ref="tablegrid"
-        :data-source="inventoryRecords"
+        :data-source="entity.records"
         :columns="columns"
         :height="400"
         :filter-row-visible="false"
@@ -67,7 +63,9 @@ import {InventoryModule, Inventory, InventoryRecord} from '../service'
 import DButton from '@/components/DButton/button.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import _ from 'lodash'
-import {RemainsModule} from "@/views/warehouse/remains/service";
+import {RawModule} from "@/views/references/materials/service";
+import {RemainsModule, Remains} from "@/views/warehouse/remains/service";
+import {AxiosResponse} from "axios";
 
 @Component({
   name: 'InventoryEditPopup',
@@ -84,42 +82,64 @@ export default class extends Vue {
   private entity: Inventory = new Inventory();
   public state = InventoryModule;
   public cancellationRecords: any[] = []
-  public columns = [
-    {
-      dataField: 'id',
-      dataType: 'string',
-      visible: false
-    },
-    {
-      dataField: 'rawremainsdetail_id',
-      dataType: 'string',
-      caption: 'Название',
-      lookup: {
-        allowClearing: true,
-        dataSource: RemainsModule.dataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'id',
-      },
-      validationRules: [{type: 'required'}]
-    },
-    {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество',
-      validationRules: [{type: 'required'}]
-    },
-  ]
+  public columns: any[] = []
 
-  public validationRules: any = {
-    number: [
-      {type: 'required', message: 'Не задан номер инвентаризации'}
-    ],
-    date: [
-      {type: 'required', message: 'Укажите дату инвентаризации'}
+  created() {
+    this.initColumns()
+  }
+
+  initColumns() {
+    this.columns = [
+      {
+        dataField: 'id',
+        dataType: 'string',
+        visible: false
+      },
+      {
+        dataField: 'raw_id',
+        dataType: 'string',
+        caption: 'Название',
+        lookup: {
+          dataSource: RawModule.rawDataSource.store(),
+          valueExpr: 'id',
+          displayExpr: 'name'
+        },
+        editorOptions: {
+          showClearButton: true,
+          searchEnabled: true
+        },
+        setCellValue: this.setOldQuantityValue
+      },
+      {
+        dataField: 'quantity',
+        dataType: 'number',
+        caption: 'Фактический остаток'
+      },
+      {
+        dataField: 'old_quantity',
+        dataType: 'number',
+        caption: 'Остаток по программе',
+        allowEditing: false
+      },
+      {
+        caption: 'Разница',
+        calculateCellValue: this.calculateDifference
+      }
     ]
   }
 
-  async created() {
+  calculateDifference(e: any) {
+    if (!_.isNil(e.quantity) && !_.isNil(e.old_quantity)) {
+      return e.old_quantity - e.quantity
+    }
+    return ''
+  }
+
+  async setOldQuantityValue(newData: any, value: any, currentRowData: any) {
+    const resp: AxiosResponse['data'] = await RemainsModule.crud.load({filter: ['row_id', '=', value]})
+    newData.row_id = value
+    newData.old_quantity = resp.data.length > 0 ?
+      resp.data.reduce((accumulator: number, item: Remains) => accumulator + item.quantity) : 0
   }
 
   empty() {
@@ -142,12 +162,6 @@ export default class extends Vue {
     const result = e.validationGroup.validate()
     if (result.isValid) {
       try {
-        this.cancellationRecords.forEach((item: any) => {
-          const recordToAdd = new InventoryRecord()
-          recordToAdd.rawremainsdetail_id = item.rawremainsdetail_id
-          recordToAdd.quantity = item.quantity
-          this.entity.records.push(recordToAdd)
-        })
         await this.state.crud.save(this.entity)
         await this.state.dataSource.reload()
         this.state.ResetCurrentInventory()

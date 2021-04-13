@@ -6,8 +6,6 @@ import { UserModule } from '@/store/modules/user'
 
 export const route_ns = 'inventory'
 
-export const table_name = 'public.inventory'
-
 
 export class Inventory {
   id: string | null = null
@@ -23,8 +21,9 @@ export class InventoryRecord {
   id: string | null = null
   shop_id: string = UserModule.shopId
   inventory_id: string | null = null
-  rawremainsdetail_id: string| null = null
-  quantity: number = 0
+  raw_id: string| null = null
+  quantity: number | null = null
+  old_quantity: number | null = null
 }
 
 @Module({ dynamic: true, store, name: 'inventory', namespaced: true })

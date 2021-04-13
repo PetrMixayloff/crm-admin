@@ -5,6 +5,22 @@ import request from '@/utils/request'
 import {UserModule} from '@/store/modules/user'
 import {AxiosResponse} from "axios";
 
+function parseParams(loadOptions: any): string {
+  let params = '?';
+  [
+    'skip',
+    'take',
+    'sort',
+    'filter'
+  ].forEach((i) => {
+    if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '' && loadOptions[i] !== ['raw_id', 'not_in', []]) {
+      params += `${i}=${JSON.stringify(loadOptions[i])}&`
+    }
+  })
+  params = params.slice(0, -1)
+  return params;
+}
+
 class CrudOperates {
   public url: string;
 
@@ -21,9 +37,16 @@ class CrudOperates {
     })
   }
 
-  public async load() {
+  public async load(loadOptions: any | null = null) {
+
+    let params: string | null = null;
+
+    if (!_.isNil(loadOptions)) {
+      params = parseParams(loadOptions);
+    }
+
     return request({
-      url: `${this.url}/`,
+      url: !!params ? `${this.url}/${params}` : `${this.url}/`,
       method: 'get'
     })
   }
@@ -92,20 +115,7 @@ export default {
           return resp
         },
         async load(loadOptions: any) {
-          let params = '?';
-
-          [
-            'skip',
-            'take',
-            'sort',
-            'filter'
-          ].forEach((i) => {
-            if (i in loadOptions && !_.isNil(loadOptions[i]) && loadOptions[i] !== '' && loadOptions[i] !== ['raw_id', 'not_in', []]) {
-              params += `${i}=${JSON.stringify(loadOptions[i])}&`
-            }
-          })
-          params = params.slice(0, -1)
-
+          let params = parseParams(loadOptions);
           const resp: AxiosResponse['data'] = await request({
             url: `${api_route}/${params}`,
             method: 'get'
