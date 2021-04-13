@@ -120,6 +120,12 @@
         </div>
         <div v-else> Самовывоз</div>
       </template>
+      <template #address-cell-template="{data}">
+        <div v-if="data.data.address">
+          <span>ул. {{ data.data.address.street }}, д. {{ data.data.address.house }}, кв. {{ data.data.address.flat }},
+          п. {{ data.data.address.entrance }}, э. {{ data.data.address.flat }}</span>
+        </div>
+      </template>
       <template #order-products-cell-template="{data}">
         <div v-for="product in data.data.products" :key="product.id">
           <div class="flex-between-c">
