@@ -77,13 +77,15 @@ export default class extends Vue {
         dataField: 'date_of_order',
         dataType: 'date',
         caption: 'Дата заказа',
-        allowHiding: false
+        allowHiding: false,
+        minWidth: 90
       },
       {
         caption: 'Время',
         dataType: 'string',
         calculateCellValue: this.getOrderTime,
-        allowHiding: false
+        allowHiding: false,
+        minWidth: 60
       },
       {
         dataField: 'created_by_id',
@@ -108,6 +110,7 @@ export default class extends Vue {
         visible: false
       },
       {
+        dataField: 'client.phone',
         dataType: 'string',
         caption: 'Клиент',
         cellTemplate: 'order-client-cell-template',
@@ -132,7 +135,10 @@ export default class extends Vue {
       {
         caption: "Статус",
         cellTemplate: 'order-status-cell-template',
-        allowHiding: false
+        allowHiding: false,
+        fixed: true,
+        fixedPosition: 'right',
+        minWidth: 150
       }
     ]
   }
