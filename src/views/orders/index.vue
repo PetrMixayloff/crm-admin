@@ -20,7 +20,8 @@
       :dbl-row-click="onRowDblClick"
       @status-changed="onStatusChanged"
     />
-    <OrderEditPopup/>
+    <OrderEditPopup />
+    <AmountPopup />
   </div>
 </template>
 
@@ -31,18 +32,21 @@ import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
 import OrderEditPopup from './components/order-edit-popup.vue'
+import AmountPopup from './components/amount-popup.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import {orderStatus} from '@/const'
 import {confirm} from 'devextreme/ui/dialog'
-import {AxiosResponse} from "axios";
+import {DxPopup} from 'devextreme-vue'
 
 @Component({
   name: 'Orders',
   components: {
     TableGrid,
     TableActions,
-    OrderEditPopup
+    OrderEditPopup,
+    DxPopup,
+    AmountPopup
   }
 })
 export default class extends Vue {
@@ -143,14 +147,16 @@ export default class extends Vue {
     ]
   }
 
-  onStatusChanged(args: any[]) {
+  async onStatusChanged(args: any[]) {
     let data: Order;
     let e: any;
     [e, data] = [...args]
     if (data.status === 'Выполнен' && data.amount !== 0) {
-      // открытие попап окна для выбора способа внесения остатка оплаты
-    } else if (data.status === 'Отменен') {
-      // отмена заказа
+      this.state.SetCurrentRow(data)
+      this.state.SetAmountVisible(true)
+    } else {
+      await this.state.crud.save(data);
+      await this.state.dataSource.reload()
     }
   }
 

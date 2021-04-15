@@ -80,6 +80,7 @@ export class Order {
 @Module({dynamic: true, store, name: 'orders', namespaced: true})
 class OrdersService extends VuexModule {
   public editVisible = false
+  public amountVisible = false
   public editMode = false
   public currentRow = new Order()
 
@@ -94,6 +95,16 @@ class OrdersService extends VuexModule {
   @Action
   public SetEditVisible(value: boolean) {
     this.SET_EDIT_VISIBLE(value)
+  }
+
+  @Mutation
+  private SET_AMOUNT_VISIBLE(value: boolean) {
+    this.amountVisible = value
+  }
+
+  @Action
+  public SetAmountVisible(value: boolean) {
+    this.SET_AMOUNT_VISIBLE(value)
   }
 
   @Mutation
