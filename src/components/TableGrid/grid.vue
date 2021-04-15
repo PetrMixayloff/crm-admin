@@ -16,6 +16,7 @@
       :selected-row-keys.sync="syncedCheckedItems"
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
+      :remote-operations="true"
       @row-click="onRowClick"
       @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
@@ -65,11 +66,11 @@
         />
       </template>
 
-      <dx-remote-operations
-        :sorting="remoteFps"
-        :paging="remoteFps"
-        :filtering="remoteFps"
-      />
+<!--      <dx-remote-operations-->
+<!--        :sorting="remoteFps"-->
+<!--        :paging="remoteFps"-->
+<!--        :filtering="remoteFps"-->
+<!--      />-->
 
       <dx-selection
         :show-check-boxes-mode="selectionMode === 'multiple' ? 'always' : 'none'"

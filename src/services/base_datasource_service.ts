@@ -82,7 +82,6 @@ export default {
     return new DataSource({
       store: new CustomStore({
         key: 'id',
-        loadMode: 'raw',
         async byKey(key) {
           const resp = await request({
             url: `${api_route}/${key}`,
@@ -139,7 +138,7 @@ export default {
             //
           }
 
-          return resp.data
+          return resp
         }
       })
     })

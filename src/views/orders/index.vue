@@ -15,13 +15,14 @@
       :grouping-enabled="true"
       :column-chooser-enable="true"
       :columns="columns"
+      :filter-value="['date_of_order', '>=', new Date()]"
       :filter-sync-enabled="true"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
       @status-changed="onStatusChanged"
     />
-    <OrderEditPopup />
-    <AmountPopup />
+    <OrderEditPopup/>
+    <AmountPopup/>
   </div>
 </template>
 
@@ -55,10 +56,7 @@ export default class extends Vue {
   private staffState = StaffModule;
   private productState = ProductsModule;
   private rawState = RawModule;
-  public columns: Array<any> = [];
-
-  initColumns() {
-    this.columns = [
+  public columns: Array<any> = [
       {
         dataField: 'id',
         dataType: 'string',
@@ -144,8 +142,7 @@ export default class extends Vue {
         fixedPosition: 'right',
         minWidth: 150
       }
-    ]
-  }
+    ];
 
   async onStatusChanged(args: any[]) {
     let data: Order;
@@ -165,7 +162,7 @@ export default class extends Vue {
   }
 
   mounted() {
-    this.initColumns()
+
   }
 
   setClientValue(rowData: any) {
