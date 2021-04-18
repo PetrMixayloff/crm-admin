@@ -90,7 +90,8 @@
           :label="{text: 'Номер телефона'}"
           :editorOptions="{
           mask: '+7 (000) 000-00-00',
-          useMaskedValue: true
+          useMaskedValue: true,
+          onChange: onPhoneChanged
           }"
           :is-required="true"
         />
@@ -220,7 +221,7 @@ import {DxForm, DxItem, DxGroupItem, DxTabbedItem, DxTab} from 'devextreme-vue/f
 import DxTabs from 'devextreme-vue/tabs';
 import {DxNumberBox} from "devextreme-vue";
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {OrdersModule, Order, OrderProduct, Address} from '../service'
+import {OrdersModule, Order, OrderProduct, Address, Client} from '../service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
@@ -281,6 +282,20 @@ export default class extends Vue {
 
   empty() {
 
+  }
+
+  async onPhoneChanged(e: any) {
+    let client_phone = this.entity.client.phone
+    if (client_phone?.length == 18) {
+      const resp: AxiosResponse['data'] = await request({
+        url: 'clients/'+ client_phone,
+        method: 'get',
+      })
+      if (resp) {
+        this.entity.client.name = resp.name
+        this.entity.client.address = {...resp.address}
+      }
+    }
   }
 
   get totalCost() {
