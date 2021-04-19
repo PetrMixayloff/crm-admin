@@ -15,7 +15,6 @@
       :grouping-enabled="true"
       :column-chooser-enable="true"
       :columns="columns"
-      :filter-value="['date_of_order', '>=', new Date()]"
       :filter-sync-enabled="true"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
@@ -80,6 +79,8 @@ export default class extends Vue {
         dataType: 'date',
         caption: 'Дата заказа',
         allowHiding: false,
+        groupIndex: 0,
+        showWhenGrouped: true,
         minWidth: 90
       },
       {

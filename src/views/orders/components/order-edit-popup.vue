@@ -10,13 +10,15 @@
     @cancel="onClose"
     @shown="onShow"
   >
-    <div id="form-container">
+    <div>
       <dx-tabs
         :data-source="tabsArray"
         :selected-index.sync="tabIndex"
       />
       <DxForm
+        class="form-container"
         v-show="tabIndex === 0"
+        :col-count="2"
         :form-data.sync="entity"
         :show-validation-summary="true"
         validation-group="orderEntity"
@@ -36,20 +38,9 @@
           editor-type="dxRadioGroup"
           :editor-options="{
             layout: 'horizontal',
+            onValueChanged: this.onDeliveryChanged,
             dataSource: [{text: 'Доставка', value: true}, {text: 'Самовывоз',value: false}],
             valueExpr: 'value', displayExpr: 'text'}"
-        />
-        <DxItem
-          data-field="courier_id"
-          :label="{text: 'Курьер'}"
-          editor-type="dxSelectBox"
-          :editor-options="{
-              showClearButton: true,
-              value: entity.courier_id,
-              dataSource: staffState.dataSource,
-              valueExpr: 'id',
-              displayExpr: 'full_name'
-            }"
         />
         <DxItem
           data-field="prepay"
@@ -71,54 +62,6 @@
               valueExpr: 'name',
               displayExpr: 'name'
             }"
-        />
-        <DxItem
-          data-field="remark"
-          :label="{text: 'Примечание к заказу'}"
-          editor-type="dxTextArea"
-        />
-
-      </DxForm>
-      <DxForm
-        v-show="tabIndex === 1"
-        :form-data.sync="entity"
-        :show-validation-summary="true"
-        validation-group="orderEntity"
-      >
-        <DxItem
-          data-field="client.phone"
-          :label="{text: 'Номер телефона'}"
-          :editorOptions="{
-          mask: '+7 (000) 000-00-00',
-          useMaskedValue: true,
-          onChange: onPhoneChanged
-          }"
-          :is-required="true"
-        />
-        <DxItem
-          data-field="client.name"
-          :label="{text: 'Имя'}"
-          :is-required="true"
-        />
-        <DxItem
-          data-field="client.address.street"
-          :label="{text: 'Улица/мкрн'}"
-        />
-        <DxItem
-          data-field="client.address.house"
-          :label="{text: '№ дома/строения'}"
-        />
-        <DxItem
-          data-field="client.address.entrance"
-          :label="{text: 'Подъезд'}"
-        />
-        <DxItem
-          data-field="client.address.floor"
-          :label="{text: 'Этаж'}"
-        />
-        <DxItem
-          data-field="client.address.flat"
-          :label="{text: 'Квартира/офис'}"
         />
         <DxItem
           data-field="reason"
@@ -144,70 +87,150 @@
               displayExpr: 'name'
             }"
         />
+        <DxItem
+          data-field="courier_id"
+          :label="{text: 'Курьер'}"
+          editor-type="dxSelectBox"
+          :editor-options="{
+              showClearButton: true,
+              value: entity.courier_id,
+              dataSource: staffState.dataSource,
+              valueExpr: 'id',
+              displayExpr: 'full_name'
+            }"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          data-field="delivery_cost"
+          :label="{text: 'Стоимость доставки'}"
+          editor-type="dxNumberBox"
+          :editor-options="{
+              min: 0,
+              value: entity.delivery_cost,
+            }"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          :col-span="2"
+          data-field="remark"
+          :label="{text: 'Примечание к заказу'}"
+          editor-type="dxTextArea"
+        />
+
       </DxForm>
-      <table-grid
-        v-show="tabIndex === 2"
-        ref="orderEditTableGrid"
-        :data-source="entity.products"
-        :columns="productColumns"
-        :allow-editing="true"
-        :filter-row-visible="false"
-        editing-mode="batch"
-        :row-click="empty"
-        :dbl-row-click="empty"
-        :master-detail-enable="true"
-        selection-mode="single"
+      <DxForm
+        class="form-container"
+        v-show="tabIndex === 1"
+        :form-data.sync="entity"
+        :show-validation-summary="true"
+        validation-group="orderEntity"
       >
-        <template #masterDetailTemplate="{rowKey, rowData}">
-          <table-grid
-            :data-source="rowData.raw"
-            :columns="rawColumns"
-            :row-click="empty"
-            :dbl-row-click="empty"
-            :allow-editing="true"
-            editing-mode="raw"
-            :filter-row-visible="false"
-            selection-mode="single"
+        <DxItem
+          data-field="client.phone"
+          :label="{text: 'Номер телефона'}"
+          :editorOptions="{
+          mask: '+7 (000) 000-00-00',
+          useMaskedValue: true,
+          onChange: onPhoneChanged
+          }"
+          :is-required="true"
+        />
+        <DxItem
+          data-field="client.name"
+          :label="{text: 'Имя'}"
+          :is-required="true"
+        />
+        <DxItem
+          data-field="client.address.street"
+          :label="{text: 'Улица/мкрн'}"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          data-field="client.address.house"
+          :label="{text: '№ дома/строения'}"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          data-field="client.address.entrance"
+          :label="{text: 'Подъезд'}"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          data-field="client.address.floor"
+          :label="{text: 'Этаж'}"
+          :visible="entity.delivery"
+        />
+        <DxItem
+          data-field="client.address.flat"
+          :label="{text: 'Квартира/офис'}"
+          :visible="entity.delivery"
+        />
+      </DxForm>
+      <div
+        v-show="tabIndex === 2"
+        class="form-container">
+        <DxForm
+          :col-count="2"
+          :form-data.sync="entity"
+          :show-validation-summary="true"
+          validation-group="orderEntity"
+        >
+          <DxItem
+            data-field="discount"
+            :label="{text: 'Скидка'}"
+            editor-type="dxNumberBox"
+            :editor-options="{
+              value: entity.discount,
+              min: 0
+            }"
           />
-        </template>
-      </table-grid>
+          <DxItem
+            data-field="decoration_cost"
+            :label="{text: 'Монтаж'}"
+            editor-type="dxNumberBox"
+            :editor-options="{
+              value: entity.decoration_cost,
+              min: 0
+            }"
+          />
+
+        </DxForm>
+        <table-grid
+          ref="orderEditTableGrid"
+          :data-source="entity.products"
+          :columns="productColumns"
+          :allow-editing="true"
+          :filter-row-visible="false"
+          editing-mode="batch"
+          :row-click="empty"
+          :dbl-row-click="empty"
+          :master-detail-enable="true"
+          selection-mode="single"
+        >
+          <template #masterDetailTemplate="{rowKey, rowData}">
+            <table-grid
+              :data-source="rowData.raw"
+              :columns="rawColumns"
+              :row-click="empty"
+              :dbl-row-click="empty"
+              :allow-editing="true"
+              editing-mode="raw"
+              :filter-row-visible="false"
+              selection-mode="single"
+            />
+          </template>
+        </table-grid>
+      </div>
     </div>
     <template v-slot:prefooter>
-      <div class="prefooter">
-        <div class="flex-r-c field">
-          <span>Стоимость доставки:</span>
-          <DxNumberBox
-            :min="0"
-            :value.sync="entity.delivery_cost"
-            :width="100"
-          />
-          <span>руб</span>
-        </div>
-        <div class="flex-r-c field">
-          <span>Стоимость монтажа:</span>
-          <DxNumberBox
-            :min="0"
-            :value.sync="entity.decoration_cost"
-            :width="100"
-          />
-          <span>руб</span>
-        </div>
+      <div class="summary">
         <div class="flex-r-c field">
           <span>Итого {{ totalCost }} руб</span>
         </div>
         <div class="flex-r-c field">
-          <span>Скидка:</span>
-          <DxNumberBox
-            :min="0"
-            :value.sync="entity.discount"
-            :width="100"
-          />
-          <span>руб</span>
-        </div>
-        <div class="flex-r-c field">
           <span>Предоплата {{ entity.prepay }} руб</span>
         </div>
-        <div class="flex-r-c" style="padding: 0">
+        <div class="flex-r-c">
           <span>Всего к доплате {{ amountCost }} руб</span>
         </div>
       </div>
@@ -288,13 +311,20 @@ export default class extends Vue {
     let client_phone = this.entity.client.phone
     if (client_phone?.length == 18) {
       const resp: AxiosResponse['data'] = await request({
-        url: 'clients/'+ client_phone,
+        url: 'clients/' + client_phone,
         method: 'get',
       })
       if (resp) {
         this.entity.client.name = resp.name
         this.entity.client.address = {...resp.address}
       }
+    }
+  }
+
+  onDeliveryChanged(e: any) {
+    if (!e.value) {
+      this.entity.courier_id = null;
+      this.entity.delivery_cost = 0;
     }
   }
 
@@ -307,6 +337,8 @@ export default class extends Vue {
   }
 
   get amountCost() {
+    if (this.totalCost - this.entity.prepay < 0)
+      return 0
     return this.totalCost - this.entity.prepay
   }
 
@@ -445,17 +477,21 @@ export default class extends Vue {
 </script>
 
 <style lang="scss" scoped>
-#form-container {
-  margin: 10px 10px 30px;
+.form-container {
+  margin: 20px 10px 30px;
 }
 
-.prefooter {
+.summary {
+  padding-top: 10px;
+  border-top: 2px solid #333;
+
   span {
     margin-right: 10px;
     margin-left: 10px;
     font-size: 14px;
     font-weight: 400;
   }
+
   .field {
     margin-bottom: 10px;
   }

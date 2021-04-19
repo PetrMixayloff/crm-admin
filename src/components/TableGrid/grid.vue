@@ -16,7 +16,7 @@
       :selected-row-keys.sync="syncedCheckedItems"
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
-      :remote-operations="true"
+      :remote-operations="{ paging: true, filtering: true, sorting: true }"
       @row-click="onRowClick"
       @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
@@ -66,11 +66,11 @@
         />
       </template>
 
-<!--      <dx-remote-operations-->
-<!--        :sorting="remoteFps"-->
-<!--        :paging="remoteFps"-->
-<!--        :filtering="remoteFps"-->
-<!--      />-->
+      <!--      <dx-remote-operations-->
+      <!--        :sorting="remoteFps"-->
+      <!--        :paging="remoteFps"-->
+      <!--        :filtering="remoteFps"-->
+      <!--      />-->
 
       <dx-selection
         :show-check-boxes-mode="selectionMode === 'multiple' ? 'always' : 'none'"
@@ -128,15 +128,17 @@
         </div>
       </template>
       <template #order-products-cell-template="{data}">
-        <div v-for="product in data.data.products" :key="product.id">
-          <div class="flex-between-c">
-            <img
-              :src="src(product.image)"
-              alt="Товар"
-              width="50px"
-            >
-            <span> {{ product.name }}</span>
-            <span> {{ product.quantity }} шт</span>
+        <div>
+          <div v-for="product in data.data.products" :key="product.id">
+            <div class="flex-between-c">
+              <img
+                :src="src(product.image)"
+                alt="Товар"
+                width="50px"
+              >
+              <span> {{ product.name }}</span>
+              <span> {{ product.quantity }} шт</span>
+            </div>
           </div>
         </div>
       </template>
@@ -144,7 +146,8 @@
         <div>
           <p><b>Всего: </b>{{ data.data.total_cost }} руб</p>
           <p><b>Предоплата: </b>{{ data.data.prepay }} руб ({{ data.data.prepay_type }})</p>
-          <p><b>Остаток: </b>{{ data.data.amount }} руб ({{ data.data.amount_type ? data.data.amount_type : 'Не оплачено' }})</p>
+          <p><b>Остаток: </b>{{ data.data.amount }} руб
+            ({{ data.data.amount_type ? data.data.amount_type : 'Не оплачено' }})</p>
         </div>
       </template>
       <template #order-status-cell-template="{data}">
