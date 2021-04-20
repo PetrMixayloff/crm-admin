@@ -12,7 +12,6 @@
     <table-grid
       ref="ordersTableGrid"
       :data-source="dataSource"
-      :grouping-enabled="true"
       :column-chooser-enable="true"
       :columns="columns"
       :filter-sync-enabled="true"
@@ -79,8 +78,8 @@ export default class extends Vue {
         dataType: 'date',
         caption: 'Дата заказа',
         allowHiding: false,
-        groupIndex: 0,
-        showWhenGrouped: true,
+        filterValue: new Date(),
+        sortOrder: 'asc',
         minWidth: 90
       },
       {

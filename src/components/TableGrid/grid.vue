@@ -16,7 +16,6 @@
       :selected-row-keys.sync="syncedCheckedItems"
       :key-expr="keyExpr ? keyExpr : undefined"
       :disabled="disabled"
-      :remote-operations="{ paging: true, filtering: true, sorting: true }"
       @row-click="onRowClick"
       @row-dbl-click="onRowDblClick"
       @cell-click="onCellClick"
@@ -66,11 +65,11 @@
         />
       </template>
 
-      <!--      <dx-remote-operations-->
-      <!--        :sorting="remoteFps"-->
-      <!--        :paging="remoteFps"-->
-      <!--        :filtering="remoteFps"-->
-      <!--      />-->
+      <dx-remote-operations
+        :sorting="remoteFps"
+        :paging="remoteFps"
+        :filtering="remoteFps"
+      />
 
       <dx-selection
         :show-check-boxes-mode="selectionMode === 'multiple' ? 'always' : 'none'"
@@ -79,8 +78,7 @@
       <dx-filter-row
         :visible="filterRowVisible"
       />
-      <dx-group-panel :visible="groupingEnabled"/>
-      <dx-grouping :auto-expand-all="false"/>
+
       <dx-search-panel
         :visible="false"
         :highlight-case-sensitive="true"
@@ -176,8 +174,6 @@ import {
   DxDataGrid,
   DxEditing,
   DxFilterRow,
-  DxGrouping,
-  DxGroupPanel,
   DxLoadPanel,
   DxMasterDetail,
   DxPager,
@@ -190,7 +186,7 @@ import {
 import _ from 'lodash'
 
 function defaultPageSizes(): number[] {
-  return [10, 25, 50, 100]
+  return [20, 50, 100]
 }
 
 @Component({
@@ -203,8 +199,6 @@ function defaultPageSizes(): number[] {
     DxFilterRow,
     DxColumn,
     DxLoadPanel,
-    DxGrouping,
-    DxGroupPanel,
     DxPager,
     DxPaging,
     DxSearchPanel,
@@ -230,18 +224,16 @@ export default class extends Vue {
   @Prop() public filterValue!: any;
   @Prop() public filterSyncEnabled!: boolean;
   @Prop({default: true}) public filterRowVisible!: boolean;
-  @Prop() public relationMode!: any;
   @Prop({default: false}) public columnChooserEnable!: boolean;
   @Prop({default: false}) public stateStoringEnable!: boolean;
   @Prop() public stateStoringKey!: string;
   @Prop() public contextMenuItems!: Array<any>;
-  @Prop() public groupingEnabled!: boolean;
   @Prop() public buttons!: any;
   @Prop({default: true}) public showColumnHeaders!: boolean;
   @Prop() public allowEditing!: boolean;
   @Prop({default: true}) public allowRowsAddDelete!: boolean;
   @Prop({default: 'batch'}) public editingMode!: string;
-  @Prop({default: 10}) public initialPageSize!: number;
+  @Prop({default: 20}) public initialPageSize!: number;
   @Prop({default: defaultPageSizes}) public pageSizes!: number[];
   @Prop() public addClass!: string;
   @Prop({default: false}) public disabled!: boolean;
