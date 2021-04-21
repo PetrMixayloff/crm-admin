@@ -110,12 +110,11 @@
         </div>
       </template>
       <template #order-delivery-cell-template="{data}">
-        <div v-if="data.delivery">
+        <div v-if="data.data.delivery">
           <p>Доставка</p>
-          <span>ул. {{ data.data.client.address.street }}, д. {{
-              data.data.client.address.house
-            }}, кв. {{ data.data.client.address.flat }},
-          п. {{ data.data.client.address.entrance }}, э. {{ data.data.client.address.flat }}</span>
+          <span>ул. {{ data.data.client.address.street || '' }}, д. {{ data.data.client.address.house || '' }},
+            кв. {{ data.data.client.address.flat || '' }}, п. {{ data.data.client.address.entrance || ''}},
+            э. {{ data.data.client.address.flat || ''}}</span>
         </div>
         <div v-else> Самовывоз</div>
       </template>
@@ -123,21 +122,6 @@
         <div v-if="data.data.address">
           <span>ул. {{ data.data.address.street }}, д. {{ data.data.address.house }}, кв. {{ data.data.address.flat }},
           п. {{ data.data.address.entrance }}, э. {{ data.data.address.flat }}</span>
-        </div>
-      </template>
-      <template #order-products-cell-template="{data}">
-        <div>
-          <div v-for="product in data.data.products" :key="product.id">
-            <div class="flex-between-c">
-              <img
-                :src="src(product.image)"
-                alt="Товар"
-                width="50px"
-              >
-              <span> {{ product.name }}</span>
-              <span> {{ product.quantity }} шт</span>
-            </div>
-          </div>
         </div>
       </template>
       <template #order-cost-cell-template="{data}">

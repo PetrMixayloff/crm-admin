@@ -18,7 +18,35 @@
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
       @status-changed="onStatusChanged"
-    />
+      :master-detail-enable="true"
+    >
+      <template #masterDetailTemplate="{rowKey, rowData}">
+        <div>
+          <div class="master-detail-caption"> Товары:</div>
+          <dx-data-grid
+            :data-source="rowData.products"
+            :allow-column-resizing="true"
+            :row-alternation-enabled="true"
+            :columns="productColumns"
+            :height="300"
+            @row-click="empty"
+            @row-dbl-click="empty"
+          >
+            <dx-load-panel
+              :enabled="true"
+            />
+            <template #image-template="{data}">
+              <img
+                :src="src(data.value)"
+                alt="Товар"
+                width="50px"
+              >
+            </template>
+          </dx-data-grid>
+        </div>
+
+      </template>
+    </table-grid>
     <OrderEditPopup/>
     <AmountPopup/>
   </div>
@@ -26,7 +54,7 @@
 
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-property-decorator'
-import {OrdersModule, Order} from './service'
+import {OrdersModule, Order, OrderProductRaw} from './service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
@@ -37,6 +65,10 @@ import TableActions from '@/components/TableActions/actions.vue'
 import {orderStatus} from '@/const'
 import {confirm} from 'devextreme/ui/dialog'
 import {DxPopup} from 'devextreme-vue'
+import {
+  DxDataGrid,
+  DxLoadPanel
+} from 'devextreme-vue/data-grid'
 
 @Component({
   name: 'Orders',
@@ -45,7 +77,9 @@ import {DxPopup} from 'devextreme-vue'
     TableActions,
     OrderEditPopup,
     DxPopup,
-    AmountPopup
+    AmountPopup,
+    DxDataGrid,
+    DxLoadPanel
   }
 })
 export default class extends Vue {
@@ -55,94 +89,143 @@ export default class extends Vue {
   private productState = ProductsModule;
   private rawState = RawModule;
   public columns: Array<any> = [
-      {
-        dataField: 'id',
-        dataType: 'string',
-        visible: false,
-        allowHiding: false
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false,
+      allowHiding: false
+    },
+    {
+      dataType: 'number',
+      caption: 'Номер',
+      dataField: 'order_number',
+      visible: false,
+      allowSorting: false
+    },
+    {
+      dataField: 'date_created',
+      dataType: 'date',
+      caption: 'Дата принятия заказа',
+      visible: false
+    },
+    {
+      dataField: 'date_of_order',
+      dataType: 'date',
+      caption: 'Дата заказа',
+      allowHiding: false,
+      filterValue: new Date,
+      selectedFilterOperation: ">=",
+      sortOrder: 'asc',
+      minWidth: 90
+    },
+    {
+      caption: 'Время',
+      dataType: 'string',
+      calculateCellValue: this.getOrderTime,
+      allowHiding: false,
+      minWidth: 60
+    },
+    {
+      dataField: 'created_by_id',
+      dataType: 'string',
+      caption: 'Принял',
+      lookup: {
+        dataSource: this.staffState.dataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'full_name'
       },
-      {
-        dataType: 'number',
-        caption: 'Номер',
-        dataField: 'order_number',
-        visible: false
+      visible: false,
+      allowSorting: false
+    },
+    {
+      dataField: 'make_by_id',
+      dataType: 'string',
+      caption: 'Выполнил',
+      lookup: {
+        dataSource: this.staffState.dataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'full_name'
       },
-      {
-        dataField: 'date_created',
-        dataType: 'date',
-        caption: 'Дата принятия заказа',
-        visible: false
-      },
-      {
-        dataField: 'date_of_order',
-        dataType: 'date',
-        caption: 'Дата заказа',
-        allowHiding: false,
-        filterValue: new Date(),
-        sortOrder: 'asc',
-        minWidth: 90
-      },
-      {
-        caption: 'Время',
-        dataType: 'string',
-        calculateCellValue: this.getOrderTime,
-        allowHiding: false,
-        minWidth: 60
-      },
-      {
-        dataField: 'created_by_id',
-        dataType: 'string',
-        caption: 'Принял',
-        lookup: {
-          dataSource: this.staffState.dataSource.store(),
-          valueExpr: 'id',
-          displayExpr: 'full_name'
-        },
-        visible: false
-      },
-      {
-        dataField: 'make_by_id',
-        dataType: 'string',
-        caption: 'Выполнил',
-        lookup: {
-          dataSource: this.staffState.dataSource.store(),
-          valueExpr: 'id',
-          displayExpr: 'full_name'
-        },
-        visible: false
-      },
-      {
-        dataField: 'client.phone',
-        dataType: 'string',
-        caption: 'Клиент',
-        cellTemplate: 'order-client-cell-template',
-        allowHiding: false
-      },
-      {
-        dataType: 'string',
-        caption: 'Доставка',
-        cellTemplate: 'order-delivery-cell-template',
-        allowHiding: false
-      },
-      {
-        dataType: 'object',
-        caption: 'Заказ',
-        cellTemplate: 'order-products-cell-template'
-      },
-      {
-        dataType: 'object',
-        caption: 'Сумма',
-        cellTemplate: 'order-cost-cell-template'
-      },
-      {
-        caption: "Статус",
-        cellTemplate: 'order-status-cell-template',
-        allowHiding: false,
-        fixed: true,
-        fixedPosition: 'right',
-        minWidth: 150
-      }
-    ];
+      visible: false,
+      allowSorting: false
+    },
+    {
+      dataField: 'client.phone',
+      dataType: 'string',
+      caption: 'Клиент',
+      cellTemplate: 'order-client-cell-template',
+      allowHiding: false,
+      allowSorting: false
+    },
+    {
+      dataField: 'delivery',
+      dataType: 'boolean',
+      caption: 'Доставка',
+      cellTemplate: 'order-delivery-cell-template',
+      allowHiding: false,
+      allowSorting: false,
+      falseText: 'Самовывоз',
+      trueText: 'Доставка'
+    },
+    {
+      dataField: 'total_cost',
+      dataType: 'number',
+      caption: 'Сумма',
+      cellTemplate: 'order-cost-cell-template',
+      allowSorting: false,
+      allowFiltering: true
+    },
+    {
+      caption: "Статус",
+      dataField: "status",
+      dataType: "string",
+      cellTemplate: 'order-status-cell-template',
+      allowHiding: false,
+      fixed: true,
+      fixedPosition: 'right',
+      minWidth: 150,
+      allowSorting: false,
+      allowFiltering: true
+    }
+  ];
+  public productColumns: Array<any> = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'product_id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'image',
+      dataType: 'string',
+      minWidth: 100,
+      width: 100,
+      caption: "Изображение",
+      alignment: "center",
+      cellTemplate: 'image-template',
+      allowSorting: false
+    },
+    {
+      dataField: 'name',
+      dataType: 'string',
+      caption: "Название",
+      allowSorting: false
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: "Количество",
+      alignment: "center",
+      minWidth: 100,
+      width: 100,
+      allowSorting: false
+    }
+  ];
+
 
   async onStatusChanged(args: any[]) {
     let data: Order;
@@ -155,6 +238,13 @@ export default class extends Vue {
       await this.state.crud.save(data);
       await this.state.dataSource.reload()
     }
+  }
+
+  src(data: any) {
+    if (!data) {
+      return require('@/assets/defaults/default_baloon.png')
+    }
+    return `https://baloon-crm.s3-eu-west-1.amazonaws.com/${data}`
   }
 
   getOrderTime(rowData: any) {
@@ -219,3 +309,11 @@ export default class extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.master-detail-caption {
+  padding: 0 0 5px 10px;
+  font-size: 14px;
+  font-weight: bold;
+}
+</style>
