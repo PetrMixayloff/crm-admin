@@ -13,11 +13,13 @@
       ref="ordersTableGrid"
       :data-source="dataSource"
       :column-chooser-enable="true"
+      :stripped-columns="false"
       :columns="columns"
       :filter-sync-enabled="true"
       :row-click="onRowClick"
       :dbl-row-click="onRowDblClick"
       @status-changed="onStatusChanged"
+      @row-prepared="colorizeGrid"
       :master-detail-enable="true"
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
@@ -277,6 +279,10 @@ export default class extends Vue {
     }
   }
 
+  empty() {
+
+  }
+
   src(data: any) {
     if (!data) {
       return require('@/assets/defaults/default_baloon.png')
@@ -303,6 +309,27 @@ export default class extends Vue {
         + rowData.client.address.floor + ', ' + rowData.client.address.flat
     } else {
       return 'Самовывоз'
+    }
+  }
+
+  colorizeGrid(e: any) {
+    if (e.rowType === 'data') {
+      switch ((e.data as Order).status) {
+        case "Новый":
+          e.rowElement.style.backgroundColor = 'rgba(0,241,10,0.3)';
+          break;
+        case "Подготовлен":
+          e.rowElement.style.backgroundColor = 'rgba(255,110,0, 0.5)';
+          break;
+        case "На доставке":
+          e.rowElement.style.backgroundColor = 'rgba(0,0,255,0.5)';
+          break;
+        case "Выполнен":
+          e.rowElement.style.backgroundColor = 'rgba(255,0,0,0.5)';
+          break;
+        case "Отменен":
+          e.rowElement.style.backgroundColor = 'rgba(100,80,100,0.2)';
+      }
     }
   }
 

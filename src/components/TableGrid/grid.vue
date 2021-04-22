@@ -7,7 +7,7 @@
       :allow-column-resizing="true"
       :column-auto-width="true"
       :column-hiding-enabled="true"
-      :row-alternation-enabled="true"
+      :row-alternation-enabled="strippedColumns"
       :show-column-headers="showColumnHeaders"
       :show-borders="true"
       :show-column-lines="true"
@@ -211,6 +211,7 @@ export default class extends Vue {
   @Prop() public addClass!: string;
   @Prop({default: false}) public disabled!: boolean;
   @Prop({default: true}) public remoteFps!: boolean;
+  @Prop({default: true}) public strippedColumns!: boolean;
 
   private orderStatuses: any[] = orderStatus
 
