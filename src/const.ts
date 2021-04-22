@@ -569,9 +569,9 @@ export const PaymentMethod = [
 ]
 
 export const orderStatus = [
-  { id: 1, name: 'Новый' },
-  { id: 2, name: 'Подготовлен' },
-  { id: 3, name: 'На доставке' },
-  { id: 4, name: 'Выполнен' },
-  { id: 5, name: 'Отменен' }
+  { id: 1, name: 'Новый', background: 'rgba(0,241,10,0.3)' },
+  { id: 2, name: 'Подготовлен', background: 'rgba(255,110,0, 0.5)' },
+  { id: 3, name: 'На доставке', background: 'rgba(0,0,255,0.5)' },
+  { id: 4, name: 'Выполнен', background: 'rgba(255,0,0,0.5)' },
+  { id: 5, name: 'Отменен', background: 'rgba(100,80,100,0.2)' }
 ]

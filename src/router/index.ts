@@ -82,25 +82,26 @@ export const constantRoutes: RouteConfig[] = [
     component: () => import(/* webpackChunkName: "401" */ '@/views/error-page/401.vue'),
     meta: {hidden: true}
   },
+  // {
+  //   path: '/',
+  //   component: Layout,
+  //   redirect: '/dashboard',
+  //   children: [
+  //     {
+  //       path: 'dashboard',
+  //       component: () => import('@/views/dashboard/index.vue'),
+  //       name: 'Dashboard',
+  //       meta: {
+  //         title: 'Главная',
+  //         icon: 'dashboard',
+  //         affix: true
+  //       }
+  //     }
+  //   ]
+  // },
   {
     path: '/',
-    component: Layout,
-    redirect: '/dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index.vue'),
-        name: 'Dashboard',
-        meta: {
-          title: 'Главная',
-          icon: 'dashboard',
-          affix: true
-        }
-      }
-    ]
-  },
-  {
-    path: '/orders',
+    redirect: '/orders',
     component: Layout,
     children: [
       {
@@ -161,22 +162,6 @@ export const asyncRoutes: RouteConfig[] = [
   warehouseRoutes,
   moneyRoutes,
   statisticRoutes,
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import(/* webpackChunkName: "icons" */ '@/views/icons/index.vue'),
-        name: 'Icons',
-        meta: {
-          title: 'icons',
-          icon: 'icon',
-          noCache: true
-        }
-      }
-    ]
-  },
   {
     path: '*',
     redirect: '/404',
