@@ -6,9 +6,12 @@
       :allow-column-reordering="true"
       :allow-column-resizing="true"
       :column-auto-width="true"
+      :column-hiding-enabled="true"
       :row-alternation-enabled="true"
       :show-column-headers="showColumnHeaders"
       :show-borders="true"
+      :show-column-lines="true"
+      :show-row-lines="true"
       :columns="columns"
       :height="gridHeight"
       :filter-sync-enabled="filterSyncEnabled"
@@ -91,23 +94,9 @@
       <template #image-cell-template="{data}">
         <img
           :src="src(data.value)"
-          alt="Сырье"
-          width="50px"
-        >
-      </template>
-      <template #images-cell-template="{data}">
-        <img
-          :src="src(data.value)"
           alt="Товар"
           width="50px"
         >
-      </template>
-      <template #order-client-cell-template="{data}">
-        <div>
-          <span>{{ data.data.client.name }}</span>
-          <br>
-          <span>{{ data.data.client.phone }}</span>
-        </div>
       </template>
       <template #order-delivery-cell-template="{data}">
         <div v-if="data.data.delivery">

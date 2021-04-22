@@ -27,6 +27,9 @@
             :data-source="rowData.products"
             :allow-column-resizing="true"
             :row-alternation-enabled="true"
+            :show-borders="true"
+            :show-column-lines="true"
+            :show-row-lines="true"
             :columns="productColumns"
             :height="300"
             @row-click="empty"
@@ -86,8 +89,6 @@ export default class extends Vue {
   public state = OrdersModule
   public dataSource = this.state.dataSource
   private staffState = StaffModule;
-  private productState = ProductsModule;
-  private rawState = RawModule;
   public columns: Array<any> = [
     {
       dataField: 'id',
@@ -116,14 +117,16 @@ export default class extends Vue {
       filterValue: new Date,
       selectedFilterOperation: ">=",
       sortOrder: 'asc',
-      minWidth: 90
+      minWidth: 140,
+      width: 150
     },
     {
       caption: 'Время',
       dataType: 'string',
       calculateCellValue: this.getOrderTime,
       allowHiding: false,
-      minWidth: 60
+      minWidth: 60,
+      width: 80
     },
     {
       dataField: 'created_by_id',
@@ -150,12 +153,29 @@ export default class extends Vue {
       allowSorting: false
     },
     {
-      dataField: 'client.phone',
-      dataType: 'string',
       caption: 'Клиент',
-      cellTemplate: 'order-client-cell-template',
+      alignment: "center",
       allowHiding: false,
-      allowSorting: false
+      columns: [
+        {
+          dataField: 'client.name',
+          dataType: 'string',
+          caption: 'Имя',
+          allowHiding: false,
+          allowSorting: false,
+          minWidth: 100,
+          width: 120
+        },
+        {
+          dataField: 'client.phone',
+          dataType: 'string',
+          caption: 'Телефон',
+          allowHiding: false,
+          allowSorting: false,
+          minWidth: 140,
+          width: 150
+        }
+      ]
     },
     {
       dataField: 'delivery',
@@ -165,7 +185,19 @@ export default class extends Vue {
       allowHiding: false,
       allowSorting: false,
       falseText: 'Самовывоз',
-      trueText: 'Доставка'
+      trueText: 'Доставка',
+      hidingPriority: 0
+    },
+    {
+      dataField: 'courier_id',
+      dataType: 'string',
+      caption: 'Курьер',
+      lookup: {
+        dataSource: this.staffState.dataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'full_name'
+      },
+      allowSorting: false
     },
     {
       dataField: 'total_cost',
@@ -173,7 +205,8 @@ export default class extends Vue {
       caption: 'Сумма',
       cellTemplate: 'order-cost-cell-template',
       allowSorting: false,
-      allowFiltering: true
+      allowFiltering: true,
+      hidingPriority: 1
     },
     {
       caption: "Статус",
@@ -181,8 +214,12 @@ export default class extends Vue {
       dataType: "string",
       cellTemplate: 'order-status-cell-template',
       allowHiding: false,
-      fixed: true,
-      fixedPosition: 'right',
+      lookup: {
+        dataSource: orderStatus,
+        valueExpr: 'name',
+        displayExpr: 'name'
+      },
+      width: 170,
       minWidth: 150,
       allowSorting: false,
       allowFiltering: true
