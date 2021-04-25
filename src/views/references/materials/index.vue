@@ -115,38 +115,69 @@ export default class extends Vue {
   public rawColumns = [
     {
       dataField: 'id',
+      dataType: 'string',
       visible: false
     },
     {
       dataField: 'category_id',
+      dataType: 'string',
       visible: false
     },
     {
       dataField: 'image',
+      dataType: 'string',
       caption: 'Изображение',
       allowFiltering: false,
-      cellTemplate: 'image-cell-template'
+      allowSorting: false,
+      cellTemplate: 'image-cell-template',
+      width: 100
     },
     {
       dataField: 'name',
+      dataType: 'string',
       caption: 'Название'
     },
     {
       dataField: 'unit',
-      caption: 'Ед. изм.'
+      dataType: 'string',
+      caption: 'Ед. изм.',
+      allowSorting: false,
+      width: 70
     },
     {
-      caption: 'Общее количество'
+      caption: 'Остатки',
+      alignment: 'center',
+      columns: [
+        {
+          caption: 'Кол-во',
+          dataType: 'number',
+          allowSorting: false,
+          width: 70
+        },
+        {
+          caption: 'Резерв',
+          dataType: 'number',
+          allowSorting: false,
+          width: 70
+        },
+        {
+          caption: 'Итого',
+          dataType: 'number',
+          allowSorting: false,
+          width: 70
+        },
+      ]
     },
     {
-      caption: 'В резерве'
+      caption: 'Сумма',
+      dataType: 'number',
+      allowSorting: false,
+      width: 100
     },
     {
-      caption: 'Стоимость остатка'
-    },
-    {
-      caption: 'Действия',
       type: 'buttons',
+      width: 40,
+      fixed: true,
       buttons: [{
         hint: 'Детализация остатков',
         icon: 'info',
@@ -244,13 +275,13 @@ export default class extends Vue {
 }
 
 .filter-tree {
-  width: 28%;
+  width: 25%;
   height: 100%;
 }
 
 .products-list {
   padding: 0 20px;
-  width: 70%;
+  width: 74%;
   height: 700px;
   margin-bottom: 10px;
 }

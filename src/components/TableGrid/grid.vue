@@ -6,7 +6,8 @@
       :allow-column-reordering="true"
       :allow-column-resizing="true"
       :column-auto-width="true"
-      :column-hiding-enabled="true"
+      :column-hiding-enabled="enableHiding"
+      :column-min-width="40"
       :row-alternation-enabled="strippedColumns"
       :show-column-headers="showColumnHeaders"
       :show-borders="true"
@@ -92,18 +93,20 @@
       />
       <dx-paging :page-size="initialPageSize"/>
       <template #image-cell-template="{data}">
-        <img
-          :src="src(data.value)"
-          alt="Товар"
-          width="50px"
-        >
+        <div class="flex-around-c">
+          <img
+            :src="src(data.value)"
+            alt="Товар"
+            width="50px"
+          >
+        </div>
       </template>
       <template #order-delivery-cell-template="{data}">
         <div v-if="data.data.delivery">
           <p>Доставка</p>
           <span>ул. {{ data.data.client.address.street || '' }}, д. {{ data.data.client.address.house || '' }},
-            кв. {{ data.data.client.address.flat || '' }}, п. {{ data.data.client.address.entrance || ''}},
-            э. {{ data.data.client.address.flat || ''}}</span>
+            кв. {{ data.data.client.address.flat || '' }}, п. {{ data.data.client.address.entrance || '' }},
+            э. {{ data.data.client.address.flat || '' }}</span>
         </div>
         <div v-else> Самовывоз</div>
       </template>
@@ -212,6 +215,7 @@ export default class extends Vue {
   @Prop({default: false}) public disabled!: boolean;
   @Prop({default: true}) public remoteFps!: boolean;
   @Prop({default: true}) public strippedColumns!: boolean;
+  @Prop({default: false}) public enableHiding!: boolean
 
   private orderStatuses: any[] = orderStatus
 
