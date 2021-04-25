@@ -93,6 +93,7 @@ import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
 import dbSchemaService from '@/services/db_schema_service'
 import DxButton from 'devextreme-vue/button'
+import ro from "element-ui/src/locale/lang/ro";
 
 @Component({
   name: 'Materials',
@@ -152,9 +153,11 @@ export default class extends Vue {
           caption: 'Кол-во',
           dataType: 'number',
           allowSorting: false,
-          width: 70
+          width: 70,
+          calculateCellValue: this.calcQuantity
         },
         {
+          dataField: 'reserved',
           caption: 'Резерв',
           dataType: 'number',
           allowSorting: false,
@@ -164,7 +167,8 @@ export default class extends Vue {
           caption: 'Итого',
           dataType: 'number',
           allowSorting: false,
-          width: 70
+          width: 70,
+          calculateCellValue: this.calcSummary
         },
       ]
     },
@@ -187,11 +191,25 @@ export default class extends Vue {
     }
   ]
 
-  public emptyEntity: any = {};
-
   onRawDetail(e: any) {
     this.state.SetCurrentRaw(e.row.data)
     this.state.ShowRemainsDetails(true)
+  }
+
+  calcQuantity(rowData: any) {
+    let total: number = 0;
+    rowData.remains.forEach((item: any) => {
+      total += item.quantity;
+    })
+    return total;
+  }
+
+  calcSummary(rowData: any) {
+    let total: number = 0;
+    rowData.remains.forEach((item: any) => {
+      total += item.quantity;
+    })
+    return total - rowData.reserved;
   }
 
   deleteCategory() {

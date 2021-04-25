@@ -28,9 +28,8 @@ export class Raw {
   cost = 0.00
   quantity = 0
   per_pack = 0
-  green_signal = 0
-  yellow_signal = 0
-  red_signal = 0
+  yellow_label = 0
+  red_label = 0
   unit = 'шт'
 }
 
