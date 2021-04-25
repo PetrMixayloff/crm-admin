@@ -82,6 +82,7 @@
         :data-source="entity.raw"
         :columns="rawColumns"
         :allow-editing="true"
+        :height="300"
         :filter-row-visible="false"
         :row-click="empty"
         :dbl-row-click="empty"
@@ -145,23 +146,18 @@ export default class extends Vue {
         valueExpr: 'id',
         displayExpr: 'name'
       },
+      allowSorting: false,
+      allowFiltering: false,
       validationRules: [{ type: 'required' }]
     },
     {
       dataField: 'quantity',
       dataType: 'number',
-      caption: 'Количество',
+      caption: 'Кол-во',
+      allowSorting: false,
+      allowFiltering: false,
+      width: 70,
       validationRules: [{ type: 'required' }]
-    },
-    {
-      dataField: 'standard_id',
-      caption: 'Название стандарта',
-      lookup: {
-        allowClearing: true,
-        dataSource: RawUsageStandardsModule.dataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'name'
-      }
     }
   ]
 

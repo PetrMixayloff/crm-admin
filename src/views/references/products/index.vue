@@ -65,16 +65,40 @@
         <table-grid
           ref="productsTableGrid"
           :data-source="productDataSource"
-          :columns="productColumns"
+          :columns="columns"
+          :master-detail-enable="true"
           :filter-value="state.currentCategory.id && state.currentCategory.id !== '0' ?
           ['category_id', '=', state.currentCategory.id] : null"
           :row-click="onRowClick"
           :dbl-row-click="editProduct"
           selection-mode="single"
-        />
+        >
+          <template #masterDetailTemplate="{rowKey, rowData}">
+            <div>
+              <div class="master-detail-caption"> Товары:</div>
+              <dx-data-grid
+                :data-source="rowData.raw"
+                :allow-column-resizing="true"
+                :row-alternation-enabled="true"
+                :show-borders="true"
+                :show-column-lines="true"
+                :show-row-lines="true"
+                :columns="rawColumns"
+                :height="200"
+                @row-click="empty"
+                @row-dbl-click="empty"
+              >
+                <dx-load-panel
+                  :enabled="true"
+                />
+              </dx-data-grid>
+            </div>
+
+          </template>
+        </table-grid>
       </div>
     </div>
-    <CategoryPopupEdit />
+    <CategoryPopupEdit/>
     <ProductPopupEdit/>
   </div>
 </template>
@@ -91,8 +115,11 @@ import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
-import dbSchemaService from "@/services/db_schema_service";
-import {table_name} from "@/views/references/products/service";
+import {RawModule} from "@/views/references/materials/service";
+import {
+  DxDataGrid,
+  DxLoadPanel
+} from 'devextreme-vue/data-grid'
 
 @Component({
   name: 'Products',
@@ -105,23 +132,85 @@ import {table_name} from "@/views/references/products/service";
     DxForm,
     DxItem,
     CategoryPopupEdit,
-    ProductPopupEdit
+    ProductPopupEdit,
+    DxDataGrid,
+    DxLoadPanel
   }
 })
 export default class extends Vue {
   public state = ProductsModule
+  private rawState = RawModule
   public productDataSource = this.state.productDataSource
   public categoryDataSource = this.state.categoryDataSource
-  public productColumns: Array<any> = [];
-  public emptyEntity: any = {};
+  private columns: Array<any> = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'category_id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'image',
+      dataType: 'string',
+      caption: 'Изображение',
+      allowFiltering: false,
+      allowSorting: false,
+      cellTemplate: 'image-cell-template',
+      width: 100
+    },
+    {
+      dataField: 'name',
+      dataType: 'string',
+      caption: 'Название'
+    },
+    {
+      dataField: 'price',
+      dataType: 'number',
+      caption: 'Цена',
+      allowSorting: false,
+      width: 70
+    },
+    {
+      dataField: 'old_price',
+      dataType: 'number',
+      caption: 'Старая цена',
+      allowSorting: false,
+      width: 100
+    }
+  ];
+  private rawColumns: Array<any> = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'raw_id',
+      dataType: 'string',
+      caption: 'Название',
+      allowSorting: false,
+      allowFiltering: false,
+      lookup: {
+        dataSource: this.rawState.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      }
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Количество',
+      width: 100,
+      allowSorting: false,
+      allowFiltering: false
+    }
+  ];
 
   created() {
-    this.initColumns()
-  }
-
-  initColumns() {
-    const included = ['image', 'name', 'price', 'old_price', 'category_id'];
-    [this.productColumns, this.emptyEntity] = dbSchemaService.prepareGridColumns(table_name, included)
   }
 
   deleteCategory() {
