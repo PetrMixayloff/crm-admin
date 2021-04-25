@@ -15,6 +15,7 @@
         id="form"
         ref="dxform"
         :form-data.sync="entity"
+        :col-count="2"
         :show-validation-summary="true"
         validation-group="rawEntity"
       >
@@ -24,8 +25,19 @@
           :label="{text: 'Название сырья'}"
         />
         <DxItem
-          data-field="description"
-          :label="{text: 'Описание'}"
+          data-field="article_number"
+          :label="{text: 'Артикул'}"
+        />
+        <DxItem
+          data-field="manufacturer"
+          :label="{text: 'Производитель'}"
+        />
+        <DxItem
+          data-field="helium_consumption"
+          :label="{text: 'Расход гелия'}"
+          help-text="Если не заполняется гелием, оставьте равным нулю"
+          editor-type="dxNumberBox"
+          :editor-options="{min: 0}"
         />
         <DxItem
           data-field="unit"
@@ -33,24 +45,28 @@
         />
         <DxItem
           data-field="per-pack"
-          :label="{text: 'Количество в упаковке'}"
+          :label="{text: 'Количество в упаковке/таре'}"
           help-text="Если сырье поставляется штучно, оставьте равным нулю"
           editor-type="dxNumberBox"
-        />
-        <DxItem
-          data-field="green_signal"
-          :label="{text: 'Зеленый остаток'}"
-          editor-type="dxNumberBox"
+          :editor-options="{min: 0}"
         />
         <DxItem
           data-field="yellow_signal"
           :label="{text: 'Желтый остаток'}"
           editor-type="dxNumberBox"
+          :editor-options="{min: 0}"
         />
         <DxItem
           data-field="red_signal"
           :label="{text: 'Красный остаток'}"
           editor-type="dxNumberBox"
+          :editor-options="{min: 0}"
+        />
+        <DxItem
+          data-field="description"
+          :label="{text: 'Описание'}"
+          :col-span="2"
+          editor-type="dxTextArea"
         />
       </DxForm>
       <h5>Изображение</h5>
