@@ -116,9 +116,8 @@ export default {
         async load(loadOptions: any) {
           let params = parseParams(loadOptions);
           const resp: AxiosResponse['data'] = await request({
-            url: api_route,
-            method: 'get',
-            params: params
+            url: `${api_route}/${params}`,
+            method: 'get'
           })
           return resp
         }
