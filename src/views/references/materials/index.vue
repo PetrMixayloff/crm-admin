@@ -129,9 +129,24 @@ export default class extends Vue {
       width: 100
     },
     {
+      dataField: 'article_number',
+      dataType: 'string',
+      caption: 'Артикул',
+      allowSorting: false,
+      width: 100
+    },
+    {
       dataField: 'name',
       dataType: 'string',
-      caption: 'Название'
+      caption: 'Название',
+      allowSorting: false
+    },
+    {
+      dataField: 'manufacturer',
+      dataType: 'string',
+      caption: 'Производитель',
+      allowSorting: false,
+      width: 130
     },
     {
       dataField: 'unit',
@@ -141,55 +156,34 @@ export default class extends Vue {
       width: 70
     },
     {
-      caption: 'Остатки',
-      alignment: 'center',
-      columns: [
-        {
-          caption: 'Кол-во',
-          dataType: 'number',
-          allowSorting: false,
-          width: 70,
-          calculateCellValue: this.calcQuantity
-        },
-        {
-          dataField: 'reserved',
-          caption: 'Резерв',
-          dataType: 'number',
-          allowSorting: false,
-          width: 70
-        },
-        {
-          caption: 'Итого',
-          dataType: 'number',
-          allowSorting: false,
-          width: 70,
-          calculateCellValue: this.calcSummary
-        },
-      ]
+      dataField: 'per_pack',
+      dataType: 'number',
+      caption: 'В упаковке/таре',
+      allowSorting: false,
+      width: 100
     },
     {
-      caption: 'Сумма',
+      dataField: 'helium_consumption',
       dataType: 'number',
+      caption: 'Расход гелия',
+      allowSorting: false,
+      width: 100
+    },
+    {
+      dataField: 'yellow_label',
+      dataType: 'number',
+      caption: 'Желтый остаток',
+      allowSorting: false,
+      width: 100
+    },
+    {
+      dataField: 'red_label',
+      dataType: 'number',
+      caption: 'Красный остаток',
       allowSorting: false,
       width: 100
     }
   ]
-
-  calcQuantity(rowData: any) {
-    let total: number = 0;
-    rowData.remains.forEach((item: any) => {
-      total += item.quantity;
-    })
-    return total;
-  }
-
-  calcSummary(rowData: any) {
-    let total: number = 0;
-    rowData.remains.forEach((item: any) => {
-      total += item.quantity;
-    })
-    return total - rowData.reserved;
-  }
 
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всех дочерних подкатегорий и их сырья. Удалить выбранную категорию?', 'Удаление категории')

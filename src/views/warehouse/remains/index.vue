@@ -72,6 +72,13 @@ export default class extends Vue {
       width: 70
     },
     {
+      dataField: 'unit',
+      dataType: 'string',
+      caption: 'Ед. изм.',
+      allowSorting: false,
+      width: 70
+    },
+    {
       caption: 'Остатки',
       alignment: 'center',
       columns: [
