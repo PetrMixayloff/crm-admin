@@ -44,20 +44,20 @@
           :label="{text: 'Единица измерения'}"
         />
         <DxItem
-          data-field="per-pack"
+          data-field="per_pack"
           :label="{text: 'Количество в упаковке/таре'}"
           help-text="Если сырье поставляется штучно, оставьте равным нулю"
           editor-type="dxNumberBox"
           :editor-options="{min: 0}"
         />
         <DxItem
-          data-field="yellow_signal"
+          data-field="yellow_label"
           :label="{text: 'Желтый остаток'}"
           editor-type="dxNumberBox"
           :editor-options="{min: 0}"
         />
         <DxItem
-          data-field="red_signal"
+          data-field="red_label"
           :label="{text: 'Красный остаток'}"
           editor-type="dxNumberBox"
           :editor-options="{min: 0}"
