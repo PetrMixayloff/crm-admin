@@ -24,7 +24,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import { RawModule } from '../service'
+import { RawModule } from "@/views/references/materials/service"
+import {RemainsModule} from "@/views/warehouse/remains/service";
 import TableGrid from '@/components/TableGrid/grid.vue'
 import request from '@/utils/request'
 import { AxiosResponse } from 'axios'
@@ -38,7 +39,7 @@ import { InvoiceModule } from '@/views/warehouse/invoice/service'
   }
 })
 export default class extends Vue {
-  public state = RawModule;
+  public state = RemainsModule;
   public columns: Array<any> = [
     {
       dataField: 'raw_id',
@@ -88,10 +89,9 @@ export default class extends Vue {
 
   async onShow() {
     const resp: AxiosResponse['data'] = await request({
-      url: `/raw/details/${this.state.currentRaw.id}`,
+      url: `/raw/details/${this.state.currentRow.id}`,
       method: 'get'
     })
-    console.log(resp)
     this.dataSource = resp.data
   }
 

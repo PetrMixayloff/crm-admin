@@ -2,11 +2,10 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
 import { UserModule } from '@/store/modules/user'
+import { Raw } from "@/views/references/materials/service";
 
 
 export const route_ns = 'remains'
-
-export const table_name = 'public.remains'
 
 
 export class Remains {
@@ -21,51 +20,40 @@ export class Remains {
 
 @Module({ dynamic: true, store, name: 'remains', namespaced: true })
 class RemainsService extends VuexModule {
-  public editVisible = false
-  public editMode = false
-  public currentRemains = new Remains()
+  public showRemainsDetails = false
+  public currentRow = new Raw()
 
   public dataSource = base_ds.getBaseDataSource(route_ns)
   public crud = base_ds.getBaseCrud(route_ns)
 
   @Mutation
-  private SET_EDIT_VISIBLE(value: boolean) {
-    this.editVisible = value
+  private SET_SHOW_REMAINS_DETAILS(value: boolean) {
+    this.showRemainsDetails = value
   }
 
   @Action
-  public SetEditVisible(value: boolean) {
-    this.SET_EDIT_VISIBLE(value)
+  public ShowRemainsDetails(value: boolean) {
+    this.SET_SHOW_REMAINS_DETAILS(value)
   }
 
   @Mutation
-  private SET_CURRENT_REMAINS(value: Remains) {
-    this.currentRemains = { ...value }
+  private SET_CURRENT_ROW(value: Raw) {
+    this.currentRow = { ...value }
   }
 
   @Action
-  public SetCurrentRemains(value: Remains) {
-    this.SET_CURRENT_REMAINS(value)
+  public SetCurrentRow(value: Raw) {
+    this.SET_CURRENT_ROW(value)
   }
 
   @Mutation
-  private RESET_CURRENT_REMAINS() {
-    this.currentRemains = new Remains()
+  private RESET_CURRENT_ROW() {
+    this.currentRow = new Raw()
   }
 
   @Action
-  public ResetCurrentRemains() {
-    this.RESET_CURRENT_REMAINS()
-  }
-
-  @Action
-  public SetEditMode(value: boolean) {
-    this.SET_EDIT_MODE(value)
-  }
-
-  @Mutation
-  private SET_EDIT_MODE(value: boolean) {
-    this.editMode = value
+  public ResetCurrentRow() {
+    this.RESET_CURRENT_ROW()
   }
 }
 

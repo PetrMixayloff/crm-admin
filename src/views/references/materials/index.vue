@@ -75,25 +75,21 @@
     </div>
     <RawCategoryPopupEdit/>
     <RawPopupEdit/>
-    <ShowRemainsDetailsPopup/>
   </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue, Watch} from 'vue-property-decorator'
 import DxTreeView from 'devextreme-vue/tree-view'
-import {RawModule, table_name} from './service'
+import {RawModule} from './service'
 import RawCategoryPopupEdit from './components/category-edit-popup.vue'
 import RawPopupEdit from './components/raw-edit-popup.vue'
-import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
 import DTextarea from '@/components/DTextarea/textarea.vue'
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
-import dbSchemaService from '@/services/db_schema_service'
 import DxButton from 'devextreme-vue/button'
-import ro from "element-ui/src/locale/lang/ro";
 
 @Component({
   name: 'Materials',
@@ -105,8 +101,7 @@ import ro from "element-ui/src/locale/lang/ro";
     TableGrid,
     DTextarea,
     RawCategoryPopupEdit,
-    RawPopupEdit,
-    ShowRemainsDetailsPopup
+    RawPopupEdit
   }
 })
 export default class extends Vue {
@@ -177,24 +172,8 @@ export default class extends Vue {
       dataType: 'number',
       allowSorting: false,
       width: 100
-    },
-    {
-      type: 'buttons',
-      width: 40,
-      fixed: true,
-      buttons: [{
-        hint: 'Детализация остатков',
-        icon: 'info',
-        visible: true,
-        onClick: this.onRawDetail
-      }]
     }
   ]
-
-  onRawDetail(e: any) {
-    this.state.SetCurrentRaw(e.row.data)
-    this.state.ShowRemainsDetails(true)
-  }
 
   calcQuantity(rowData: any) {
     let total: number = 0;

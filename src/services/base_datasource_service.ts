@@ -116,28 +116,10 @@ export default {
         async load(loadOptions: any) {
           let params = parseParams(loadOptions);
           const resp: AxiosResponse['data'] = await request({
-            url: `${api_route}/${params}`,
-            method: 'get'
+            url: api_route,
+            method: 'get',
+            params: params
           })
-
-          if (resp && resp.data) {
-            if (api_route === 'raw_category' || api_route === 'product_category') {
-              resp.data.forEach((item: any) => {
-                if (!item.parent_id) {
-                  item.parent_id = '0'
-                }
-              })
-              resp.data.push({
-                id: '0',
-                name: "Все",
-                parent_id: null
-              })
-              resp.totalCount++
-            }
-          } else {
-            //
-          }
-
           return resp
         }
       })

@@ -3,13 +3,14 @@
     <table-grid
       table-title="Остатки"
       ref="tablegrid"
-      :data-source="state.dataSource"
-      :columns="recordsColumns"
+      :data-source="rawState.rawDataSource"
+      :columns="columns"
       :row-click="onRowClick"
       :dbl-row-click="empty"
       selection-mode="single"
     >
     </table-grid>
+    <ShowRemainsDetailsPopup/>
   </div>
 </template>
 
@@ -17,70 +18,109 @@
 import { Component, Vue } from 'vue-property-decorator'
 import TableGrid from "@/components/TableGrid/grid.vue";
 import {RawModule} from "@/views/references/materials/service";
-import dbSchemaService from "@/services/db_schema_service";
-import {InvoiceModule} from "@/views/warehouse/invoice/service";
-import { RemainsModule, table_name } from './service'
+import { RemainsModule } from './service'
+import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
 
 @Component({
   name: 'Remains',
   components: {
-    TableGrid
+    TableGrid,
+    ShowRemainsDetailsPopup
   }
 })
 
 export default class extends Vue {
   public state = RemainsModule
-  public columns: any[] = []
-  public recordsColumns = [
+  public rawState = RawModule
+  public columns: any[] = [
     {
       dataField: 'id',
       dataType: 'string',
       visible: false
     },
     {
-      dataField: 'raw_id',
+      dataField: 'image',
       dataType: 'string',
-      caption: 'Наименование',
+      caption: 'Изображение',
+      allowFiltering: false,
+      allowSorting: false,
+      cellTemplate: 'image-cell-template',
+      width: 100
+    },
+    {
+      dataField: 'category_id',
+      dataType: 'string',
+      caption: 'Категория',
       lookup: {
         allowClearing: true,
-        dataSource: RawModule.rawDataSource.store(),
+        dataSource: RawModule.rawCategoryDataSource.store(),
         valueExpr: 'id',
         displayExpr: 'name'
-      }
+      },
+      width: 200
     },
     {
-      dataField: 'invoice_id',
+      dataField: 'name',
       dataType: 'string',
-      caption: 'Номер накладной',
-      lookup: {
-        allowClearing: true,
-        dataSource: InvoiceModule.dataSource.store(),
-        valueExpr: 'id',
-        displayExpr: 'number'
-      }
+      caption: 'Название'
     },
     {
-      dataField: 'price',
-      dataType: 'number',
-      caption: 'Цена за ед.'
+      dataField: 'unit',
+      dataType: 'string',
+      caption: 'Ед. изм.',
+      allowSorting: false,
+      width: 70
     },
     {
-      dataField: 'quantity',
-      dataType: 'number',
-      caption: 'Количество'
+      caption: 'Остатки',
+      alignment: 'center',
+      columns: [
+        {
+          dataField: 'quantity',
+          dataType: 'number',
+          caption: 'Кол-во',
+          allowSorting: false,
+          width: 70
+        },
+        {
+          dataField: 'reserved',
+          caption: 'Резерв',
+          dataType: 'number',
+          allowSorting: false,
+          width: 70
+        },
+        {
+          dataField: 'available_quantity',
+          dataType: 'number',
+          caption: 'Итого',
+          allowSorting: false,
+          width: 70
+        },
+      ]
     },
+    {
+      caption: 'Сумма',
+      dataType: 'number',
+      allowSorting: false,
+      width: 100
+    },
+    {
+      type: 'buttons',
+      buttons: [{
+        hint: 'Детализация остатков',
+        icon: 'info',
+        visible: true,
+        onClick: this.onRawDetail
+      }]
+    }
   ]
-    public emptyEntity: any = {};
 
-  created() {
-    this.initColumns()
+    onRawDetail(e: any) {
+    this.state.SetCurrentRow(e.row.data)
+    this.state.ShowRemainsDetails(true)
   }
 
-  initColumns() {
-    const included = ['id', 'raw_id', 'invoice_id', 'price', 'quantity'];
-
-    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
+  created() {
   }
 
   onRowClick() {
