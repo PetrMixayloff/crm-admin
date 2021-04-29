@@ -58,11 +58,9 @@
 </template>
 
 <script lang="ts">
-import {Component, Vue, Watch} from 'vue-property-decorator'
-import {OrdersModule, Order, OrderProductRaw} from './service'
+import {Component, Vue} from 'vue-property-decorator'
+import {OrdersModule, Order} from './service'
 import {StaffModule} from "@/views/references/staff/service";
-import {ProductsModule} from "@/views/references/products/service";
-import {RawModule} from "@/views/references/materials/service";
 import OrderEditPopup from './components/order-edit-popup.vue'
 import AmountPopup from './components/amount-popup.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'

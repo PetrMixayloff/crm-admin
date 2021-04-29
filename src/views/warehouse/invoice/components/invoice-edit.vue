@@ -1,13 +1,13 @@
 <template>
   <d-edit-popup
-    :title="state.rawEditMode ? 'Изменение данных в накладной' : 'Создание новой накладной'"
+    title="Создание новой накладной"
     default-width="1200"
     default-height="1000"
     :visible="state.editVisible"
     validation-group="invoiceEntity"
     @hidden="onClose"
     @ok="onOk"
-    @cancel="onCancel"
+    @cancel="onClose"
     @shown="onShow"
   >
     <div id="form-container">
@@ -15,17 +15,18 @@
         id="form"
         ref="dxform"
         :form-data.sync="entity"
+        :col-count="2"
         :show-validation-summary="true"
         validation-group="invoiceEntity"
       >
         <DxItem
           data-field="number"
-          :validation-rules="validationRules.number"
           :label="{text: 'Номер накладной'}"
+          :is-required="true"
         />
         <DxItem
           data-field="date"
-          :validation-rules="validationRules.number"
+          :is-required="true"
           :label="{text: 'Дата'}"
           editor-type="dxDateBox"
           :editor-options="{adaptivityEnabled: true, hint: 'Дата накладной', openOnFieldClick: true,
@@ -41,6 +42,7 @@
         />
         <DxItem
           data-field="remark"
+          :col-span="2"
           :label="{text: 'Примечание'}"
           editor-type="dxTextArea"
         />
@@ -71,7 +73,6 @@ import {InvoiceModule, Invoice, InvoiceRecord} from '../service'
 import {RawModule} from '@/views/references/materials/service'
 import DButton from '@/components/DButton/button.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
-import _ from 'lodash'
 
 @Component({
   name: 'InvoiceEditPopup',
@@ -98,6 +99,7 @@ export default class extends Vue {
       dataField: 'raw_id',
       dataType: 'string',
       caption: 'Наименование',
+      allowSorting: false,
       lookup: {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
@@ -110,30 +112,24 @@ export default class extends Vue {
       dataField: 'price',
       dataType: 'number',
       caption: 'Цена за ед.',
+      allowSorting: false,
       validationRules: [{type: 'required'}]
     },
     {
       dataField: 'quantity',
       dataType: 'number',
       caption: 'Количество',
+      allowSorting: false,
       validationRules: [{type: 'required'}]
     },
     {
       dataField: 'total',
       dataType: 'number',
       caption: 'Сумма',
+      allowSorting: false,
       calculateCellValue: this.calculateTotal
     }
   ]
-
-  public validationRules: any = {
-    number: [
-      {type: 'required', message: 'Не задан номер накладной'}
-    ],
-    date: [
-      {type: 'required', message: 'Укажите дату накладной'}
-    ]
-  }
 
   async created() {
   }
@@ -149,16 +145,12 @@ export default class extends Vue {
   }
 
   onShow() {
-    if (this.state.editMode) {
-      this.entity = _.cloneDeep(this.state.currentInvoice)
-    } else {
-      this.entity = new Invoice()
-    }
+    this.entity = new Invoice()
+
   }
 
   onClose() {
     this.state.SetEditVisible(false)
-    this.state.SetEditMode(false)
   }
 
   async onOk(e: any) {
@@ -180,19 +172,6 @@ export default class extends Vue {
         console.log(e)
       }
     }
-  }
-
-  onCancel(e: any) {
-    this.state.SetEditVisible(false)
-    this.state.SetEditMode(false)
-  }
-
-  onUploaded(e: any) {
-    //
-  }
-
-  onRemove() {
-    //
   }
 }
 </script>

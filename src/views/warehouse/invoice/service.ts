@@ -2,7 +2,6 @@ import { Action, getModule, Module, Mutation, VuexModule } from 'vuex-module-dec
 import store from '@/store'
 import base_ds from '@/services/base_datasource_service'
 import { UserModule } from '@/store/modules/user'
-import _ from 'lodash'
 
 export const route_ns = 'invoice'
 
@@ -31,7 +30,6 @@ export class InvoiceRecord {
 @Module({ dynamic: true, store, name: 'invoice', namespaced: true })
 class InvoiceService extends VuexModule {
   public editVisible = false
-  public editMode = false
   public currentInvoice = new Invoice()
 
   public dataSource = base_ds.getBaseDataSource(route_ns)
@@ -65,16 +63,6 @@ class InvoiceService extends VuexModule {
   @Action
   public ResetCurrentInvoice() {
     this.RESET_CURRENT_INVOICE()
-  }
-
-  @Action
-  public SetEditMode(value: boolean) {
-    this.SET_EDIT_MODE(value)
-  }
-
-  @Mutation
-  private SET_EDIT_MODE(value: boolean) {
-    this.editMode = value
   }
 }
 

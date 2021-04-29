@@ -1,12 +1,14 @@
 <template>
   <div class="app-container">
-    <table-actions
-      :on-create-new="createNewInvoice"
-      :on-edit="editInvoice"
-      :on-delete="deleteInvoice"
-      table-title="Накладные"
-      :selected="state.currentInvoice.id"
-    />
+    <div class="flex-r-c bottom20">
+      <dx-button
+        type="default"
+        icon="plus"
+        text="Создать"
+        @click="createNewInvoice"
+      />
+    </div>
+
     <table-grid
       ref="tablegrid"
       :data-source="state.dataSource"
@@ -17,13 +19,25 @@
       :master-detail-enable="true"
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
-        <table-grid
-          :data-source="rowData.records"
-          :columns="recordsColumns"
-          :row-click="empty"
-          :dbl-row-click="empty"
-          selection-mode="single"
-        />
+        <div>
+          <div class="master-detail-caption"> Позиции в накладной:</div>
+          <dx-data-grid
+            :data-source="rowData.records"
+            :allow-column-resizing="true"
+            :row-alternation-enabled="true"
+            :show-borders="true"
+            :show-column-lines="true"
+            :show-row-lines="true"
+            :columns="recordsColumns"
+            :height="400"
+            @row-click="empty"
+            @row-dbl-click="empty"
+          >
+            <dx-load-panel
+              :enabled="true"
+            />
+          </dx-data-grid>
+        </div>
       </template>
     </table-grid>
     <InvoiceEditPopup/>
@@ -33,23 +47,63 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import TableGrid from '@/components/TableGrid/grid.vue'
-import TableActions from '@/components/TableActions/actions.vue'
-import {InvoiceModule, table_name} from './service'
-import dbSchemaService from '@/services/db_schema_service'
+import {InvoiceModule} from './service'
 import InvoiceEditPopup from './components/invoice-edit.vue'
 import {RawModule} from '@/views/references/materials/service';
+import {DxButton} from 'devextreme-vue'
+import {
+  DxDataGrid,
+  DxLoadPanel
+} from 'devextreme-vue/data-grid'
 
 @Component({
   name: 'Invoice',
   components: {
     TableGrid,
-    TableActions,
-    InvoiceEditPopup
+    DxButton,
+    InvoiceEditPopup,
+    DxDataGrid,
+    DxLoadPanel
   }
 })
 export default class extends Vue {
   public state = InvoiceModule
-  public columns: any[] = []
+  public columns: any[] = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'number',
+      dataType: 'string',
+      allowSorting: false,
+      caption: 'Номер'
+    },
+    {
+      dataField: 'date',
+      dataType: 'date',
+      caption: 'Дата'
+    },
+    {
+      dataField: 'supplier',
+      dataType: 'string',
+      allowSorting: false,
+      caption: 'Поставщик'
+    },
+    {
+      dataField: 'payment_method',
+      dataType: 'string',
+      allowSorting: false,
+      caption: 'Способ оплаты'
+    },
+    {
+      dataField: 'remark',
+      dataType: 'string',
+      allowSorting: false,
+      caption: 'Примчание'
+    }
+  ]
   public recordsColumns = [
     {
       dataField: 'id',
@@ -60,49 +114,45 @@ export default class extends Vue {
       dataField: 'raw_id',
       dataType: 'string',
       caption: 'Наименование',
+      allowSorting: false,
       lookup: {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
         valueExpr: 'id',
         displayExpr: 'name'
-      }
+      },
+      validationRules: [{type: 'required'}]
     },
     {
       dataField: 'price',
       dataType: 'number',
-      caption: 'Цена за ед.'
+      allowSorting: false,
+      caption: 'Цена за ед.',
+      validationRules: [{type: 'required'}]
     },
     {
       dataField: 'quantity',
       dataType: 'number',
-      caption: 'Количество'
+      caption: 'Количество',
+      allowSorting: false,
+      validationRules: [{type: 'required'}]
     },
     {
       dataField: 'total',
       dataType: 'number',
       caption: 'Сумма',
+      allowSorting: false,
       calculateCellValue: this.calculateTotal
     }
   ]
-  public emptyEntity: any = {};
 
   created() {
-    this.initColumns()
-  }
-
-  initColumns() {
-    const included = ['id', 'number', 'date', 'supplier', 'remark', 'payment_method'];
-
-    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
   }
 
   onRowClick() {
-
   }
 
   empty() {
-
   }
 
   calculateTotal(e: any) {
@@ -114,14 +164,6 @@ export default class extends Vue {
 
   createNewInvoice() {
     this.state.SetEditVisible(true)
-  }
-
-  editInvoice() {
-
-  }
-
-  deleteInvoice() {
-
   }
 }
 </script>
