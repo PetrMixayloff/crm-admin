@@ -15,22 +15,20 @@ export class Cancellation {
   number: string | null = null
   date: Date = new Date()
   remark: string | null = null
-  supplier: string | null = null
   records: Array<CancellationRecord> = []
 }
 
 export class CancellationRecord {
   id: string | null = null
-  shop_id: string = UserModule.shopId
   cancellation_id: string | null = null
-  rawremainsdetail_id: string| null = null
+  shop_id: string = UserModule.shopId
+  raw_id: string| null = null
   quantity: number = 0
 }
 
 @Module({ dynamic: true, store, name: 'cancellation', namespaced: true })
 class CancellationService extends VuexModule {
   public editVisible = false
-  public editMode = false
   public currentCancellation = new Cancellation()
 
   public dataSource = base_ds.getBaseDataSource(route_ns)
@@ -64,16 +62,6 @@ class CancellationService extends VuexModule {
   @Action
   public ResetCurrentCancellation() {
     this.RESET_CURRENT_CANCELLATION()
-  }
-
-  @Action
-  public SetEditMode(value: boolean) {
-    this.SET_EDIT_MODE(value)
-  }
-
-  @Mutation
-  private SET_EDIT_MODE(value: boolean) {
-    this.editMode = value
   }
 }
 

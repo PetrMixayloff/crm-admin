@@ -12,17 +12,18 @@
     />
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <error-log class="errLog-container right-menu-item hover-effect" />
+        <error-log class="errLog-container right-menu-item hover-effect"/>
       </template>
       <el-dropdown
         class="avatar-container right-menu-item hover-effect"
         trigger="click"
       >
         <div class="avatar-wrapper">
-          <svg-icon
-            class="user-icon"
-            name="user"/>
-          <i class="el-icon-caret-bottom" />
+          <img
+            :src="avatar+'?imageView2/1/w/80/h/80'"
+            class="user-avatar"
+          >
+          <i class="el-icon-caret-bottom"/>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/profile/">
@@ -30,11 +31,11 @@
               Профиль
             </el-dropdown-item>
           </router-link>
-<!--          <router-link to="/shop/">-->
-<!--            <el-dropdown-item>-->
-<!--              Мои магазины-->
-<!--            </el-dropdown-item>-->
-<!--          </router-link>-->
+          <!--          <router-link to="/shop/">-->
+          <!--            <el-dropdown-item>-->
+          <!--              Мои магазины-->
+          <!--            </el-dropdown-item>-->
+          <!--          </router-link>-->
           <el-dropdown-item
             divided
             @click.native="logout"
@@ -50,9 +51,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
-import { AppModule } from '@/store/modules/app'
-import { UserModule } from '@/store/modules/user'
+import {Component, Vue} from 'vue-property-decorator'
+import {AppModule} from '@/store/modules/app'
+import {UserModule} from '@/store/modules/user'
 import Breadcrumb from '@/components/Breadcrumb/index.vue'
 import ErrorLog from '@/components/ErrorLog/index.vue'
 import Hamburger from '@/components/Hamburger/index.vue'
@@ -68,6 +69,10 @@ import Hamburger from '@/components/Hamburger/index.vue'
 export default class extends Vue {
   get sidebar() {
     return AppModule.sidebar
+  }
+
+  get avatar() {
+    return UserModule.avatar
   }
 
   get device() {
@@ -91,7 +96,7 @@ export default class extends Vue {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, .08);
 
   .hamburger-container {
     line-height: 46px;
@@ -100,7 +105,7 @@ export default class extends Vue {
     padding: 0 15px;
     cursor: pointer;
     transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
       background: rgba(0, 0, 0, .025)

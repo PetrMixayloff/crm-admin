@@ -19,7 +19,7 @@ export interface IUserState {
 class User extends VuexModule implements IUserState {
   public token = getToken() || ''
   public name = ''
-  public avatar = ''
+  public avatar = 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
   public email = ''
   public shopId = ''
   public roles: string[] = []

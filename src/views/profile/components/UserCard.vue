@@ -10,7 +10,7 @@
     <div class="user-profile">
       <div class="box-center">
         <pan-thumb
-          :image="user.avatar"
+          :image="avatar"
           :height="'100px'"
           :width="'100px'"
           :hoverable="false"
@@ -75,6 +75,7 @@
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { IProfile } from '../index.vue'
 import PanThumb from '@/components/PanThumb/index.vue'
+import {UserModule} from "@/store/modules/user";
 
 @Component({
   name: 'UserCard',
@@ -84,6 +85,10 @@ import PanThumb from '@/components/PanThumb/index.vue'
 })
 export default class extends Vue {
   @Prop({ required: true }) private user!: IProfile
+
+  get avatar() {
+    return UserModule.avatar
+  }
 }
 </script>
 

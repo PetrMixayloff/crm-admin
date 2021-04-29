@@ -2,8 +2,8 @@
   <div class="app-container">
     <table-actions
       :on-create-new="createNewCancellation"
-      :on-edit="editCancellation"
-      :on-delete="deleteCancellation"
+      :on-edit="empty"
+      :on-delete="empty"
       table-title="Списание"
       :selected="state.currentCancellation.id"
     />
@@ -17,13 +17,25 @@
       :master-detail-enable="true"
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
-        <table-grid
-          :data-source="rowData.records"
-          :columns="recordsColumns"
-          :row-click="empty"
-          :dbl-row-click="empty"
-          selection-mode="single"
-        />
+        <div>
+          <h4> Список позиций:</h4>
+          <dx-data-grid
+            :data-source="rowData.records"
+            :allow-column-resizing="true"
+            :row-alternation-enabled="true"
+            :show-borders="true"
+            :show-column-lines="true"
+            :show-row-lines="true"
+            :columns="recordsColumns"
+            :height="400"
+            @row-click="empty"
+            @row-dbl-click="empty"
+          >
+            <dx-load-panel
+              :enabled="true"
+            />
+          </dx-data-grid>
+        </div>
       </template>
     </table-grid>
     <CancellationEditPopup/>
@@ -31,25 +43,53 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import {Component, Vue} from 'vue-property-decorator'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import TableActions from '@/components/TableActions/actions.vue'
-import { CancellationModule, table_name } from "./service";
-import dbSchemaService from '@/services/db_schema_service'
-import { RawModule } from "@/views/references/materials/service";
+import {CancellationModule} from "./service";
+import {RawModule} from "@/views/references/materials/service";
 import CancellationEditPopup from './components/cancellation-edit.vue'
+import {
+  DxDataGrid,
+  DxLoadPanel
+} from 'devextreme-vue/data-grid'
 
 @Component({
   name: 'Cancellation',
   components: {
     TableGrid,
     TableActions,
-    CancellationEditPopup
+    CancellationEditPopup,
+    DxDataGrid,
+    DxLoadPanel
   }
 })
 export default class extends Vue {
   public state = CancellationModule
-  public columns: any[] = []
+  public columns: any[] = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'number',
+      dataType: 'string',
+      caption: "Номер",
+      allowSorting: false
+    },
+    {
+      dataField: 'date',
+      dataType: 'date',
+      caption: "Дата"
+    },
+    {
+      dataField: 'remark',
+      dataType: 'string',
+      caption: "Примечание",
+      allowSorting: false
+    }
+  ]
   public recordsColumns = [
     {
       dataField: 'id',
@@ -74,38 +114,18 @@ export default class extends Vue {
     },
   ]
 
-  public emptyEntity: any = {};
-
   created() {
-    this.initColumns()
-  }
-
-  initColumns() {
-    const included = ['id', 'number', 'date', 'supplier', 'remark'];
-
-    [this.columns, this.emptyEntity] = dbSchemaService.prepareGridColumns(
-      table_name, included)
   }
 
   onRowClick() {
-
   }
 
   empty() {
-
   }
-
 
   createNewCancellation() {
     this.state.SetEditVisible(true)
   }
 
-  editCancellation() {
-
-  }
-
-  deleteCancellation() {
-
-  }
 }
 </script>

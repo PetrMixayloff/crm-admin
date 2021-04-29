@@ -1,8 +1,8 @@
 <template>
   <d-edit-popup
     title="Создание новой накладной"
-    default-width="1200"
-    default-height="1000"
+    default-width="900"
+    default-height="800"
     :visible="state.editVisible"
     validation-group="invoiceEntity"
     @hidden="onClose"
@@ -51,7 +51,7 @@
       <h3>Товарные позиции</h3>
       <table-grid
         ref="tablegrid"
-        :data-source="invoiceRecords"
+        :data-source="entity.records"
         :columns="columns"
         :height="400"
         :filter-row-visible="false"
@@ -88,7 +88,6 @@ import TableGrid from '@/components/TableGrid/grid.vue'
 export default class extends Vue {
   private entity: Invoice = new Invoice();
   public state = InvoiceModule;
-  public invoiceRecords: any[] = []
   public columns = [
     {
       dataField: 'id',
@@ -157,13 +156,6 @@ export default class extends Vue {
     const result = e.validationGroup.validate()
     if (result.isValid) {
       try {
-        this.invoiceRecords.forEach((item: any) => {
-          const recordToAdd = new InvoiceRecord()
-          recordToAdd.raw_id = item.raw_id
-          recordToAdd.price = item.price
-          recordToAdd.quantity = item.quantity
-          this.entity.records.push(recordToAdd)
-        })
         await this.state.crud.save(this.entity)
         await this.state.dataSource.reload()
         this.state.ResetCurrentInvoice()

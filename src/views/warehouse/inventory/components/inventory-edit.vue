@@ -2,7 +2,7 @@
   <d-edit-popup
     :title="'Инвентаризация'"
     default-width="900"
-    default-height="1000"
+    default-height="800"
     :visible="state.editVisible"
     validation-group="inventoryEntity"
     @hidden="onClose"
@@ -81,7 +81,6 @@ import {AxiosResponse} from "axios";
 export default class extends Vue {
   private entity: Inventory = new Inventory();
   public state = InventoryModule;
-  public cancellationRecords: any[] = []
   public columns: any[] = [
     {
       dataField: 'id',

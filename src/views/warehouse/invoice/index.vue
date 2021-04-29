@@ -20,7 +20,7 @@
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
         <div>
-          <div class="master-detail-caption"> Позиции в накладной:</div>
+          <h4> Список позиций:</h4>
           <dx-data-grid
             :data-source="rowData.records"
             :allow-column-resizing="true"

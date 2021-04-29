@@ -17,13 +17,25 @@
       :master-detail-enable="true"
     >
       <template #masterDetailTemplate="{rowKey, rowData}">
-        <table-grid
-          :data-source="rowData.records"
-          :columns="recordsColumns"
-          :row-click="empty"
-          :dbl-row-click="empty"
-          selection-mode="single"
-        />
+        <div>
+          <h4> Список позиций:</h4>
+          <dx-data-grid
+            :data-source="rowData.records"
+            :allow-column-resizing="true"
+            :row-alternation-enabled="true"
+            :show-borders="true"
+            :show-column-lines="true"
+            :show-row-lines="true"
+            :columns="recordsColumns"
+            :height="400"
+            @row-click="empty"
+            @row-dbl-click="empty"
+          >
+            <dx-load-panel
+              :enabled="true"
+            />
+          </dx-data-grid>
+        </div>
       </template>
     </table-grid>
     <InventoryEditPopup/>
@@ -37,13 +49,19 @@ import TableActions from '@/components/TableActions/actions.vue'
 import {InventoryModule} from './service'
 import {RawModule} from "@/views/references/materials/service"
 import InventoryEditPopup from './components/inventory-edit.vue'
+import {
+  DxDataGrid,
+  DxLoadPanel
+} from 'devextreme-vue/data-grid'
 
 @Component({
   name: 'Inventory',
   components: {
     TableGrid,
     TableActions,
-    InventoryEditPopup
+    InventoryEditPopup,
+    DxDataGrid,
+    DxLoadPanel
   }
 })
 
@@ -66,7 +84,8 @@ export default class extends Vue {
       {
         dataField: 'number',
         dataType: 'string',
-        caption: 'Номер'
+        caption: 'Номер',
+        allowSorting: false
       },
       {
         dataField: 'date',
@@ -76,7 +95,8 @@ export default class extends Vue {
       {
         dataField: 'remark',
         dataType: 'string',
-        caption: 'Примечание'
+        caption: 'Примечание',
+        allowSorting: false
       }
     ]
     this.recordsColumns = [
@@ -93,21 +113,25 @@ export default class extends Vue {
           dataSource: RawModule.rawDataSource.store(),
           valueExpr: 'id',
           displayExpr: 'name'
-        }
+        },
+        allowSorting: false
       },
       {
         dataField: 'quantity',
         dataType: 'number',
-        caption: 'Фактический остаток'
+        caption: 'Фактический остаток',
+        allowSorting: false
       },
       {
         dataField: 'old_quantity',
         dataType: 'number',
-        caption: 'Остаток по программе'
+        caption: 'Остаток по программе',
+        allowSorting: false
       },
       {
         caption: 'Разница',
-        calculateCellValue: this.calculateDifference
+        calculateCellValue: this.calculateDifference,
+        allowSorting: false
       }
     ]
   }

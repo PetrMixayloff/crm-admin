@@ -86,6 +86,10 @@ export default class extends Vue {
   created() {
     this.getUser()
   }
+  get avatar() {
+    return UserModule.avatar
+  }
+
 
   private getUser() {
     this.user = {
