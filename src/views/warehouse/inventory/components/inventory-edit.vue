@@ -1,7 +1,7 @@
 <template>
   <d-edit-popup
-    :title="'Создание списка для инвентаризации'"
-    default-width="1200"
+    :title="'Инвентаризация'"
+    default-width="900"
     default-height="1000"
     :visible="state.editVisible"
     validation-group="inventoryEntity"
@@ -15,6 +15,7 @@
         id="form"
         ref="dxform"
         :form-data.sync="entity"
+        :col-count="2"
         :show-validation-summary="true"
         validation-group="inventoryEntity"
       >
@@ -33,12 +34,11 @@
         />
         <DxItem
           data-field="remark"
+          :col-span="2"
           :label="{text: 'Примечание'}"
           editor-type="dxTextArea"
         />
       </DxForm>
-      <br>
-      <h3>Позиции к инвентаризации</h3>
       <table-grid
         ref="tablegrid"
         :data-source="entity.records"
@@ -82,64 +82,65 @@ export default class extends Vue {
   private entity: Inventory = new Inventory();
   public state = InventoryModule;
   public cancellationRecords: any[] = []
-  public columns: any[] = []
+  public columns: any[] = [
+    {
+      dataField: 'id',
+      dataType: 'string',
+      visible: false
+    },
+    {
+      dataField: 'raw_id',
+      dataType: 'string',
+      caption: 'Название',
+      lookup: {
+        dataSource: RawModule.rawDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: 'name'
+      },
+      editorOptions: {
+        showClearButton: true,
+        searchEnabled: true
+      },
+      setCellValue: this.setOldQuantityValue,
+      allowSorting: false
+    },
+    {
+      dataField: 'quantity',
+      dataType: 'number',
+      caption: 'Фактический остаток',
+      allowSorting: false,
+      width: 150
+    },
+    {
+      dataField: 'old_quantity',
+      dataType: 'number',
+      caption: 'Остаток по программе',
+      allowEditing: false,
+      allowSorting: false,
+      width: 150
+    },
+    {
+      caption: 'Разница',
+      dataType: 'number',
+      calculateCellValue: this.calculateDifference,
+      allowSorting: false,
+      width: 70
+    }
+  ]
 
-  created() {
-    this.initColumns()
-  }
-
-  initColumns() {
-    this.columns = [
-      {
-        dataField: 'id',
-        dataType: 'string',
-        visible: false
-      },
-      {
-        dataField: 'raw_id',
-        dataType: 'string',
-        caption: 'Название',
-        lookup: {
-          dataSource: RawModule.rawDataSource.store(),
-          valueExpr: 'id',
-          displayExpr: 'name'
-        },
-        editorOptions: {
-          showClearButton: true,
-          searchEnabled: true
-        },
-        setCellValue: this.setOldQuantityValue
-      },
-      {
-        dataField: 'quantity',
-        dataType: 'number',
-        caption: 'Фактический остаток'
-      },
-      {
-        dataField: 'old_quantity',
-        dataType: 'number',
-        caption: 'Остаток по программе',
-        allowEditing: false
-      },
-      {
-        caption: 'Разница',
-        calculateCellValue: this.calculateDifference
-      }
-    ]
-  }
+  created() {}
 
   calculateDifference(e: any) {
     if (!_.isNil(e.quantity) && !_.isNil(e.old_quantity)) {
-      return e.old_quantity - e.quantity
+      return e.quantity - e.old_quantity
     }
     return ''
   }
 
   async setOldQuantityValue(newData: any, value: any, currentRowData: any) {
-    const resp: AxiosResponse['data'] = await RemainsModule.crud.load({filter: ['row_id', '=', value]})
-    newData.row_id = value
-    newData.old_quantity = resp.data.length > 0 ?
-      resp.data.reduce((accumulator: number, item: Remains) => accumulator + item.quantity) : 0
+    const resp: AxiosResponse['data'] = await RawModule.crudRaw.load({filter: ['id', '=', value]})
+    newData.raw_id = value
+    newData.old_quantity = resp.data.length > 0 ? resp.data[0].quantity : 0
   }
 
   empty() {
