@@ -244,7 +244,7 @@ import {DxForm, DxItem, DxGroupItem, DxTabbedItem, DxTab} from 'devextreme-vue/f
 import DxTabs from 'devextreme-vue/tabs';
 import {DxNumberBox} from "devextreme-vue";
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
-import {OrdersModule, Order, OrderProduct, Address, Client} from '../service'
+import {OrdersModule, Order, OrderProduct, Address} from '../service'
 import {StaffModule} from "@/views/references/staff/service";
 import {ProductsModule} from "@/views/references/products/service";
 import {RawModule} from "@/views/references/materials/service";
@@ -252,9 +252,7 @@ import _ from 'lodash'
 import TableGrid from '@/components/TableGrid/grid.vue'
 import {Reasons, SalesChannel, PaymentMethod} from "@/const";
 import request from '@/utils/request'
-import axios, {AxiosResponse} from 'axios'
-import dbSchemaService from "@/services/db_schema_service";
-import {table_name} from "@/views/references/products/service";
+import {AxiosResponse} from 'axios'
 
 @Component({
   name: 'OrderEditPopup',

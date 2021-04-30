@@ -74,7 +74,7 @@ export default class extends Vue {
     },
     {
       dataField: 'number',
-      dataType: 'string',
+      dataType: 'number',
       caption: "Номер",
       allowSorting: false
     },
@@ -82,6 +82,12 @@ export default class extends Vue {
       dataField: 'date',
       dataType: 'date',
       caption: "Дата"
+    },
+    {
+      dataField: 'reason',
+      dataType: 'string',
+      caption: "Причина",
+      allowSorting: false
     },
     {
       dataField: 'remark',
@@ -97,9 +103,10 @@ export default class extends Vue {
       visible: false
     },
     {
-      dataField: 'raw_remains_detail.raw_id',
+      dataField: 'raw_id',
       dataType: 'string',
       caption: 'Название',
+      allowSorting: false,
       lookup: {
         allowClearing: true,
         dataSource: RawModule.rawDataSource.store(),
@@ -110,7 +117,9 @@ export default class extends Vue {
     {
       dataField: 'quantity',
       dataType: 'number',
-      caption: 'Количество'
+      caption: 'Количество',
+      width: 100,
+      allowSorting: false
     },
   ]
 

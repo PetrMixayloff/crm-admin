@@ -12,8 +12,9 @@ export const table_name = 'public.cancellation'
 export class Cancellation {
   id: string | null = null
   shop_id: string = UserModule.shopId
-  number: string | null = null
+  number: number | null = null
   date: Date = new Date()
+  reason: string = ''
   remark: string | null = null
   records: Array<CancellationRecord> = []
 }

@@ -39,6 +39,14 @@
         <DxItem
           data-field="payment_method"
           :label="{text: 'Способ оплаты'}"
+          editor-type="dxSelectBox"
+          :editor-options="{
+              showClearButton: true,
+              value: entity.payment_method,
+              dataSource: paymentMethod,
+              valueExpr: 'name',
+              displayExpr: 'name'
+            }"
         />
         <DxItem
           data-field="remark"
@@ -73,6 +81,7 @@ import {InvoiceModule, Invoice, InvoiceRecord} from '../service'
 import {RawModule} from '@/views/references/materials/service'
 import DButton from '@/components/DButton/button.vue'
 import TableGrid from '@/components/TableGrid/grid.vue'
+import {PaymentMethod} from "@/const";
 
 @Component({
   name: 'InvoiceEditPopup',
@@ -129,6 +138,7 @@ export default class extends Vue {
       calculateCellValue: this.calculateTotal
     }
   ]
+  private paymentMethod = PaymentMethod;
 
   async created() {
   }

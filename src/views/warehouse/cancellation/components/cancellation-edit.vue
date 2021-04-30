@@ -20,11 +20,6 @@
         validation-group="cancellationEntity"
       >
         <DxItem
-          data-field="number"
-          :is-required="true"
-          :label="{text: 'Номер'}"
-        />
-        <DxItem
           data-field="date"
           :label="{text: 'Дата'}"
           :is-required="true"
@@ -33,8 +28,8 @@
                             pickerType: 'native', showClearButton: true, type: 'date'}"
         />
         <DxItem
-          data-field="supplier"
-          :label="{text: 'Поставщик'}"
+          data-field="reason"
+          :label="{text: 'Причина'}"
         />
         <DxItem
           data-field="remark"
@@ -101,12 +96,15 @@ export default class extends Vue {
         valueExpr: 'id',
         displayExpr: 'name',
       },
+      allowSorting: false,
       validationRules: [{type: 'required'}]
     },
     {
       dataField: 'quantity',
       dataType: 'number',
       caption: 'Количество',
+      width: 100,
+      allowSorting: false,
       validationRules: [{type: 'required'}]
     },
   ]
