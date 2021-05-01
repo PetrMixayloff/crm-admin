@@ -55,8 +55,7 @@
           editor-type="dxTextArea"
         />
       </DxForm>
-      <br>
-      <h3>Товарные позиции</h3>
+      <h4>Товарные позиции</h4>
       <table-grid
         ref="tablegrid"
         :data-source="entity.records"
@@ -121,21 +120,24 @@ export default class extends Vue {
       dataType: 'number',
       caption: 'Цена за ед.',
       allowSorting: false,
-      validationRules: [{type: 'required'}]
+      validationRules: [{type: 'required'}],
+      width: 100
     },
     {
       dataField: 'quantity',
       dataType: 'number',
       caption: 'Количество',
       allowSorting: false,
-      validationRules: [{type: 'required'}]
+      validationRules: [{type: 'required'}],
+      width: 100
     },
     {
       dataField: 'total',
       dataType: 'number',
       caption: 'Сумма',
       allowSorting: false,
-      calculateCellValue: this.calculateTotal
+      calculateCellValue: this.calculateTotal,
+      width: 80
     }
   ]
   private paymentMethod = PaymentMethod;

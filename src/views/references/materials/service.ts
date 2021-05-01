@@ -33,6 +33,8 @@ export class Raw {
   yellow_label = 0
   red_label = 0
   unit = 'шт'
+  article_number: string | null = null
+  manufacturer: string | null = null
 }
 
 @Module({ dynamic: true, store, name: 'raw', namespaced: true })
