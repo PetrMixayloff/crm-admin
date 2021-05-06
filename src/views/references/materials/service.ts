@@ -19,21 +19,23 @@ export class RawCategory {
 
 export class Raw {
   id: string | null = null
-  category_id: string | null = null
   shop_id: string = UserModule.shopId
+  category_id: string | null = null
   name = ''
+  article_number: string | null = null
+  manufacturer: string | null = null
+  unit = '796'
+  piece_unit: string | null = null
+  per_pack: number | null = null
+  helium_consumption: number | null = null
+  yellow_label: number | null = null
+  red_label: number | null = null
   description = ''
   image: string | null = null
   cost = 0.00
   quantity = 0
   reserved = 0
   available_quantity = 0
-  per_pack = 0
-  yellow_label = 0
-  red_label = 0
-  unit = '796'
-  article_number: string | null = null
-  manufacturer: string | null = null
 }
 
 @Module({ dynamic: true, store, name: 'raw', namespaced: true })

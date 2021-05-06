@@ -20,9 +20,22 @@
         validation-group="rawEntity"
       >
         <DxItem
+          data-field="category_id"
+          :label="{text: 'Категория'}"
+          editor-type="dxSelectBox"
+          :editor-options="{
+          dataSource: state.rawCategoryDataSource,
+          valueExpr: 'id',
+          displayExpr: 'name',
+          searchEnabled: true,
+          searchExpr: 'name'
+        }"
+          :is-required="true"
+        />
+        <DxItem
           data-field="name"
-          :validation-rules="validationRules.name"
           :label="{text: 'Наименование'}"
+          :is-required="true"
         />
         <DxItem
           data-field="article_number"
@@ -31,13 +44,6 @@
         <DxItem
           data-field="manufacturer"
           :label="{text: 'Производитель'}"
-        />
-        <DxItem
-          data-field="helium_consumption"
-          :label="{text: 'Расход гелия'}"
-          help-text="Если не заполняется гелием, оставьте равным нулю"
-          editor-type="dxNumberBox"
-          :editor-options="{min: 0}"
         />
         <DxItem
           data-field="unit"
@@ -50,13 +56,51 @@
           searchEnabled: true,
           searchExpr: 'name'
         }"
+          :is-required="true"
+        />
+        <DxItem
+          item-type="simple"
+          name="needOpening"
+          help-text="Если товар поставляется в упаковках, а используется поштучно"
+        >
+            <template #default>
+                <DxCheckBox
+                  v-model:value="needOpening"
+                  text="Разборный"
+                />
+            </template>
+        </DxItem>
+        <DxItem
+          data-field="piece_unit"
+          :label="{text: 'Единица измерения разборного сырья'}"
+          editor-type="dxSelectBox"
+          :editor-options="{
+          dataSource: units,
+          valueExpr: 'code',
+          displayExpr: (item) => { return item && item.name + ', ' + item.caption; },
+          searchEnabled: true,
+          searchExpr: 'name'
+        }"
+          :is-required="needOpening"
+          :visible="needOpening"
         />
         <DxItem
           data-field="per_pack"
           :label="{text: 'Количество в упаковке/таре'}"
-          help-text="Если сырье поставляется штучно, оставьте равным нулю"
           editor-type="dxNumberBox"
           :editor-options="{min: 0}"
+          :is-required="needOpening"
+          :visible="needOpening"
+        />
+        <DxItem
+          data-field="helium_consumption"
+          :label="{text: 'Расход гелия'}"
+          help-text="Если не заполняется гелием, оставьте равным нулю"
+          editor-type="dxNumberBox"
+          :editor-options="{min: 0}"
+        />
+        <DxItem
+          item-type="empty"
         />
         <DxItem
           data-field="yellow_label"
@@ -116,6 +160,7 @@
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
 import {DxForm, DxItem} from 'devextreme-vue/form'
+import {DxCheckBox} from "devextreme-vue";
 import {DxFileUploader} from 'devextreme-vue/file-uploader'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {Raw, RawModule} from '../service'
@@ -123,7 +168,7 @@ import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
 import {filePost, fileDelete} from '@/utils/file-upload'
 import axios, {AxiosResponse} from 'axios';
-import { MeasureUnits } from '@/const'
+import {MeasureUnits} from '@/const'
 
 @Component({
   name: 'RawPopupEdit',
@@ -132,7 +177,8 @@ import { MeasureUnits } from '@/const'
     DxItem,
     DButton,
     DEditPopup,
-    DxFileUploader
+    DxFileUploader,
+    DxCheckBox
   }
 })
 export default class extends Vue {
@@ -141,12 +187,7 @@ export default class extends Vue {
   private imageToDelete: string | null = null
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
   private units = MeasureUnits
-
-  public validationRules: any = {
-    name: [
-      {type: 'required', message: 'Название сырья не задано'}
-    ]
-  }
+  private needOpening: boolean = false;
 
   async created() {
   }
