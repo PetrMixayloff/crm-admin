@@ -128,21 +128,24 @@ export default class extends Vue {
       dataType: 'number',
       allowSorting: false,
       caption: 'Цена за ед.',
-      validationRules: [{type: 'required'}]
+      validationRules: [{type: 'required'}],
+      width: 100
     },
     {
       dataField: 'quantity',
       dataType: 'number',
-      caption: 'Количество',
+      caption: 'Кол-во',
       allowSorting: false,
-      validationRules: [{type: 'required'}]
+      validationRules: [{type: 'required'}],
+      width: 70
     },
     {
       dataField: 'total',
       dataType: 'number',
       caption: 'Сумма',
       allowSorting: false,
-      calculateCellValue: this.calculateTotal
+      calculateCellValue: this.calculateTotal,
+      width: 70
     }
   ]
 

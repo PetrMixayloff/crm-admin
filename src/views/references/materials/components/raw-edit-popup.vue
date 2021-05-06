@@ -22,7 +22,7 @@
         <DxItem
           data-field="name"
           :validation-rules="validationRules.name"
-          :label="{text: 'Название сырья'}"
+          :label="{text: 'Наименование'}"
         />
         <DxItem
           data-field="article_number"
@@ -42,6 +42,14 @@
         <DxItem
           data-field="unit"
           :label="{text: 'Единица измерения'}"
+          editor-type="dxSelectBox"
+          :editor-options="{
+          dataSource: units,
+          valueExpr: 'code',
+          displayExpr: (item) => { return item && item.name + ', ' + item.caption; },
+          searchEnabled: true,
+          searchExpr: 'name'
+        }"
         />
         <DxItem
           data-field="per_pack"
@@ -113,9 +121,9 @@ import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {Raw, RawModule} from '../service'
 import DButton from '@/components/DButton/button.vue'
 import _ from 'lodash'
-import {UserModule} from '@/store/modules/user'
 import {filePost, fileDelete} from '@/utils/file-upload'
 import axios, {AxiosResponse} from 'axios';
+import { MeasureUnits } from '@/const'
 
 @Component({
   name: 'RawPopupEdit',
@@ -132,6 +140,7 @@ export default class extends Vue {
   public state = RawModule;
   private imageToDelete: string | null = null
   private uploadUrl = `${process.env.VUE_APP_BASE_API}/files`
+  private units = MeasureUnits
 
   public validationRules: any = {
     name: [

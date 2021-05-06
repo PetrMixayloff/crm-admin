@@ -8,7 +8,6 @@ export const raw_route_ns = 'raw'
 export const raw_category_route_ns = 'raw_category'
 export const raw_details_route_ns = 'raw/details'
 
-export const table_name = 'public.raw'
 
 export class RawCategory {
   id: string | null = null
@@ -32,7 +31,7 @@ export class Raw {
   per_pack = 0
   yellow_label = 0
   red_label = 0
-  unit = 'шт'
+  unit = '796'
   article_number: string | null = null
   manufacturer: string | null = null
 }
@@ -49,6 +48,8 @@ class RawService extends VuexModule {
 
   public rawDataSource = base_ds.getBaseDataSource(raw_route_ns)
   public crudRaw = base_ds.getBaseCrud(raw_route_ns)
+
+  public rawDetailsDataSource = base_ds.getBaseDataSource(raw_details_route_ns)
 
   public rawCategoryDataSource = base_ds.getBaseDataSource(raw_category_route_ns)
   public crudRawCategory = base_ds.getBaseCrud(raw_category_route_ns)

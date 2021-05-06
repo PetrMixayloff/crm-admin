@@ -39,18 +39,35 @@
         />
       </DxForm>
       <h3>Позиции к списанию</h3>
-      <table-grid
-        ref="tablegrid"
+      <dx-data-grid
         :data-source="entity.records"
+        :allow-column-resizing="true"
+        :row-alternation-enabled="true"
+        :show-borders="true"
+        :show-column-lines="true"
+        :show-row-lines="true"
         :columns="columns"
         :height="400"
-        :filter-row-visible="false"
-        :column-chooser-enable="false"
-        :allow-editing="true"
-        editing-mode="raw"
-        :row-click="empty"
-        :dbl-row-click="empty"
-      />
+        :on-saved="onNewRowSaved"
+        @row-click="empty"
+        @row-dbl-click="empty"
+      >
+        <dx-load-panel
+          :enabled="true"
+        />
+        <dx-editing
+          :allow-updating="true"
+          :allow-adding="true"
+          mode="raw"
+        />
+        <template #dropDownBoxEditor="{ data: cellInfo }">
+          <remainsDropDownBox
+            :value="cellInfo.value"
+            :on-value-changed="cellInfo.setValue"
+            :data-source="remains"
+          />
+        </template>
+      </dx-data-grid>
     </div>
   </d-edit-popup>
 </template>
@@ -61,9 +78,15 @@ import {DxForm, DxItem} from 'devextreme-vue/form'
 import DEditPopup from '@/components/DEditPopup/editpopup.vue'
 import {CancellationModule, Cancellation} from '../service'
 import DButton from '@/components/DButton/button.vue'
-import TableGrid from '@/components/TableGrid/grid.vue'
-import _ from 'lodash'
 import {RawModule} from "@/views/references/materials/service";
+import remainsDropDownBox from './remains-drop-down-box.vue'
+import {
+  DxDataGrid,
+  DxLoadPanel,
+  DxEditing
+} from 'devextreme-vue/data-grid'
+import request from '@/utils/request'
+import _ from 'lodash'
 
 @Component({
   name: 'CancellationEditPopup',
@@ -72,7 +95,10 @@ import {RawModule} from "@/views/references/materials/service";
     DxItem,
     DButton,
     DEditPopup,
-    TableGrid
+    DxDataGrid,
+    DxLoadPanel,
+    DxEditing,
+    remainsDropDownBox
   }
 })
 
@@ -96,7 +122,23 @@ export default class extends Vue {
         valueExpr: 'id',
         displayExpr: 'name',
       },
+      setCellValue: this.resetValues,
       allowSorting: false,
+      validationRules: [{type: 'required'}]
+    },
+    {
+      dataField: 'raw_remains_details_id',
+      dataType: 'string',
+      caption: 'Накладная',
+      editCellTemplate: 'dropDownBoxEditor',
+      allowSorting: false,
+      lookup: {
+        allowClearing: true,
+        dataSource: RawModule.rawDetailsDataSource.store(),
+        valueExpr: 'id',
+        displayExpr: (item: any) => {return item && 'Номер ' + item.number + ' от ' + new Date(item.date).toLocaleDateString();},
+      },
+      width: 200,
       validationRules: [{type: 'required'}]
     },
     {
@@ -106,10 +148,33 @@ export default class extends Vue {
       width: 100,
       allowSorting: false,
       validationRules: [{type: 'required'}]
-    },
+    }
   ]
+  private remains: any[] = []
 
   async created() {
+  }
+
+  onNewRowSaved(e: any) {
+    const record: any = this.entity.records[this.entity.records.length - 1]
+    const rawRemains: any = this.remains.find((item: any) => item.id === record.raw_remains_details_id)
+    if (rawRemains)
+      record.price = rawRemains.price
+  }
+
+  async resetValues(newData: any, value: string, currentRowData: any) {
+    newData.raw_id = value;
+    newData.raw_remains_details_id = null;
+    newData.quantity = null;
+    if (_.isNil(value)) {
+      this.remains = []
+      return
+    }
+    const resp: any = await request({
+      url: `raw/details/${value}`,
+      method: 'get'
+    })
+    this.remains = resp.data
   }
 
   empty() {

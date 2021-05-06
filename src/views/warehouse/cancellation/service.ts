@@ -6,8 +6,6 @@ import { UserModule } from '@/store/modules/user'
 
 export const route_ns = 'cancellation'
 
-export const table_name = 'public.cancellation'
-
 
 export class Cancellation {
   id: string | null = null
