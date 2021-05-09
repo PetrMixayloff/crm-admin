@@ -250,11 +250,6 @@ export default class extends Vue {
     return e
   }
 
-  getData(data: any) {
-    console.log(data)
-    return '123'
-  }
-
   public getSelectedData() {
     const grid = (this.$refs.dxdatagrid as any).instance
     const selectedKeys = grid.getSelectedRowKeys()

@@ -66,7 +66,7 @@
           ref="tablegrid"
           :data-source="rawDataSource"
           :columns="rawColumns"
-          :filter-value="state.currentCategory.id && state.currentCategory.id !== '0' ? ['category_id', '=', state.currentCategory.id] : null"
+          :filter-value="filterValue"
           :row-click="onRowClick"
           :dbl-row-click="editRaw"
           selection-mode="single"
@@ -90,6 +90,7 @@ import DTextarea from '@/components/DTextarea/textarea.vue'
 import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
 import DxButton from 'devextreme-vue/button'
+import _ from 'lodash'
 
 @Component({
   name: 'Materials',
@@ -185,6 +186,13 @@ export default class extends Vue {
     }
   ]
 
+  get filterValue() {
+    if (!_.isNil(this.state.currentCategory.id)) {
+      return ['category_id', '=', this.state.currentCategory.id]
+    }
+    return null
+  }
+
   deleteCategory() {
     confirm('Внимание!!! Удаление категории приведет к удалению всех дочерних подкатегорий и их сырья. Удалить выбранную категорию?', 'Удаление категории')
       .then(async (answer: boolean) => {
@@ -261,19 +269,16 @@ export default class extends Vue {
 .main-box-content {
   display: flex;
   justify-content: flex-start;
-  height: 100%;
   margin-top: 10px;
 }
 
 .filter-tree {
   width: 25%;
-  height: 100%;
 }
 
 .products-list {
   padding: 0 20px;
   width: 74%;
-  height: 700px;
   margin-bottom: 10px;
 }
 </style>

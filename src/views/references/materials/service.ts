@@ -27,7 +27,7 @@ export class Raw {
   unit = '796'
   piece_unit: string | null = null
   per_pack: number | null = null
-  helium_consumption: number | null = null
+  helium_consumption: number = 0
   yellow_label: number | null = null
   red_label: number | null = null
   description = ''
