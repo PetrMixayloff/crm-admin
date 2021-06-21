@@ -15,11 +15,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import {Component, Vue} from 'vue-property-decorator'
 import TableGrid from "@/components/TableGrid/grid.vue";
 import {RawModule} from "@/views/references/materials/service";
-import { RemainsModule } from './service'
+import {RemainsModule} from './service'
+import request from '@/utils/request'
 import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
+import {confirm} from "devextreme/ui/dialog";
+import _ from 'lodash'
 
 @Component({
   name: 'Remains',
@@ -111,13 +114,44 @@ export default class extends Vue {
         icon: 'info',
         visible: true,
         onClick: this.onRawDetail
-      }]
+      },
+        {
+          hint: 'Распаковать',
+          icon: 'group',
+          visible: this.isOpeningVisible,
+          onClick: this.onOpening
+        }]
     }
   ]
 
-    onRawDetail(e: any) {
+  onRawDetail(e: any) {
     this.state.SetCurrentRow(e.row.data)
     this.state.ShowRemainsDetails(true)
+  }
+
+  isOpeningVisible(e: any) {
+    if (!_.isNil(e.row.data.piece_raw_id) && e.row.data.quantity > 0) {
+      return true
+    }
+    return false
+  }
+
+  onOpening(e: any) {
+    confirm(`Вы уверены, что хотите разупаковать сырье ${e.row.data.name}?`, 'Распаковка сырья')
+      .then(async (answer: boolean) => {
+        if (!answer) {
+          return
+        }
+        try {
+          await request({
+            url: `opening/${e.row.data.id}`,
+            method: 'post'
+          })
+          await this.rawState.rawDataSource.reload()
+        } catch (e) {
+          console.log(e)
+        }
+      })
   }
 
   created() {

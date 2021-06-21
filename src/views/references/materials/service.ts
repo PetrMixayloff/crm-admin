@@ -19,6 +19,7 @@ export class RawCategory {
 
 export class Raw {
   id: string | null = null
+  piece_raw_id: string | null = null
   shop_id: string = UserModule.shopId
   category_id: string | null = null
   name = ''
