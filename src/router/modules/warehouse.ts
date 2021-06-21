@@ -34,6 +34,12 @@ const warehouseRoutes: RouteConfig = {
       component: () => import('@/views/warehouse/invoice/index.vue'),
       name: 'Invoice',
       meta: {title: 'Оприходование'}
+    },
+    {
+      path: 'opening',
+      component: () => import('@/views/warehouse/opening/index.vue'),
+      name: 'Opening',
+      meta: {title: 'Разборка'}
     }
   ]
 }

@@ -149,6 +149,11 @@ export default class extends Vue {
     }
   ]
 
+  displayRawName(data: any) {
+    console.log(data)
+    return 'id'
+  }
+
   created() {
   }
 
