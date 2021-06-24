@@ -7,7 +7,6 @@ import {Raw, RawCategory} from "@/views/references/materials/service";
 export const product_route_ns = 'product'
 export const category_route_ns = 'product_category'
 
-export const table_name = 'public.product'
 
 export class ProductCategory {
   id: string | null = null
@@ -25,10 +24,17 @@ export class ProductRawRelation {
   standard_id: string | null = null
 }
 
+export class ProductSetRelation {
+  product_id: string | null = null
+  product_set_id: string | null = null
+  quantity: number = 0
+}
+
 export class Product {
   id: string | null = null
   category_id: string | null = null
   shop_id: string = UserModule.shopId
+  base: boolean = true;
   name = ''
   description = ''
   image: string | null = null
@@ -36,6 +42,9 @@ export class Product {
   old_price: number | null = null
   show_on_store = true
   raw: Array<ProductRawRelation> = []
+  products: Array<ProductSetRelation> = []
+  raw_to_delete: Array<string> = []
+  products_to_delete: Array<string> = []
 }
 
 @Module({ dynamic: true, store, name: 'products', namespaced: true })

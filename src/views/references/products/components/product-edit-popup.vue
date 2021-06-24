@@ -16,6 +16,7 @@
         ref="dxform"
         :form-data.sync="entity"
         :show-validation-summary="true"
+        :col-count="2"
         validation-group="productEntity"
       >
         <DxItem
@@ -231,12 +232,7 @@ export default class extends Vue {
         }
       }
       if (this.rawToDelete.length > 0) {
-        for (const rawId of this.rawToDelete) {
-          await request({
-            url: `/product/raw_relation/${rawId}`,
-            method: 'delete'
-          })
-        }
+        this.entity['raw_to_delete'] = this.rawToDelete
       }
       try {
         await this.state.crudProduct.save(this.entity)
