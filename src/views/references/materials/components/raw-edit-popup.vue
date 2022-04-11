@@ -198,6 +198,7 @@ export default class extends Vue {
   onShow() {
     if (this.state.rawEditMode) {
       this.entity = _.cloneDeep(this.state.currentRaw)
+      this.needOpening = !_.isNil(this.entity.piece_raw_id)
     } else {
       this.entity = new Raw()
       this.entity.category_id = this.state.currentCategory.id
