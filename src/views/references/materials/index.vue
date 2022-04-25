@@ -91,6 +91,7 @@ import {DxScrollView} from 'devextreme-vue'
 import {confirm} from 'devextreme/ui/dialog'
 import DxButton from 'devextreme-vue/button'
 import _ from 'lodash'
+import {MeasureUnits} from "@/const";
 
 @Component({
   name: 'Materials',
@@ -153,6 +154,11 @@ export default class extends Vue {
       dataField: 'unit',
       dataType: 'string',
       caption: 'Ед. изм.',
+      lookup: {
+        dataSource: MeasureUnits,
+        valueExpr: 'code',
+        displayExpr: 'name'
+      },
       allowSorting: false,
       width: 70
     },

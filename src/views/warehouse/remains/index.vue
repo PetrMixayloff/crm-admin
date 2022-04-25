@@ -16,13 +16,14 @@
 
 <script lang="ts">
 import {Component, Vue} from 'vue-property-decorator'
-import TableGrid from "@/components/TableGrid/grid.vue";
 import {RawModule} from "@/views/references/materials/service";
 import {RemainsModule} from './service'
-import request from '@/utils/request'
-import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
 import {confirm} from "devextreme/ui/dialog";
+import request from '@/utils/request'
+import TableGrid from "@/components/TableGrid/grid.vue";
+import ShowRemainsDetailsPopup from './components/show-remains-details.vue'
 import _ from 'lodash'
+import {MeasureUnits} from "@/const";
 
 @Component({
   name: 'Remains',
@@ -71,6 +72,11 @@ export default class extends Vue {
       dataField: 'unit',
       dataType: 'string',
       caption: 'Ед. изм.',
+      lookup: {
+        dataSource: MeasureUnits,
+        valueExpr: 'code',
+        displayExpr: 'name'
+      },
       allowSorting: false,
       width: 70
     },

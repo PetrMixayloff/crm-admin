@@ -62,10 +62,10 @@ export class Order {
   delivery_cost: number = 0
   decoration_cost: number = 0
   courier_id: string | null = null
-  total_cost: number | null = null
+  total_cost: number = 0
   prepay: number = 0
   prepay_type: PaymentMethod = 'Наличные'
-  amount: number | null = null
+  amount: number = 0
   amount_type: PaymentMethod | null = null
   discount: number = 0
   rating: number | null = null

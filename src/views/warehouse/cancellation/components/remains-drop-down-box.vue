@@ -57,7 +57,7 @@ import {RawModule} from "@/views/references/materials/service";
   }
 })
 export default class extends Vue {
-  @Prop({default: null}) private value!: number | null;
+  @Prop({default: 0}) private value!: number;
   @Prop({required: true}) private onValueChanged!: Function;
   @Prop({required: true}) private dataSource!: any;
 

@@ -43,7 +43,19 @@
         :allow-deleting="allowRowsAddDelete"
         :mode="editingMode"
         start-edit-action="click"
-      />
+      >
+        <DxTexts
+          add-row="Добавить товар"
+        />
+      </DxEditing>
+
+      <DxToolbar>
+        <DxItem
+          name="addRowButton"
+          show-text="always"
+        />
+      </DxToolbar>
+
       <DxStateStoring
         :enabled="stateStoringEnable"
         type="localStorage"
@@ -104,7 +116,7 @@
       <template #order-delivery-cell-template="{data}">
         <div v-if="data.data.delivery">
           <p>Доставка</p>
-          <span>ул. {{ data.data.client.address.street || '' }}, д. {{ data.data.client.address.house || '' }},
+          <span v-if="data.data.client && data.data.client.address">ул. {{ data.data.client.address.street || '' }}, д. {{ data.data.client.address.house || '' }},
             кв. {{ data.data.client.address.flat || '' }}, п. {{ data.data.client.address.entrance || '' }},
             э. {{ data.data.client.address.flat || '' }}</span>
         </div>
@@ -141,7 +153,7 @@
 <script lang="ts">
 import {Component, Emit, Prop, PropSync, Vue} from 'vue-property-decorator'
 import {DxCheckBox} from 'devextreme-vue/check-box'
-import {DxSelectBox} from "devextreme-vue";
+import {DxSelectBox, DxButton} from "devextreme-vue";
 import {orderStatus} from '@/const'
 import {
   DxColumn,
@@ -157,9 +169,12 @@ import {
   DxRemoteOperations,
   DxSearchPanel,
   DxSelection,
-  DxStateStoring
+  DxStateStoring,
+  DxTexts,
+  DxToolbar,
+  DxItem
 } from 'devextreme-vue/data-grid'
-import _ from 'lodash'
+
 
 function defaultPageSizes(): number[] {
   return [20, 50, 100]
@@ -183,7 +198,11 @@ function defaultPageSizes(): number[] {
     DxColumnFixing,
     DxStateStoring,
     DxCheckBox,
-    DxSelectBox
+    DxSelectBox,
+    DxTexts,
+    DxButton,
+    DxToolbar,
+    DxItem
   }
 })
 export default class extends Vue {

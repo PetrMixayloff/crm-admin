@@ -5,9 +5,10 @@
     default-height="800"
     :visible="state.showRemainsDetails"
     @hidden="onClose"
-    @ok="onOk"
     @cancel="onCancel"
     @shown="onShow"
+    :show-ok-button="false"
+    :cancel-button-caption="'Закрыть'"
   >
     <div id="form-container">
       <table-grid
@@ -97,10 +98,6 @@ export default class extends Vue {
 
   onClose() {
     this.state.ShowRemainsDetails(false)
-  }
-
-  async onOk(e: any) {
-    this.onClose()
   }
 
   onCancel(e: any) {
